@@ -1,7 +1,5 @@
 package cn.tju.doctor.utils;
 
-import cn.tju.tdwy.dao.RoadMapper;
-import cn.tju.tdwy.daomain.RoadMySQL;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +23,7 @@ public class StringToJsonUtils {
         System.out.println(stringToJson2(ee));
 
     }
-    public static ArrayList<Map> stringToJson(String string, RoadMapper roadMapper){
+    public static ArrayList<Map> stringToJson(String string){
         ArrayList<Map> fields_list = new ArrayList<>();
         try {
             string = string.replace("/","\\\\");
@@ -46,15 +44,11 @@ public class StringToJsonUtils {
                     String picURL = jsonObject.getString("picURL");
                     //Integer.parseInt
                     picURL = "http://211.81.50.158/img/tdwy_pic/luhu.jpg";
-                    RoadMySQL roadMySQL = roadMapper.getRoadByRoadNum(roadNum);
-                    String lng = roadMySQL.getLng();
-                    String lat = roadMySQL.getLat();
+
                     amap.put("accessTime",accessTime);
                     amap.put("roadText",roadText);
                     amap.put("roadDirectNum",roadDirectNum);
                     amap.put("dirNum",dirNum);
-                    amap.put("lng",lng);
-                    amap.put("lat",lat);
                     amap.put("picURL",picURL);
                     fields_list.add(amap);
                 }
