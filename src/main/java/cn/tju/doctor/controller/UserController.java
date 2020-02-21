@@ -32,6 +32,7 @@ public class UserController {
     public RetResult<String> getCheckCode(@RequestBody Map<String,String> json){
         String checkCode = String.valueOf(new Random().nextInt(899999) + 100000);
         String message = "您的验证码为："+checkCode;
+        List<User> emaillist = userMapper.getUserByEmail(json.get("email"));
         try {
             emailService.sendSimpleMail(json.get("email"), "验证码", message);
         }catch (Exception e){
@@ -47,9 +48,9 @@ public class UserController {
         List<User> emaillist = userMapper.getUserByEmail(json.get("email"));
         if (usernamelist.size()==0 && emaillist.size() == 0){
             return RetResponse.makeOKRsp("ok");
-        }else if (usernamelist.size() == 0){
+        }else if (usernamelist.size() != 0){
             return RetResponse.makeErrRsp("该用户名已经被注册");
-        }else if (emaillist.size() == 0){
+        }else if (emaillist.size() != 0){
             return RetResponse.makeErrRsp("该邮箱已经被注册");
         }else {
             return RetResponse.makeErrRsp("ERROR");
@@ -64,13 +65,14 @@ public class UserController {
             return RetResponse.makeErrRsp("邮箱不正确");
         }else {
             User user = list.get(0);
-            if (user.getPasswd().equals(json.get("passwd"))){
+            if (user.getPassword().equals(json.get("password"))){
                 Map<String,String> map = new HashMap<>();
                 map.put("username",user.getUsername());
-                String token= JWT.create().withAudience(String.valueOf(user.getId())).sign(Algorithm.HMAC256(user.getPasswd()));
+                String token= JWT.create().withAudience(String.valueOf(user.getActureID())).sign(Algorithm.HMAC256(user.getPassword()));
                 user.setToken(token);
                 userMapper.updateUser(user);
                 map.put("token",token);
+                map.put("type",user.getType());
                 System.out.println(map);
                 return RetResponse.makeOKRsp(map);
             }else {
@@ -105,12 +107,60 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/updateUser")
+    @RequestMapping(value = "/getUser", method = RequestMethod.POST)
+    public RetResult<Map> getUser(@RequestBody Map<String,String> map){
+        List<User> list = userMapper.getUserByToken(map.get("token"));
+        Map<String,Object> data = new HashMap<>();
+        if (list.size()==0){
+            return RetResponse.makeErrRsp("用户不存在");
+        }else {
+            User user;
+            try{
+                user = list.get(0);
+            }catch (Exception e){
+                e.printStackTrace();
+                return RetResponse.makeErrRsp("获取用户信息出错");
+            }
+            data.put("username",user.getUsername());
+            data.put("modify",user.getModify());
+            data.put("email",user.getEmail());
+            data.put("ares",user.getArea());
+            data.put("region",user.getRegion());
+            data.put("unit",user.getUnit());
+            data.put("part",user.getPart());
+            data.put("like",user.getLike());
+            data.put("download",user.getDownload());
+            data.put("record",user.getRecord());
+            data.put("view",user.getView());
+            data.put("getMoney",user.getGetMoney());
+            data.put("getmoneyrecord",user.getGetmoneyrecord());
+            data.put("state",user.getState());
+            data.put("money",user.getMoney());
+            return RetResponse.makeOKRsp(data);
+        }
+    }
+
+    @RequestMapping(value = "/modify")
     public RetResult<String> updateUser(@RequestBody User user){
         List<User> list = userMapper.getUserByEmail(user.getEmail());
         User newUser = list.get(0);
-        newUser.setPasswd(user.getPasswd());
-        int flag = userMapper.updateUser(newUser);
+        user.setAuthorID(newUser.getAuthorID());
+        /*newUser.setPassword(user.getPassword());
+        newUser.setEmail(user.getEmail());
+        newUser.setArea(user.getArea());
+        newUser.setRegion(user.getRegion());
+        newUser.setUnit(user.getUnit());
+        newUser.setPart(user.getPart());
+        newUser.setName(user.getName());
+        newUser.setActureID(user.getActureID());
+        newUser.setPhone(user.getPhone());
+        newUser.setAddress(user.getAddress());
+        newUser.setBankID(user.getBankID());
+        newUser.setIfDoc(user.getIfDoc());
+        newUser.setDocID(user.getDocID());
+        newUser.setDocIDurl(user.getDocIDurl());
+        newUser.setType(user.getType());*/
+        int flag = userMapper.updateUser(user);
         if (flag == 1){
             return RetResponse.makeOKRsp("ok");
         }else{
@@ -118,70 +168,34 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/updateKeywords")
-    public RetResult<String> updateKeywords(@RequestBody User user){
-        List<User> list = userMapper.getUserByToken(user.getToken());
-        User newUser = list.get(0);
-        String str = newUser.getKeywords();
-        Set set = new HashSet();
-        if (str!=null && str!=""){
-            String[] keywords = str.replace("[","").replace("]","").split(",");
-            for (String keyword:keywords){
-                set.add(keyword);
-            }
-        }
-        set.add(user.getKeywords());
-        System.out.println(set.toString());
-        newUser.setKeywords(set.toString());
-        int flag = userMapper.updateUser(newUser);
-        if (flag == 1){
-            return RetResponse.makeOKRsp("ok");
-        }else{
-            return RetResponse.makeErrRsp("ERROR");
-        }
-    }
-
-    @RequestMapping(value = "/deleteKeywords")
-    public RetResult<String> deleteKeywords(@RequestBody User user){
-        List<User> list = userMapper.getUserByToken(user.getToken());
-        User newUser = list.get(0);
-        String str = newUser.getKeywords();
-        Set<String> set = new HashSet();
-        String[] keywords = str.replace("[","").replace("]","").split(",");
-        for (String keyword:keywords){
-            set.add(keyword);
-        }
-        set.remove(user.getKeywords());
-        newUser.setKeywords(set.toString());
-        int flag = userMapper.updateUser(newUser);
-        if (flag == 1){
-            return RetResponse.makeOKRsp("ok");
-        }else{
-            return RetResponse.makeErrRsp("ERROR");
-        }
-    }
-
-    @RequestMapping(value = "/getKeywords")
-    public RetResult<List<String>> getKeywords(@RequestBody User user){
-        List<User> list = userMapper.getUserByToken(user.getToken());
-        if (list.size()!=0){
-            String str = list.get(0).getKeywords();
-            List<String> list1 = new ArrayList<>();
-            if (str!=null || str!=""){
-                String[] keywords = str.replace("[","").replace("]","").split(",");
-                for (String keyword:keywords){
-                    list1.add(keyword.trim());
-                }
-            }
-            return RetResponse.makeOKRsp(list1);
+    @RequestMapping(value = "/getDoc")
+    public RetResult<List> getDoc(@RequestBody Map<String,String> map){
+        List<User> list = userMapper.getUserByArea(map.get("area"));
+        List<Map> result = new ArrayList<>();
+        if (list.size()==0){
+            return RetResponse.makeErrRsp("用户不存在");
         }else {
-            return RetResponse.makeErrRsp("Error");
+            for (User user : list){
+                Map<String,Object> resultMap = new HashMap<>();
+                resultMap.put("username",user.getUsername());
+                resultMap.put("modify",user.getModify());
+                resultMap.put("wechatQun",user.getWechatQun());
+                resultMap.put("active",user.getActive());
+                resultMap.put("online",user.getOnline());
+                resultMap.put("area",user.getArea());
+                resultMap.put("region",user.getRegion());
+                resultMap.put("unit",user.getUnit());
+                resultMap.put("part",user.getPart());
+                result.add(resultMap);
+            }
+            return RetResponse.makeOKRsp(result);
         }
+
     }
 
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
-        user.setKeywords("[]");
+        System.out.println("ok");
         int flag = userMapper.insertUser(user);
         if (flag==1){
             return RetResponse.makeOKRsp("ok");
@@ -189,4 +203,5 @@ public class UserController {
             return RetResponse.makeErrRsp("注册失败");
         }
     }
+
 }
