@@ -17,9 +17,9 @@ public interface BaseMapper {
     @Select("SELECT * FROM `base`")
     List<Base> getBaseList();
     @Insert({"INSERT INTO `base`(`article`, `view`, " +
-            "`download`, `like`, `hide`) VALUES (${article},${view},${download},${like},${hide})"})
+            "`download`, `like`, `hide`) VALUES (${base.article},${base.view},${base.download},${base.like},${base.hide})"})
     int insertBase(Base base);
-    @Update("UPDATE `base` SET `article` = ${article}, `view` = ${view}," +
-            " `download` = ${download}, `like` = ${like}, `hide` = ${hide} WHERE `uuid` = ${id}")
+    @Update("UPDATE `base` SET `article` = ${base.article}, `view` = ${base.view}," +
+            " `download` = ${base.download}, `like` = ${base.like}, `hide` = ${base.hide} WHERE `uuid` = ${base.id}")
     int updateBase(Base base);
 }
