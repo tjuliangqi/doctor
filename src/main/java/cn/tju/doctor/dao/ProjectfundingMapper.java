@@ -2,11 +2,14 @@ package cn.tju.doctor.dao;
 
 import cn.tju.doctor.daomain.Projectfunding;
 import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
+@Repository
+@Mapper
 public interface ProjectfundingMapper {
     @Select("SELECT * FROM `projectfunding` WHERE `number` = #{number}")
     Projectfunding getProjectfundingByNumber(String number);
