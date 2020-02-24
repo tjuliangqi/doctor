@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.WorkMapper" >
+
+    <select id="getWorkByIDAndState" resultType="cn.tju.doctor.daomain.Work" parameterType="cn.tju.doctor.daomain.WorkState">
+        SELECT * FROM works WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+    </select>
+
+<!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
+<!--        SELECT * FROM works WHERE token = #{token} ;-->
+<!--    </select>-->
+
+<!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
+<!--        SELECT * FROM works WHERE username = #{username} ;-->
+<!--    </select>-->
+
+<!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
+<!--        SELECT * FROM works WHERE area = #{area} ;-->
+<!--    </select>-->
+
+    <insert id="insertWork" parameterType="cn.tju.doctor.daomain.Work">
+        INSERT INTO works (uuid, workID, name, publishID, publishName, acceptID, acceptName, introduce, workfile)
+        VALUES  (#{uuid}, #{workID}, #{name}, #{publishID}, #{publishName}, #{acceptID}, #{acceptName}, #{introduce}, #{workfile})
+    </insert>
+
+<!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->
+<!--        DELETE FROM users WHERE id = #{id}-->
+<!--    </delete>-->
+
+    <update id="updateWork" parameterType="cn.tju.doctor.daomain.WorkState">
+        UPDATE works
+        <set>
+            <if test='workState.type == "0"'>ifRead="1",</if>
+            <if test='workState.type == "1"'>ifFinish="1",</if>
+            <if test="workState.workfile != null">workfile=#{workState.workfile}</if>
+        </set>
+        WHERE uuid=#{workState.uuid}
+    </update>
+
+</mapper>
