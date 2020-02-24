@@ -3,10 +3,10 @@ package cn.tju.doctor.daomain;
 public class Projectfunding {
     private String number;
     private String projectID;
-    private float mount;
-    private float rest;
-    private float in;
-    private float out;
+    private double mount;
+    private double rest;
+    private int in;
+    private int out;
     private int test;
     private String testtime;
     private String testuser;
@@ -39,35 +39,35 @@ public class Projectfunding {
         this.projectID = projectID;
     }
 
-    public float getMount() {
+    public double getMount() {
         return mount;
     }
 
-    public void setMount(float mount) {
+    public void setMount(double mount) {
         this.mount = mount;
     }
 
-    public float getRest() {
+    public double getRest() {
         return rest;
     }
 
-    public void setRest(float rest) {
+    public void setRest(double rest) {
         this.rest = rest;
     }
 
-    public float getIn() {
+    public int getIn() {
         return in;
     }
 
-    public void setIn(float in) {
+    public void setIn(int in) {
         this.in = in;
     }
 
-    public float getOut() {
+    public int getOut() {
         return out;
     }
 
-    public void setOut(float out) {
+    public void setOut(int out) {
         this.out = out;
     }
 
