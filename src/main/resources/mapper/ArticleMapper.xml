@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.ArticleMapper">
+
+
+    <insert id="insertArticle" parameterType="cn.tju.doctor.daomain.ArticleBean">
+        INSERT INTO article (uuid, title, source, writeTime, creatTime, sourceURL, fulltext, picURL, videoURL, label, part, ifVideo, like, view, download, berecord)
+        VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fulltext}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{like}, #{view}, #{download}, #{berecord})
+    </insert>
+
+
+</mapper>
