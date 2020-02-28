@@ -10,8 +10,10 @@ import java.util.List;
 public interface UserfundingMapper {
     @Select("SELECT * FROM `userfunding` WHERE `number` = #{number}")
     Userfunding getUserfundingByNumber(@Param("number") String number);
-    @Select("SELECT * FROM `userfunding` WHERE `${type}` = #{value}")
-    List<Userfunding> getUserfundingList(@Param("type") String type,@Param("value") String value);
+    @Select("SELECT * FROM `userfunding` WHERE `applyTime` >= #{type} AND ifWork = ${value2} AND in = ${value3} AND test = ${value1}")
+    List<Userfunding> getUserfundingListByApplytime(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
+    @Select("SELECT * FROM `userfunding` WHERE `authorID` = #{type} AND ifWork = ${value2} AND in = ${value3} AND test = ${value1}")
+    List<Userfunding> getUserfundingListByAuthorId(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Insert("INSERT INTO `userfunding` (`number`, `authorID` ,`mount`,`rest`,`in`, `out`, `applyID`, `applyTime`, " +
             "`record` ,`source` ,`sourceAccount` ,`go` ,`goaccount`" +
             ") VALUES (#{userfunding.number}, #{userfunding.authorID}," +
