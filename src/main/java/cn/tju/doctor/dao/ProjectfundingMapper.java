@@ -12,6 +12,10 @@ public interface ProjectfundingMapper {
     Projectfunding getProjectfundingByNumber(String number);
     @Select("SELECT * FROM `projectfunding` WHERE `${type}` = #{value}")
     List<Projectfunding> getProjectfundingList(String type, String value);
+    @Select("SELECT * FROM `projectfunding` WHERE `applyTime` >= #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
+    List<Projectfunding> getProjectfundingListByApplytime(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
+    @Select("SELECT * FROM `projectfunding` WHERE `projectID` = #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
+    List<Projectfunding> getProjectfundingByprojectID(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Insert({"INSERT INTO `projectfunding` (`number`, `projectID` ,`mount` ,`rest` ," +
             "`in`, `out`, `applyID`, `applyTime`," +
             "`record`, `source`, `sourceAccount`, `go`, `goaccount`" +
@@ -26,7 +30,7 @@ public interface ProjectfundingMapper {
             "testtime = #{projectfunding.testtime}, testuser = #{projectfunding.testuser} " +
             "WHERE number = #{projectfunding.number}")
     int updateProjectfundingTest(@Param("projectfunding") Projectfunding projectfunding);
-    @Update("UPDATE `projectfunding` SET ifWork = ${projectfunding.ifWork}, testRecord = #{projectfunding.workRecord}," +
+    @Update("UPDATE `projectfunding` SET ifWork = ${projectfunding.ifWork}, workRecord = #{projectfunding.workRecord}," +
             "workTime = #{projectfunding.workTime}, workUser = #{projectfunding.workUser} " +
             "WHERE number = #{projectfunding.number}")
     int updateProjectfundingWork(@Param("projectfunding") Projectfunding projectfunding);

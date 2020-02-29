@@ -22,8 +22,8 @@ import java.util.Map;
 import static cn.tju.doctor.service.AskService.searchList;
 
 @RestController
-@RequestMapping("/userFunding")
-public class UserfundingController {
+@RequestMapping("/userFea")
+public class UserFeaController {
     @Autowired
     UserfundingMapper userfundingMapper;
     @Autowired

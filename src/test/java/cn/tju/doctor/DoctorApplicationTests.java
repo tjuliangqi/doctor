@@ -90,4 +90,13 @@ public class DoctorApplicationTests {
         System.out.println(projectfundingMapper.updateProjectfundingWork(update));
     }
 
+    @Test
+    public void searchUser(){
+        String time = "2020-02-21";
+        String token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUI1NiJ9.eyJhdWQiOiIyMjM1NDEyIn0.oSppn0UPGXHjrgVVdcZUiE1v8kZxuRfWi2RczEGLE_0";
+        String authorID = "wy";
+        System.out.println(userfundingMapper.getUserfundingListByApplytime(time,1,1,1).get(0).getApplyTime());
+        System.out.println(userfundingMapper.getUserfundingListByAuthorId(authorID,1,1,1).get(0).getApplyID());
+    }
+
 }
