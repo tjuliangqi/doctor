@@ -96,7 +96,6 @@ public class ProjectFeaController {
         try{
             userMapper.updateUser(user);
         }catch (Exception e){
-            //这里需要修改流水标志位吗
             System.out.println("扣款出错:" + e);
             projectfunding.setTest(2);
             projectfundingMapper.updateProjectfundingTest(projectfunding);
