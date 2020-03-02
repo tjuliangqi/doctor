@@ -6,6 +6,7 @@ import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
 import cn.tju.doctor.daomain.Work;
 import cn.tju.doctor.daomain.WorkState;
+import cn.tju.doctor.utils.JsonToMapUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,27 +24,32 @@ public class workController {
     @Autowired
     WorkMapper workMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
-    public RetResult<List> search(@RequestBody Map json) {
+    public RetResult<List> search(@RequestBody Map json) throws JSONException {
         System.out.println(json.get("type"));
         System.out.println(json.get("value"));
         String type = json.get("type").toString();
         String value = json.get("value").toString();
+        Map valueMap = new HashMap();
+        valueMap = JsonToMapUtils.strToMap(value);
         String firstState = type.substring(0, 1);
         String secondState = type.substring(1, 2);
         WorkState workState = new WorkState();
-        workState.setStateValue1(value);
         switch (firstState){
             case "0":
                 workState.setState1("publishTime");
+                workState.setStateValue1(valueMap.get("publishTime").toString());
                 break;
             case "1":
                 workState.setState1("workID");
+                workState.setStateValue1(valueMap.get("workID").toString());
                 break;
             case "2":
                 workState.setState1("publishID");
+                workState.setStateValue1(valueMap.get("publishID").toString());
                 break;
             case "3":
                 workState.setState1("acceptID");
+                workState.setStateValue1(valueMap.get("acceptID").toString());
                 break;
         }
         switch (secondState){
@@ -58,6 +64,10 @@ public class workController {
             case "2":
                 workState.setState2("ifFinish");
                 workState.setStateValue2("1");
+                break;
+            case "3":
+                workState.setState2("workID");
+                workState.setStateValue2(valueMap.get("workID").toString());
                 break;
         }
         System.out.println(workState);
