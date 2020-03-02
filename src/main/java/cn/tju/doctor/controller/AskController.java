@@ -1,9 +1,12 @@
 package cn.tju.doctor.controller;
 
+import cn.tju.doctor.dao.ArticleMapper;
+import cn.tju.doctor.daomain.ArticleBean;
 import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static cn.tju.doctor.service.AskService.*;
 
@@ -18,6 +22,8 @@ import static cn.tju.doctor.service.AskService.*;
 
 @RequestMapping("/article")
 public class AskController {
+    @Autowired
+    ArticleMapper articleMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<Object> search(@RequestBody Map<String,String> map) throws IOException, JSONException {
         //RetResult retResult = new RetResult();
@@ -77,6 +83,7 @@ public class AskController {
         String label = String.valueOf(map.get("label"));
         String part = String.valueOf(map.get("part"));
         Integer ifVideo = Integer.valueOf(map.get("ifVideo"));
+        String uuid = UUID.randomUUID().toString();
         json.put("title", title);
         json.put("source", source);
         json.put("writeTime", writeTime);
@@ -89,8 +96,22 @@ public class AskController {
         json.put("part", part);
         json.put("ifVideo", ifVideo);
 
-        String result = addData(json);
+        ArticleBean articleBean = new ArticleBean();
+        articleBean.setUuid(uuid);
+        articleBean.setTitle(title);
+        articleBean.setSourceURL(sourceURL);
+        articleBean.setSource(source);
+        articleBean.setWriteTime(writeTime);
+        articleBean.setCreatTime(creatTime);
+        articleBean.setFulltext(fulltext);
+        articleBean.setPicURL(picURL);
+        articleBean.setVideoURL(videoURL);
+        articleBean.setLabel(label);
+        articleBean.setPart(part);
+        articleBean.setIfVideo(ifVideo);
 
-        return RetResponse.makeOKRsp(result);
+        //String result = addData(json);
+        int result = articleMapper.insertArticle(articleBean);
+        return RetResponse.makeOKRsp("ok");
     }
 }

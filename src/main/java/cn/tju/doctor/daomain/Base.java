@@ -1,50 +1,50 @@
 package cn.tju.doctor.daomain;
 
 public class Base {
-    private float article;
-    private float view;
-    private float download;
-    private float like;
-    private float hide;
+    private double article;
+    private double view;
+    private double download;
+    private double like;
+    private double hide;
     private int id;
 
-    public float getArticle() {
+    public double getArticle() {
         return article;
     }
 
-    public void setArticle(float article) {
+    public void setArticle(double article) {
         this.article = article;
     }
 
-    public float getView() {
+    public double getView() {
         return view;
     }
 
-    public void setView(float view) {
+    public void setView(double view) {
         this.view = view;
     }
 
-    public float getDownload() {
+    public double getDownload() {
         return download;
     }
 
-    public void setDownload(float download) {
+    public void setDownload(double download) {
         this.download = download;
     }
 
-    public float getLike() {
+    public double getLike() {
         return like;
     }
 
-    public void setLike(float like) {
+    public void setLike(double like) {
         this.like = like;
     }
 
-    public float getHide() {
+    public double getHide() {
         return hide;
     }
 
-    public void setHide(float hide) {
+    public void setHide(double hide) {
         this.hide = hide;
     }
 
