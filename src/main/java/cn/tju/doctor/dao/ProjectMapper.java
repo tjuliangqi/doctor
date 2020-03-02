@@ -14,6 +14,7 @@ public interface ProjectMapper {
     List<ProjectBean> getProjectByTimeAndState(ProjectState projectState);
     List<ProjectBean> getProjectByIDAndState(ProjectState projectState);
     List<ProjectBean> getProjectByProjectID(String projectID);
+    List<ProjectBean> getProjectByUserProjectID(String userID, String projectID);
     int insertProject(ProjectBeanAdd projectBeanAdd);
     int modifyProject(ProjectBeanAdd projectBeanAdd);
     int updateProject(@Param("workState") WorkState workState);

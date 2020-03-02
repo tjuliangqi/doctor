@@ -16,6 +16,10 @@
         SELECT * FROM projects WHERE projectID = #{projectID};
     </select>
 
+    <select id="getProjectByUserProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
+        SELECT * FROM projects WHERE (projectID = #{projectID} AND acceptuser = #{userID}) OR (projectID = #{projectID} AND creatuser = #{userID});
+    </select>
+
 <!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
 <!--        SELECT * FROM works WHERE token = #{token} ;-->
 <!--    </select>-->
