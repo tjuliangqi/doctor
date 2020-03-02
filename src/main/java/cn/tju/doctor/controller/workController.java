@@ -66,8 +66,8 @@ public class workController {
                 workState.setStateValue2("1");
                 break;
             case "3":
-                workState.setState2("acceptID");
-                workState.setStateValue2(valueMap.get("acceptID").toString());
+                workState.setState2("workID");
+                workState.setStateValue2(valueMap.get("workID").toString());
                 break;
         }
         System.out.println(workState);
