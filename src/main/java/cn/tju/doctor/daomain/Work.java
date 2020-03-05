@@ -17,6 +17,7 @@ public class Work {
     private String finishTime;
     private String introduce;
     private String workfile;
+    private String process;
 
     public String getUuid() {
         return uuid;
@@ -130,6 +131,14 @@ public class Work {
         this.workfile = workfile;
     }
 
+    public String getProcess() {
+        return process;
+    }
+
+    public void setProcess(String process) {
+        this.process = process;
+    }
+
     @Override
     public String toString() {
         return "Work{" +
@@ -147,6 +156,7 @@ public class Work {
                 ", finishTime='" + finishTime + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", workfile='" + workfile + '\'' +
+                ", process='" + process + '\'' +
                 '}';
     }
 }

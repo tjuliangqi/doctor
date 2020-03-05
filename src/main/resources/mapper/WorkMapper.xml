@@ -4,7 +4,7 @@
 <mapper namespace="cn.tju.doctor.dao.WorkMapper" >
 
     <select id="getWorkByIDAndState" resultType="cn.tju.doctor.daomain.Work" parameterType="cn.tju.doctor.daomain.WorkState">
-        SELECT * FROM works WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+        SELECT * FROM works WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2} AND process = #{stateValue3};
     </select>
 
 <!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
@@ -20,8 +20,8 @@
 <!--    </select>-->
 
     <insert id="insertWork" parameterType="cn.tju.doctor.daomain.Work">
-        INSERT INTO works (uuid, workID, name, publishID, publishName, acceptID, acceptName, introduce, workfile)
-        VALUES  (#{uuid}, #{workID}, #{name}, #{publishID}, #{publishName}, #{acceptID}, #{acceptName}, #{introduce}, #{workfile})
+        INSERT INTO works (uuid, workID, name, publishID, publishName, acceptID, acceptName, introduce, workfile, process)
+        VALUES  (#{uuid}, #{workID}, #{name}, #{publishID}, #{publishName}, #{acceptID}, #{acceptName}, #{introduce}, #{workfile}, #{process})
     </insert>
 
 <!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->

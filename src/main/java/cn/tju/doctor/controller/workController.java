@@ -34,6 +34,7 @@ public class workController {
         String firstState = type.substring(0, 1);
         String secondState = type.substring(1, 2);
         WorkState workState = new WorkState();
+        workState.setStateValue3(valueMap.get("process").toString());
         switch (firstState){
             case "0":
                 workState.setState1("publishTime");
@@ -54,12 +55,12 @@ public class workController {
         }
         switch (secondState){
             case "0":
-                workState.setState2("ifRead");
+                workState.setState2("0");
                 workState.setStateValue2("0");
                 break;
             case "1":
-                workState.setState2("ifRead");
-                workState.setStateValue2("1");
+                workState.setState2("ifFinish");
+                workState.setStateValue2("0");
                 break;
             case "2":
                 workState.setState2("ifFinish");
@@ -87,6 +88,7 @@ public class workController {
         String acceptName = json.get("acceptName").toString();
         String introduce = json.get("introduce").toString();
         String workfile = json.get("workfile").toString();
+        String process = json.get("process").toString();
         Work work = new Work();
         work.setWorkID(workID);
         work.setName(name);
@@ -96,6 +98,7 @@ public class workController {
         work.setAcceptName(acceptName);
         work.setIntroduce(introduce);
         work.setWorkfile(workfile);
+        work.setProcess(process);
         String uuid = UUID.randomUUID().toString();
         work.setUuid(uuid);
         workMapper.insertWork(work);

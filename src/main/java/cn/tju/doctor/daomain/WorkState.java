@@ -5,6 +5,8 @@ public class WorkState {
     private String stateValue1;
     private String state2;
     private String stateValue2;
+    private String state3;
+    private String stateValue3;
     private String type;
     private String uuid;
     private String workfile;
@@ -66,6 +68,22 @@ public class WorkState {
         this.stateValue2 = stateValue2;
     }
 
+    public String getState3() {
+        return state3;
+    }
+
+    public void setState3(String state3) {
+        this.state3 = state3;
+    }
+
+    public String getStateValue3() {
+        return stateValue3;
+    }
+
+    public void setStateValue3(String stateValue3) {
+        this.stateValue3 = stateValue3;
+    }
+
     @Override
     public String toString() {
         return "WorkState{" +
@@ -73,6 +91,8 @@ public class WorkState {
                 ", stateValue1='" + stateValue1 + '\'' +
                 ", state2='" + state2 + '\'' +
                 ", stateValue2='" + stateValue2 + '\'' +
+                ", state3='" + state3 + '\'' +
+                ", stateValue3='" + stateValue3 + '\'' +
                 ", type='" + type + '\'' +
                 ", uuid='" + uuid + '\'' +
                 ", workfile='" + workfile + '\'' +
