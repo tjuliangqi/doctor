@@ -31,6 +31,7 @@ public class UserFeaController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Userfunding userfunding) {
         //RetResult retResult = new RetResult();
+        //这里扣钱变成云账户提现
         User user = new User();
         User go = new User();
         if (userfunding.getOut() == 1){
