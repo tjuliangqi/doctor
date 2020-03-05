@@ -137,6 +137,7 @@ public class projectController {
         projectBeanDock.setDataURL(dataURL);
         projectBeanDock.setIntroduce(introduce);
         projectBeanDock.setMoneyManager(moneyManager);
+        projectBeanDock.setProjectManager(projectManager);
         projectBeanDock.setMount(mount);
         projectBeanDock.setProcess("0");
 
