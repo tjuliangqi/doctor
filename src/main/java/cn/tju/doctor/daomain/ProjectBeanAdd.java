@@ -188,5 +188,4 @@ public class ProjectBeanAdd {
     private String userType;
     private String company;
     private String actor;
-
 }

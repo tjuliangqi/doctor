@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.ProjectDockMapper">
+
+    <insert id="insertProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
+        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce)
+        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce})
+    </insert>
+
+    <select id="getProjectDockByProjectID" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
+        SELECT * FROM projectDock WHERE projectID = #{projectID}  ORDER BY process DESC;
+    </select>
+
+
+
+    <insert id="modifyProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
+        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce)
+        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce})
+    </insert>
+
+
+    <update id="updateProjectDock" parameterType="cn.tju.doctor.daomain.ProjectState">
+        UPDATE projectDock ifWork="1" WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+    </update>
+</mapper>

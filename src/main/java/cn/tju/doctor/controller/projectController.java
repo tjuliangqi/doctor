@@ -1,5 +1,6 @@
 package cn.tju.doctor.controller;
 
+import cn.tju.doctor.dao.ProjectDockMapper;
 import cn.tju.doctor.dao.ProjectMapper;
 import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,8 @@ import java.util.*;
 public class projectController {
     @Autowired
     ProjectMapper projectMapper;
+    @Autowired
+    ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
         System.out.println(map.get("value"));
@@ -59,12 +62,24 @@ public class projectController {
                 projectState.setState2("process");
                 projectState.setStateValue2("2");
                 break;
+            case "3":
+                projectState.setState2("process");
+                projectState.setStateValue2("3");
+                break;
+            case "4":
+                projectState.setState2("process");
+                projectState.setStateValue2("4");
+                break;
+            case "5":
+                projectState.setState2("process");
+                projectState.setStateValue2("5");
+                break;
         }
         System.out.println(projectState);
         List<ProjectBean> projectBeans;
         if(firstState == "0")
             projectBeans = projectMapper.getProjectByTimeAndState(projectState);
-        else if(firstState == "5") {
+        else if(firstState == "a") {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
@@ -86,6 +101,11 @@ public class projectController {
         String projectmoney = json.get("projectmoney").toString();
         String company = json.get("company").toString();
         String actor = json.get("actor").toString();
+        String userType = json.get("userType").toString();
+        String mount = json.get("mount").toString();
+        String projectManager = json.get("projectManager").toString();
+        String companyAccount = json.get("companyAccount").toString();
+        String moneyManager = json.get("moneyManager").toString();
 
         ProjectBeanAdd projectBeanAdd = new ProjectBeanAdd();
         projectBeanAdd.setName(name);
@@ -97,6 +117,7 @@ public class projectController {
         projectBeanAdd.setProjectmoney(projectmoney);
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
+        projectBeanAdd.setUserType(userType);
         String uuid = UUID.randomUUID().toString();
         String projectID = UUID.randomUUID().toString();
         Date now = new Date();
@@ -106,8 +127,22 @@ public class projectController {
         projectBeanAdd.setProjectID(projectID);
         projectBeanAdd.setBeginTime(beginTime);
         projectBeanAdd.setProcess("0");
-        //projectBeanAdd.setActor("0");
+
+        ProjectBeanDock projectBeanDock = new ProjectBeanDock();
+        projectBeanDock.setUuid(uuid);
+        projectBeanDock.setProjectID(projectID);
+        projectBeanDock.setBeginTime(beginTime);
+        projectBeanDock.setCompany(company);
+        projectBeanDock.setCompanyAccount(companyAccount);
+        projectBeanDock.setDataURL(dataURL);
+        projectBeanDock.setIntroduce(introduce);
+        projectBeanDock.setMoneyManager(moneyManager);
+        projectBeanDock.setMount(mount);
+        projectBeanDock.setProcess("0");
+
         projectMapper.insertProject(projectBeanAdd);
+        projectDockMapper.insertProjectDock(projectBeanDock);
+
         return RetResponse.makeOKRsp("ok");
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -121,16 +156,23 @@ public class projectController {
         String userType = json.get("userType").toString();
         String company = json.get("company").toString();
         String actor = json.get("actor").toString();
+        String process = json.get("process").toString();
 
         ProjectBeanAdd projectBeanAdd = new ProjectBeanAdd();
+        ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanAdd.setProjectID(projectID);
         projectBeanAdd.setAcceptuser(acceptuser);
         projectBeanAdd.setUserdataURL(userdataURL);
         projectBeanAdd.setUserType(userType);
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
+        projectBeanAdd.setProcess(process);
         String uuid = UUID.randomUUID().toString();
         projectBeanAdd.setUuid(uuid);
+
+        projectBeanDock.setUuid(uuid);
+        projectBeanDock.setProjectID(projectID);
+        projectBeanDock.setProcess(process);
         try {
             List<ProjectBean> projectBeans = projectMapper.getProjectByProjectID(projectID);
             projectBeanAdd.setName(projectBeans.get(0).getName());
@@ -138,13 +180,27 @@ public class projectController {
             projectBeanAdd.setDataURL(projectBeans.get(0).getDataURL());
             projectBeanAdd.setIntroduce(projectBeans.get(0).getIntroduce());
             projectBeanAdd.setCreatuser(projectBeans.get(0).getCreatuser());
-            projectBeanAdd.setIfWork(projectBeans.get(0).getIfWork());
-            projectBeanAdd.setProcess(projectBeans.get(0).getProcess());
+            //projectBeanAdd.setIfWork(projectBeans.get(0).getIfWork());
 
         } catch (Exception e){
             return RetResponse.makeErrRsp("项目还未创建，无法指派");
         }
+
+        try {
+            List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
+            projectBeanDock.setDataURL(projectBeanDocks.get(0).getDataURL());
+            projectBeanDock.setMount(projectBeanDocks.get(0).getMount());
+            projectBeanDock.setMoneyManager(projectBeanDocks.get(0).getMoneyManager());
+            projectBeanDock.setIntroduce(projectBeanDocks.get(0).getIntroduce());
+            projectBeanDock.setCompanyAccount(projectBeanDocks.get(0).getCompanyAccount());
+            projectBeanDock.setBeginTime(projectBeanDocks.get(0).getBeginTime());
+            projectBeanDock.setProjectManager(projectBeanDocks.get(0).getProjectManager());
+
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("未项目经理对接，无法指派");
+        }
         projectMapper.modifyProject(projectBeanAdd);
+        projectDockMapper.modifyProjectDock(projectBeanDock);
         return RetResponse.makeOKRsp("ok");
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -195,5 +251,45 @@ public class projectController {
         result.put("url","");
         return RetResponse.makeOKRsp(result);
 //        return RetResponse.makeErrRsp("查无数据");
+    }
+
+    @RequestMapping(value = "/lookUser", method = RequestMethod.POST)
+    public RetResult<Map> lookUser(@RequestBody Map json) {
+
+        String projectID = json.get("projectID").toString();
+        String process = json.get("process").toString();
+        ProjectState projectState = new ProjectState();
+        projectState.setState1("projectID");
+        projectState.setStateValue1(projectID);
+        projectState.setState2("process");
+        projectState.setStateValue2(process);
+        List<ProjectBean> projectBeans;
+        projectBeans = projectMapper.getProjectByIDAndState(projectState);
+        HashSet<String> hashSet = new HashSet<>();
+        for(ProjectBean each:projectBeans){
+            hashSet.add(each.getAcceptuser());
+        }
+        Map result = new HashMap();
+        result.put("acceptuser",hashSet);
+        return RetResponse.makeOKRsp(result);
+    }
+
+    @RequestMapping(value = "/finish", method = RequestMethod.POST)
+    public RetResult<String> finish(@RequestBody Map json) {
+
+        String projectID = json.get("projectID").toString();
+        String process = json.get("process").toString();
+        ProjectState projectState = new ProjectState();
+        projectState.setState1("projectID");
+        projectState.setStateValue1(projectID);
+        projectState.setState2("process");
+        projectState.setStateValue2(process);
+        List<ProjectBean> projectBeans;
+        int res = projectMapper.updateProject(projectState);
+        int res2 = projectDockMapper.updateProjectDock(projectState);
+
+        Map result = new HashMap();
+
+        return RetResponse.makeOKRsp("ok");
     }
 }

@@ -13,7 +13,7 @@
     </select>
 
     <select id="getProjectByProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
-        SELECT * FROM projects WHERE projectID = #{projectID};
+        SELECT * FROM projects WHERE projectID = #{projectID}  ORDER BY process DESC;
     </select>
 
     <select id="getProjectByUserProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
@@ -49,4 +49,8 @@
         WHERE uuid=#{workState.uuid}
     </update>
 
+
+    <update id="updateProject" parameterType="cn.tju.doctor.daomain.ProjectState">
+        UPDATE projects ifWork="1" WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+    </update>
 </mapper>
