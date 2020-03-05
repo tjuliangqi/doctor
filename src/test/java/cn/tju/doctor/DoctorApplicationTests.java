@@ -1,7 +1,9 @@
 package cn.tju.doctor;
 
+import cn.tju.doctor.dao.ProjectManagerMapper;
 import cn.tju.doctor.dao.ProjectfundingMapper;
 import cn.tju.doctor.dao.UserfundingMapper;
+import cn.tju.doctor.daomain.ProjectManagerBean;
 import cn.tju.doctor.daomain.Projectfunding;
 import cn.tju.doctor.daomain.Userfunding;
 import cn.tju.doctor.utils.numberUtils;
@@ -14,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
@@ -22,6 +25,8 @@ public class DoctorApplicationTests {
     UserfundingMapper userfundingMapper;
     @Autowired
     ProjectfundingMapper projectfundingMapper;
+    @Autowired
+    ProjectManagerMapper projectManagerMapper;
     @Test
     public void contextLoads() {
     }
@@ -97,6 +102,26 @@ public class DoctorApplicationTests {
         String authorID = "wy";
         System.out.println(userfundingMapper.getUserfundingListByApplytime(time,1,1,1).get(0).getApplyTime());
         System.out.println(userfundingMapper.getUserfundingListByAuthorId(authorID,1,1,1).get(0).getApplyID());
+    }
+
+    @Test
+    public void projectManagerTest(){
+
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sf.format(date);
+        ProjectManagerBean projectManager = new ProjectManagerBean();
+        projectManager.setUuid(UUID.randomUUID().toString());
+        projectManager.setProjectID("0001");
+        projectManager.setMoneyManager("wy");
+        projectManager.setMount(4523.5);
+        projectManager.setBeginTime("2020-03-05");
+        projectManager.setEndtime("2020-03-15");
+//        projectManagerMapper.insertProjectManager(projectManager);
+        ProjectManagerBean projectManagerBean = projectManagerMapper.getProjectManagerByProjectID("0001").get(0);
+        projectManagerBean.setMount(11111.0);
+        projectManagerMapper.updateProjectManager(projectManagerBean);
+
     }
 
 }

@@ -64,6 +64,11 @@ public class projectController {
         List<ProjectBean> projectBeans;
         if(firstState == "0")
             projectBeans = projectMapper.getProjectByTimeAndState(projectState);
+        else if(firstState == "5") {
+            String userID = value.split("\\+")[0];
+            String projectID = value.split("\\+")[1];
+            projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
+        }
         else
             projectBeans = projectMapper.getProjectByIDAndState(projectState);
         return RetResponse.makeOKRsp(projectBeans);

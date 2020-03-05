@@ -31,9 +31,54 @@ public class UserFeaController {
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Userfunding userfunding) {
         //RetResult retResult = new RetResult();
+        //这里扣钱变成云账户提现
+        User user = new User();
+        User go = new User();
+        if (userfunding.getOut() == 1){
+            List<User> list = userMapper.getUserByAuthorID(userfunding.getApplyID());
+            List<User> golist = userMapper.getUserByAuthorID(userfunding.getGo());
+            if (list.size() == 0){
+                return RetResponse.makeErrRsp("扣款账户不存在");
+            }
+            if (golist.size() == 0){
+                return RetResponse.makeErrRsp("目标账户不存在");
+            }
+            user = list.get(0);
+            go = golist.get(0);
+            if (user.getMoney() < userfunding.getMount()){
+                return RetResponse.makeErrRsp("账户余额不足");
+            }
+        }
         String number = numberUtils.getOrderNo();
         userfunding.setNumber(number);
-        userfundingMapper.insertUserfunding(userfunding);
+        try{
+            userfundingMapper.insertUserfunding(userfunding);
+        }catch (Exception e){
+            System.out.println("交易流水出错:" + e);
+            return RetResponse.makeErrRsp("交易流水出错");
+        }
+        user.setMoney(user.getMoney() - userfunding.getMount());
+        go.setMoney(go.getMoney() + userfunding.getMount());
+        try{
+            userMapper.updateUser(user);
+        }catch (Exception e){
+
+            System.out.println("扣款出错:" + e);
+            userfunding.setTest(2);
+            userfundingMapper.updateUserfundingTest(userfunding);
+            userfunding.setIfWork(2);
+            userfundingMapper.updateUserfundingWork(userfunding);
+            return RetResponse.makeErrRsp("扣款出错");
+        }
+        try{
+            userMapper.updateUser(go);
+        }catch (Exception e){
+            System.out.println("放款出错：" + e);
+            user.setMoney(user.getMoney() + userfunding.getMount());
+            userMapper.updateUser(user);
+            return RetResponse.makeErrRsp("放款出错");
+        }
+
         return RetResponse.makeOKRsp("ok");
     }
 

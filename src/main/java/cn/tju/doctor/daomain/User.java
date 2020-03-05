@@ -22,7 +22,7 @@ public class User implements Serializable {
     private String phone;
     private String address;
     private String bankID;
-    private String money;
+    private Double money;
     private int vaild;
     private String company;
     private String type;
@@ -44,7 +44,7 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(String username, String authorID, String area, String region, String unit, String part, String wechatQun, int active, int online, int article, String test, String name, String actureID, int ifDoc, String docID, String phone, String address, String bankID, String money, int vaild, String company, String type, String like, String download, String record, String view, String token, String email, String password, String docIDurl, int modify, int getMoney, String modifyString, String getmoneyrecord, int state) {
+    public User(String username, String authorID, String area, String region, String unit, String part, String wechatQun, int active, int online, int article, String test, String name, String actureID, int ifDoc, String docID, String phone, String address, String bankID, Double money, int vaild, String company, String type, String like, String download, String record, String view, String token, String email, String password, String docIDurl, int modify, int getMoney, String modifyString, String getmoneyrecord, int state) {
         this.username = username;
         this.authorID = authorID;
         this.area = area;
@@ -226,11 +226,11 @@ public class User implements Serializable {
         this.bankID = bankID;
     }
 
-    public String getMoney() {
+    public Double getMoney() {
         return money;
     }
 
-    public void setMoney(String money) {
+    public void setMoney(Double money) {
         this.money = money;
     }
 
