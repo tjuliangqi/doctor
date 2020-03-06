@@ -5,8 +5,8 @@
 
 
     <insert id="insertArticle" parameterType="cn.tju.doctor.daomain.ArticleBean">
-        INSERT INTO article (uuid, title, source, writeTime, creatTime, sourceURL, fulltext, picURL, videoURL, label, part, ifVideo, like, view, download, berecord)
-        VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fulltext}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{like}, #{view}, #{download}, #{berecord})
+        INSERT INTO article (title, source, writeTime, creatTime, sourceURL, fullContent, picURL, videoURL, label, part, ifVideo, likes, views, download, berecord)
+        VALUES  (#{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fullContent}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{likes}, #{views}, #{download}, #{berecord})
     </insert>
 
 

@@ -51,12 +51,12 @@ public class ArticleBean {
         this.sourceURL = sourceURL;
     }
 
-    public String getFulltext() {
-        return fulltext;
+    public String getFullContent() {
+        return fullContent;
     }
 
-    public void setFulltext(String fulltext) {
-        this.fulltext = fulltext;
+    public void setFullContent(String fullContent) {
+        this.fullContent = fullContent;
     }
 
     public String getPicURL() {
@@ -99,20 +99,20 @@ public class ArticleBean {
         this.ifVideo = ifVideo;
     }
 
-    public int getLike() {
-        return like;
+    public int getLikes() {
+        return likes;
     }
 
-    public void setLike(int like) {
-        this.like = like;
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
-    public int getView() {
-        return view;
+    public int getViews() {
+        return views;
     }
 
-    public void setView(int view) {
-        this.view = view;
+    public void setViews(int views) {
+        this.views = views;
     }
 
     public int getDownload() {
@@ -140,14 +140,14 @@ public class ArticleBean {
                 ", writeTime='" + writeTime + '\'' +
                 ", creatTime='" + creatTime + '\'' +
                 ", sourceURL='" + sourceURL + '\'' +
-                ", fulltext='" + fulltext + '\'' +
+                ", fullContent='" + fullContent + '\'' +
                 ", picURL='" + picURL + '\'' +
                 ", videoURL='" + videoURL + '\'' +
                 ", label='" + label + '\'' +
                 ", part='" + part + '\'' +
                 ", ifVideo=" + ifVideo +
-                ", like=" + like +
-                ", view=" + view +
+                ", likes=" + likes +
+                ", views=" + views +
                 ", download=" + download +
                 ", berecord=" + berecord +
                 '}';
@@ -159,14 +159,14 @@ public class ArticleBean {
     private String writeTime;
     private String creatTime;
     private String sourceURL;
-    private String fulltext;
+    private String fullContent;
     private String picURL;
     private String videoURL;
     private String label;
     private String part;
     private int ifVideo;
-    private int like;
-    private int view;
+    private int likes;
+    private int views;
     private int download;
     private int berecord;
 

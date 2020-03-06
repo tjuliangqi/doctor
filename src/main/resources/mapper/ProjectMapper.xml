@@ -26,13 +26,13 @@
 
 
     <insert id="insertProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">
-        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, creatuser, projectaccount, projectmoney, company, actor)
-        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{creatuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor})
+        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, createuser, projectaccount, projectmoney, company, actor)
+        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{createuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor})
     </insert>
 
     <insert id="modifyProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">
-        INSERT INTO projects (uuid, projectID, acceptuser, userdataURL, userType, company, actor)
-        VALUES  (#{uuid}, #{projectID}, #{acceptuser}, #{userdataURL}, #{userType}, #{company}, #{actor})
+        INSERT INTO projects (uuid, projectID, name, acceptuser, userdataURL, userType, company, actor)
+        VALUES  (#{uuid}, #{projectID}, #{name}, #{acceptuser}, #{userdataURL}, #{userType}, #{company}, #{actor})
     </insert>
 
 <!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->

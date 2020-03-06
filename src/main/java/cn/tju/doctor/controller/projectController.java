@@ -96,7 +96,7 @@ public class projectController {
         String data = json.get("data").toString();
         String dataURL = json.get("dataURL").toString();
         String introduce = json.get("introduce").toString();
-        String creatuser = json.get("creatuser").toString();
+        String createuser = json.get("createuser").toString();
         String projectaccount = json.get("projectaccount").toString();
         String projectmoney = json.get("projectmoney").toString();
         String company = json.get("company").toString();
@@ -113,7 +113,7 @@ public class projectController {
         projectBeanAdd.setData(data);
         projectBeanAdd.setDataURL(dataURL);
         projectBeanAdd.setIntroduce(introduce);
-        projectBeanAdd.setCreatuser(creatuser);
+        projectBeanAdd.setCreateuser(createuser);
         projectBeanAdd.setProjectaccount(projectaccount);
         projectBeanAdd.setProjectmoney(projectmoney);
         projectBeanAdd.setCompany(company);
@@ -142,7 +142,7 @@ public class projectController {
         projectBeanDock.setMount(mount);
         projectBeanDock.setProcess("0");
         projectBeanDock.setAccounting(accounting);
-
+        System.out.println(projectBeanAdd);
         projectMapper.insertProject(projectBeanAdd);
         projectDockMapper.insertProjectDock(projectBeanDock);
 
@@ -175,6 +175,7 @@ public class projectController {
 
         projectBeanDock.setUuid(uuid);
         projectBeanDock.setProjectID(projectID);
+        projectBeanDock.setCompany(company);
         projectBeanDock.setProcess(process);
         try {
             List<ProjectBean> projectBeans = projectMapper.getProjectByProjectID(projectID);
@@ -182,7 +183,7 @@ public class projectController {
             projectBeanAdd.setData(projectBeans.get(0).getData());
             projectBeanAdd.setDataURL(projectBeans.get(0).getDataURL());
             projectBeanAdd.setIntroduce(projectBeans.get(0).getIntroduce());
-            projectBeanAdd.setCreatuser(projectBeans.get(0).getCreatuser());
+            projectBeanAdd.setCreateuser(projectBeans.get(0).getCreateuser());
             //projectBeanAdd.setIfWork(projectBeans.get(0).getIfWork());
 
         } catch (Exception e){

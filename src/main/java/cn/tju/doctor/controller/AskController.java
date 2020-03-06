@@ -77,7 +77,7 @@ public class AskController {
         String writeTime = String.valueOf(map.get("writeTime"));
         String creatTime = String.valueOf(map.get("creatTime"));
         String sourceURL = String.valueOf(map.get("sourceURL"));
-        String fulltext = String.valueOf(map.get("fulltext"));
+        String fullContent = String.valueOf(map.get("fullContent"));
         String picURL = String.valueOf(map.get("picURL"));
         String videoURL = String.valueOf(map.get("videoURL"));
         String label = String.valueOf(map.get("label"));
@@ -89,7 +89,7 @@ public class AskController {
         json.put("writeTime", writeTime);
         json.put("creatTime", creatTime);
         json.put("sourceURL", sourceURL);
-        json.put("fulltext", fulltext);
+        json.put("fullContent", fullContent);
         json.put("picURL", picURL);
         json.put("videoURL", videoURL);
         json.put("label", label);
@@ -103,7 +103,7 @@ public class AskController {
         articleBean.setSource(source);
         articleBean.setWriteTime(writeTime);
         articleBean.setCreatTime(creatTime);
-        articleBean.setFulltext(fulltext);
+        articleBean.setFullContent(fullContent);
         articleBean.setPicURL(picURL);
         articleBean.setVideoURL(videoURL);
         articleBean.setLabel(label);
@@ -111,6 +111,7 @@ public class AskController {
         articleBean.setIfVideo(ifVideo);
 
         //String result = addData(json);
+        System.out.println(articleBean);
         int result = articleMapper.insertArticle(articleBean);
         return RetResponse.makeOKRsp("ok");
     }

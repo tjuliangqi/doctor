@@ -60,14 +60,14 @@ public class AskService {
                     String writeTime = (String)searchHit.getSourceAsMap().get("writeTime");
                     String creatTime = (String)searchHit.getSourceAsMap().get("creatTime");
                     String sourceURL = (String)searchHit.getSourceAsMap().get("sourceURL");
-                    String fulltext = (String)searchHit.getSourceAsMap().get("fulltext");
+                    String fullContent = (String)searchHit.getSourceAsMap().get("fulltext");
                     String picURL = (String)searchHit.getSourceAsMap().get("picURL");
                     String videoURL = (String)searchHit.getSourceAsMap().get("videoURL");
                     String label = (String)searchHit.getSourceAsMap().get("label");
                     String part = (String)searchHit.getSourceAsMap().get("part");
                     int ifVideo = (int)searchHit.getSourceAsMap().get("ifVideo");
-                    int like = (int)searchHit.getSourceAsMap().get("like");
-                    int view = (int)searchHit.getSourceAsMap().get("views");
+                    int likes = (int)searchHit.getSourceAsMap().get("like");
+                    int views = (int)searchHit.getSourceAsMap().get("views");
                     int download = (int)searchHit.getSourceAsMap().get("download");
                     int berecord = (int)searchHit.getSourceAsMap().get("berecord");
 
@@ -76,14 +76,14 @@ public class AskService {
                    articleBean.setWriteTime(writeTime);
                    articleBean.setCreatTime(creatTime);
                    articleBean.setSourceURL(sourceURL);
-                   articleBean.setFulltext(fulltext);
+                   articleBean.setFullContent(fullContent);
                    articleBean.setPicURL(picURL);
                    articleBean.setVideoURL(videoURL);
                    articleBean.setLabel(label);
                    articleBean.setPart(part);
                    articleBean.setIfVideo(ifVideo);
-                   articleBean.setLike(like);
-                   articleBean.setView(view);
+                   articleBean.setLikes(likes);
+                   articleBean.setViews(views);
                    articleBean.setDownload(download);
                    articleBean.setBerecord(berecord);
 

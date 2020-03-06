@@ -50,12 +50,12 @@ public class ProjectBeanAdd {
         this.introduce = introduce;
     }
 
-    public String getCreatuser() {
-        return creatuser;
+    public String getCreateuser() {
+        return createuser;
     }
 
-    public void setCreatuser(String creatuser) {
-        this.creatuser = creatuser;
+    public void setCreateuser(String createuser) {
+        this.createuser = createuser;
     }
 
     public String getAcceptuser() {
@@ -155,7 +155,7 @@ public class ProjectBeanAdd {
                 ", data='" + data + '\'' +
                 ", dataURL='" + dataURL + '\'' +
                 ", introduce='" + introduce + '\'' +
-                ", creatuser='" + creatuser + '\'' +
+                ", createuser='" + createuser + '\'' +
                 ", acceptuser='" + acceptuser + '\'' +
                 ", beginTime='" + beginTime + '\'' +
                 ", endTime='" + endTime + '\'' +
@@ -176,7 +176,7 @@ public class ProjectBeanAdd {
     private String data;
     private String dataURL;
     private String introduce;
-    private String creatuser;
+    private String createuser;
     private String acceptuser;
     private String beginTime;
     private String endTime;
