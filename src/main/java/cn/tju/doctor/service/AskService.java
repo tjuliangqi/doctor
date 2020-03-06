@@ -67,7 +67,7 @@ public class AskService {
                     String part = (String)searchHit.getSourceAsMap().get("part");
                     int ifVideo = (int)searchHit.getSourceAsMap().get("ifVideo");
                     int like = (int)searchHit.getSourceAsMap().get("like");
-                    int view = (int)searchHit.getSourceAsMap().get("view");
+                    int view = (int)searchHit.getSourceAsMap().get("views");
                     int download = (int)searchHit.getSourceAsMap().get("download");
                     int berecord = (int)searchHit.getSourceAsMap().get("berecord");
 
