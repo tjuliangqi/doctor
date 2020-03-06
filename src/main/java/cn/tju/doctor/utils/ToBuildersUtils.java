@@ -30,7 +30,7 @@ public class ToBuildersUtils {
                         .size(10)
                         .query(builder0);
             } else{
-                builder0 = QueryBuilders.matchQuery("part", value);
+                builder0 = QueryBuilders.matchQuery("label", value);
                 searchSourceBuilder.from(page)
                         .size(10)
                         .query(builder0);
