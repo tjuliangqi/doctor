@@ -4,8 +4,8 @@
 <mapper namespace="cn.tju.doctor.dao.ProjectDockMapper">
 
     <insert id="insertProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
-        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce)
-        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce})
+        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce, accounting)
+        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting})
     </insert>
 
     <select id="getProjectDockByProjectID" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
@@ -15,12 +15,12 @@
 
 
     <insert id="modifyProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
-        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce)
-        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce})
+        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce, accounting)
+        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting})
     </insert>
 
 
     <update id="updateProjectDock" parameterType="cn.tju.doctor.daomain.ProjectState">
-        UPDATE projectDock ifWork="1" WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+        UPDATE projectDock SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
     </update>
 </mapper>

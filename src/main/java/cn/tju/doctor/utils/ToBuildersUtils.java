@@ -17,15 +17,20 @@ public class ToBuildersUtils {
         QueryBuilder builder0;
         QueryBuilder builderAdd;
         System.out.println(preparaString);
-        // {0:标题, 1:推荐}
+        // {0:标题, 1:推荐, 2: part}
         if (ifPrepara == false || preparaString.equals("{}")) {
             if (type.equals("0")) {
                 builder0 = QueryBuilders.matchQuery("title", value);
                 searchSourceBuilder.from(page)
                         .size(10)
                         .query(builder0);
-            } else {
+            } else if(type.equals("1")){
                 builder0 = QueryBuilders.matchAllQuery();
+                searchSourceBuilder.from(page)
+                        .size(10)
+                        .query(builder0);
+            } else{
+                builder0 = QueryBuilders.matchQuery("part", value);
                 searchSourceBuilder.from(page)
                         .size(10)
                         .query(builder0);

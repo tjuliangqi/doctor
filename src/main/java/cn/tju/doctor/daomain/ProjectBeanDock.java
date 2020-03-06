@@ -113,6 +113,7 @@ public class ProjectBeanDock {
                 ", beginTime='" + beginTime + '\'' +
                 ", endtime='" + endtime + '\'' +
                 ", introduce='" + introduce + '\'' +
+                ", accounting='" + accounting + '\'' +
                 '}';
     }
 
@@ -128,5 +129,16 @@ public class ProjectBeanDock {
     private String beginTime;
     private String endtime;
     private String introduce;
+
+    public String getAccounting() {
+        return accounting;
+    }
+
+    public void setAccounting(String accounting) {
+        this.accounting = accounting;
+    }
+
+    private String accounting;
+
 
 }

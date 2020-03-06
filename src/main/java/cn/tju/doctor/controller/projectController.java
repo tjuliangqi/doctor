@@ -106,6 +106,7 @@ public class projectController {
         String projectManager = json.get("projectManager").toString();
         String companyAccount = json.get("companyAccount").toString();
         String moneyManager = json.get("moneyManager").toString();
+        String accounting = json.get("accounting").toString();
 
         ProjectBeanAdd projectBeanAdd = new ProjectBeanAdd();
         projectBeanAdd.setName(name);
@@ -140,6 +141,7 @@ public class projectController {
         projectBeanDock.setProjectManager(projectManager);
         projectBeanDock.setMount(mount);
         projectBeanDock.setProcess("0");
+        projectBeanDock.setAccounting(accounting);
 
         projectMapper.insertProject(projectBeanAdd);
         projectDockMapper.insertProjectDock(projectBeanDock);
@@ -196,6 +198,7 @@ public class projectController {
             projectBeanDock.setCompanyAccount(projectBeanDocks.get(0).getCompanyAccount());
             projectBeanDock.setBeginTime(projectBeanDocks.get(0).getBeginTime());
             projectBeanDock.setProjectManager(projectBeanDocks.get(0).getProjectManager());
+            projectBeanDock.setAccounting(projectBeanDocks.get(0).getAccounting());
 
         } catch (Exception e){
             return RetResponse.makeErrRsp("未项目经理对接，无法指派");

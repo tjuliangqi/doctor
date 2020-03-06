@@ -51,6 +51,6 @@
 
 
     <update id="updateProject" parameterType="cn.tju.doctor.daomain.ProjectState">
-        UPDATE projects ifWork="1" WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
+        UPDATE projects SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
     </update>
 </mapper>
