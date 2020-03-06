@@ -33,13 +33,18 @@ public class UserController {
         String checkCode = String.valueOf(new Random().nextInt(899999) + 100000);
         String message = "您的验证码为："+checkCode;
         List<User> emaillist = userMapper.getUserByEmail(json.get("email"));
-        try {
-            emailService.sendSimpleMail(json.get("email"), "验证码", message);
-        }catch (Exception e){
-            e.printStackTrace();
-            return RetResponse.makeErrRsp("邮箱验证失败，请检查邮箱是否正确");
+        if (emaillist.size()==0){
+            try {
+                emailService.sendSimpleMail(json.get("email"), "验证码", message);
+            }catch (Exception e){
+                e.printStackTrace();
+                return RetResponse.makeErrRsp("邮箱验证失败，请检查邮箱是否正确");
+            }
+            return RetResponse.makeOKRsp(checkCode);
+        }else {
+            return RetResponse.makeErrRsp("该邮箱已经被注册");
         }
-        return RetResponse.makeOKRsp(checkCode);
+
     }
 
     @RequestMapping(value = "/getCheckUser", method = RequestMethod.POST)
