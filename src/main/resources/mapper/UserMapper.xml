@@ -23,13 +23,17 @@
         SELECT * FROM users WHERE authorID = #{authorID} ;
     </select>
 
+    <select id="getUserByTest" resultType="cn.tju.doctor.daomain.User" parameterType="String">
+        SELECT * FROM users WHERE test = #{test} ;
+    </select>
+
     <insert id="insertUser" parameterType="cn.tju.doctor.daomain.User">
-        INSERT INTO users (username, password, email, area, region, unit, part, name, actureID, phone, address, bankID, ifDoc, docID, docIDurl, type)
-        VALUES  (#{user.username}, #{user.password}, #{user.email}, #{user.area}, #{user.region}, #{user.unit}, #{user.part}, #{user.name}, #{user.actureID}, #{user.phone}, #{user.address}, #{user.bankID}, #{user.ifDoc}, #{user.docID}, #{user.docIDurl}, #{user.type})
+        INSERT INTO users (username, password, email, area, region, unit, part, name, actureID, phone, address, bankID, ifDoc, docID, docIDurl, type, authorID, test)
+        VALUES  (#{user.username}, #{user.password}, #{user.email}, #{user.area}, #{user.region}, #{user.unit}, #{user.part}, #{user.name}, #{user.actureID}, #{user.phone}, #{user.address}, #{user.bankID}, #{user.ifDoc}, #{user.docID}, #{user.docIDurl}, #{user.type}, #{user.authorID}, #{user.test})
     </insert>
 
-    <delete id="deleteUserById" parameterType="java.lang.Integer">
-        DELETE FROM users WHERE id = #{id}
+    <delete id="deleteUserById" parameterType="java.lang.String">
+        DELETE FROM users WHERE authorID = #{authorID}
     </delete>
 
     <update id="updateUser" parameterType="cn.tju.doctor.daomain.User">
@@ -53,6 +57,7 @@
             <if test="user.docIDurl != null">docIDurl=#{user.docIDurl},</if>
             <if test="user.type != null">type=#{user.type},</if>
             <if test="user.money != null">money=#{user.money},</if>
+            <if test="user.test != null">test=#{user.test},</if>
         </set>
         WHERE authorID=#{user.authorID}
     </update>

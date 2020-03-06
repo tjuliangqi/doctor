@@ -16,7 +16,8 @@ public interface UserMapper {
     List<User> getUserByToken(@Param("token") String token);
     List<User> getUserByArea(@Param("area") String area);
     List<User> getUserByAuthorID(@Param("authorID") String authorID);
+    List<User> getUserByTest(@Param("test") String test);
     int insertUser(@Param("user") User user);
-    int deleteUserById(@Param("id") int id);
+    int deleteUserById(@Param("authorID") String authorID);
     int updateUser(@Param("user") User user);
 }

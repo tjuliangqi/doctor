@@ -65,20 +65,30 @@ public class UserController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public RetResult<Map> login(@RequestBody Map<String,String> json){
         List<User> list = userMapper.getUserByEmail(json.get("email"));
-        System.out.println(json);
         if (list.size()==0){
             return RetResponse.makeErrRsp("邮箱不正确");
         }else {
             User user = list.get(0);
             if (user.getPassword().equals(json.get("password"))){
-                Map<String,String> map = new HashMap<>();
+                if (user.getTest().equals("0")){
+                    userMapper.deleteUserById(user.getAuthorID());
+                    return RetResponse.makeErrRsp("审核未通过");
+                }
+                if (user.getTest().equals("10000")){
+                    return RetResponse.makeErrRsp("请等待审核");
+                }
+                Map<String,Object> map = new HashMap<>();
                 map.put("username",user.getUsername());
                 String token= JWT.create().withAudience(String.valueOf(user.getActureID())).sign(Algorithm.HMAC256(user.getPassword()));
                 user.setToken(token);
                 userMapper.updateUser(user);
                 map.put("token",token);
                 map.put("type",user.getType());
-                System.out.println(map);
+                map.put("authorID",user.getAuthorID());
+                map.put("area",user.getArea());
+                map.put("region",user.getRegion());
+                map.put("test",user.getTest());
+                map.put("money",user.getMoney());
                 return RetResponse.makeOKRsp(map);
             }else {
                 return RetResponse.makeErrRsp("密码不正确");
@@ -200,6 +210,8 @@ public class UserController {
 
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
+        user.setTest("10000");
+        user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
         int flag = userMapper.insertUser(user);
         if (flag==1){
@@ -207,6 +219,12 @@ public class UserController {
         }else {
             return RetResponse.makeErrRsp("注册失败");
         }
+    }
+
+    @RequestMapping(value = "/getTest", method = RequestMethod.POST)
+    public RetResult<List<User>> getTest(){
+        List<User> list = userMapper.getUserByTest("10000");
+        return RetResponse.makeOKRsp(list);
     }
 
 }
