@@ -13,16 +13,17 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static cn.tju.doctor.service.AskService.*;
+import static cn.tju.doctor.service.AskService.articlePrepara;
+import static cn.tju.doctor.service.AskService.searchList;
 
 @RestController
 
@@ -241,13 +242,13 @@ public class AskController {
         map1.put("views","200");
         map1.put("likes","300");
         map1.put("download","400");
-        map1.put("hide","500");
+        map1.put("berecord","500");
 
         map2.put("article","1000");
         map2.put("views","2000");
         map2.put("likes","3000");
         map2.put("download","4000");
-        map2.put("hide","5000");
+        map2.put("berecord","5000");
         map3.put("day",map1);
         map3.put("all",map2);
 
