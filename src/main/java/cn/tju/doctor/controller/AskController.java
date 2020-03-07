@@ -253,4 +253,29 @@ public class AskController {
             return RetResponse.makeOKRsp(Beans);
         }
     }
+
+    @RequestMapping(value = "/calculate", method = RequestMethod.POST)
+    public RetResult<Object> calculate (@RequestBody Map<String,String> map) throws IOException, JSONException {
+        //RetResult retResult = new RetResult();
+        String date = String.valueOf(map.get("date"));
+        Map<String,String> map1 = new HashMap<>();
+        Map<String,String> map2 = new HashMap<>();
+        Map<String,Map<String,String>> map3 = new HashMap<>();
+        map1.put("article","100");
+        map1.put("views","200");
+        map1.put("likes","300");
+        map1.put("download","400");
+        map1.put("hide","500");
+
+        map2.put("article","1000");
+        map2.put("views","2000");
+        map2.put("likes","3000");
+        map2.put("download","4000");
+        map2.put("hide","5000");
+        map3.put("day",map1);
+        map3.put("all",map2);
+
+        return RetResponse.makeOKRsp(map3);
+    }
+
 }
