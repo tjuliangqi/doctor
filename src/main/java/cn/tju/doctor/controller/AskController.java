@@ -2,9 +2,12 @@ package cn.tju.doctor.controller;
 
 import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.ArticleMapper;
+import cn.tju.doctor.dao.DataMapper;
 import cn.tju.doctor.daomain.ArticleBean;
+import cn.tju.doctor.daomain.Data;
 import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
+import cn.tju.doctor.utils.DateUtil;
 import cn.tju.doctor.utils.EsUtils;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -31,6 +34,8 @@ import static cn.tju.doctor.service.AskService.searchList;
 public class AskController {
     @Autowired
     ArticleMapper articleMapper;
+    @Autowired
+    DataMapper dataMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<Object> search(@RequestBody Map<String,String> map) throws IOException, JSONException {
         //RetResult retResult = new RetResult();
@@ -231,49 +236,28 @@ public class AskController {
         }
     }
 
-    @RequestMapping(value = "/calculate", method = RequestMethod.POST)
-    public RetResult<Object> calculate (@RequestBody Map<String,String> map) throws IOException, JSONException {
+    @RequestMapping(value = "/updatedata", method = RequestMethod.POST)
+    public RetResult<Object> updatedata (@RequestBody Map<String,String> map) {
         //RetResult retResult = new RetResult();
-        String date = String.valueOf(map.get("date"));
-        Map<String,String> map1 = new HashMap<>();
-        Map<String,String> map2 = new HashMap<>();
-        Map<String,Map<String,String>> map3 = new HashMap<>();
-        map1.put("article","100");
-        map1.put("views","200");
-        map1.put("likes","300");
-        map1.put("download","400");
-        map1.put("berecord","500");
+        String type = String.valueOf(map.get("type"));
+        String uuid = String.valueOf(map.get("uuid"));
+        DateUtil.update(dataMapper,Integer.valueOf(type),DateUtil.gainDate());
+        DateUtil.update(dataMapper,Integer.valueOf(type),"2000-01-01");
+        /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
 
-        map2.put("article","1000");
-        map2.put("views","2000");
-        map2.put("likes","3000");
-        map2.put("download","4000");
-        map2.put("berecord","5000");
-        map3.put("day",map1);
-        map3.put("all",map2);
-
-        return RetResponse.makeOKRsp(map3);
+        /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/
+        return RetResponse.makeOKRsp("ok");
     }
 
-//    @RequestMapping(value = "/file", method = RequestMethod.POST)
-//    public RetResult<Map<String,Object>> pic(@RequestParam("ﬁleName") MultipartFile file, @RequestParam("ﬁleType") int ﬁleType) {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        try {
-//            String fileName = System.currentTimeMillis() + file.getOriginalFilename();
-//            String destFileName = "D:\\tdwy_upload" + File.separator + fileName;
-//
-//            File destFile = new File(destFileName);
-//            destFile.getParentFile().mkdirs();
-//            file.transferTo(destFile);
-//
-//            String ﬁleURL = destFileName;
-//            resultMap.put("ﬁleURL", ﬁleURL);
-//
-//            return RetResponse.makeOKRsp(resultMap);
-//        } catch (Exception e) {
-//            return RetResponse.makeErrRsp("上传文件出错");
-//        }
-//    }
-
+    @RequestMapping(value = "/getdata", method = RequestMethod.POST)
+    public RetResult<Object> data (@RequestBody Map<String,String> map) {
+        //RetResult retResult = new RetResult();
+        List<Data> list = new ArrayList<>();
+        Data data1 = dataMapper.getDataById("2000-01-01");
+        Data data2 = dataMapper.getDataById(DateUtil.gainDate());
+        list.add(data1);
+        list.add(data2);
+        return RetResponse.makeOKRsp();
+    }
 
 }
