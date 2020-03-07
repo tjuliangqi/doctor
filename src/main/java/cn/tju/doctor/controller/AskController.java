@@ -1,9 +1,17 @@
 package cn.tju.doctor.controller;
 
+import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.ArticleMapper;
 import cn.tju.doctor.daomain.ArticleBean;
 import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
+import cn.tju.doctor.utils.EsUtils;
+import org.elasticsearch.action.search.SearchRequest;
+import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static cn.tju.doctor.service.AskService.*;
 
@@ -114,5 +120,137 @@ public class AskController {
         System.out.println(articleBean);
         int result = articleMapper.insertArticle(articleBean);
         return RetResponse.makeOKRsp("ok");
+    }
+    @RequestMapping(value = "/searchById", method = RequestMethod.POST)
+    public RetResult<ArticleBean> searchById(@RequestBody Map<String,String> map) throws JSONException {
+        String uuid = map.get("uuid");
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.client;
+        ArrayList<ArticleBean> articleBeans = new ArrayList<>();
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+
+        searchSourceBuilder.query(QueryBuilders.matchQuery("uuid", uuid));
+        SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = client.search(searchRequest);
+        } catch (IOException e) {
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeErrRsp("未找到文章");
+        }
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        if (searchHits.length < 1) {
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeErrRsp("未找到文章");
+        } else {
+            ArticleBean articleBean = new ArticleBean();
+            for (SearchHit searchHit : searchHits) {
+                String title = (String) searchHit.getSourceAsMap().get("title");
+                String source = (String) searchHit.getSourceAsMap().get("source");
+                String writeTime = (String) searchHit.getSourceAsMap().get("writeTime");
+                String creatTime = (String) searchHit.getSourceAsMap().get("creatTime");
+                String sourceURL = (String) searchHit.getSourceAsMap().get("sourceURL");
+                String fullContent = (String) searchHit.getSourceAsMap().get("fullContent");
+                String picURL = (String) searchHit.getSourceAsMap().get("picURL");
+                String videoURL = (String) searchHit.getSourceAsMap().get("videoURL");
+                String label = (String) searchHit.getSourceAsMap().get("label");
+                String part = (String) searchHit.getSourceAsMap().get("part");
+                int ifVideo = (int) searchHit.getSourceAsMap().get("ifVideo");
+                int likes = (int) searchHit.getSourceAsMap().get("likes");
+                int views = (int) searchHit.getSourceAsMap().get("views");
+                int download = (int) searchHit.getSourceAsMap().get("download");
+                int berecord = (int) searchHit.getSourceAsMap().get("berecord");
+
+                articleBean.setTitle(title);
+                articleBean.setSource(source);
+                articleBean.setWriteTime(writeTime);
+                articleBean.setCreatTime(creatTime);
+                articleBean.setSourceURL(sourceURL);
+                articleBean.setFullContent(fullContent);
+                articleBean.setPicURL(picURL);
+                articleBean.setVideoURL(videoURL);
+                articleBean.setLabel(label);
+                articleBean.setPart(part);
+                articleBean.setIfVideo(ifVideo);
+                articleBean.setLikes(likes);
+                articleBean.setViews(views);
+                articleBean.setDownload(download);
+                articleBean.setBerecord(berecord);
+
+
+            }
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeOKRsp(articleBean);
+        }
+    }
+
+    @RequestMapping(value = "/searchHome", method = RequestMethod.POST)
+    public RetResult<List> searchHome(@RequestBody Map<String,String> map) throws JSONException {
+        String value = map.get("value");
+        EsUtils esUtils = new EsUtils();
+        RestHighLevelClient client = esUtils.client;
+        ArrayList<Map> Beans = new ArrayList<>();
+
+        SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.size(5);
+        searchSourceBuilder.query(QueryBuilders.matchQuery("label", value));
+        SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = null;
+        try {
+            searchResponse = client.search(searchRequest);
+        } catch (IOException e) {
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeErrRsp("未找到文章");
+        }
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
+        if (searchHits.length < 1) {
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeErrRsp("未找到文章");
+        } else {
+//            ArticleBean articleBean = new ArticleBean();
+
+            for (SearchHit searchHit : searchHits) {
+                Map<String,String> map1 = new HashMap<>();
+                String title = (String) searchHit.getSourceAsMap().get("title");
+                String uuid = (String) searchHit.getSourceAsMap().get("uuid");
+                String fullContent = (String) searchHit.getSourceAsMap().get("fulltext");
+                String picURL = (String) searchHit.getSourceAsMap().get("picURL");
+                map1.put("title",title);
+                map1.put("uuid",uuid);
+                map1.put("fullContent",fullContent.substring(0,10));
+                map1.put("picURL",picURL);
+                Beans.add(map1);
+
+            }
+            try {
+                esUtils.client.close();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+            return RetResponse.makeOKRsp(Beans);
+        }
     }
 }

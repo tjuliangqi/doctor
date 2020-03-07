@@ -79,12 +79,11 @@ public class projectController {
         List<ProjectBean> projectBeans;
         if(firstState == "0")
             projectBeans = projectMapper.getProjectByTimeAndState(projectState);
-        else if(firstState == "a") {
+        else if(firstState.equals("a")) {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
-        }
-        else
+        } else
             projectBeans = projectMapper.getProjectByIDAndState(projectState);
         return RetResponse.makeOKRsp(projectBeans);
 //        return RetResponse.makeErrRsp("查无数据");

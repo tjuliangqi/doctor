@@ -29,7 +29,7 @@ public class fileController {
             }
             file.transferTo(destFile);
 
-            return RetResponse.makeOKRsp(File.separator + username + File.separator + fileName);
+            return RetResponse.makeOKRsp(File.separator +"doctorfile"+File.separator +"upload"+File.separator + username + File.separator + fileName);
         } catch (Exception e){
             return RetResponse.makeErrRsp("文件上传失败");
         }

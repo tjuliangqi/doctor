@@ -2,6 +2,7 @@ package cn.tju.doctor.service;
 
 import cn.tju.doctor.Config;
 import cn.tju.doctor.daomain.ArticleBean;
+import cn.tju.doctor.daomain.ViewBean;
 import cn.tju.doctor.utils.EsUtils;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
@@ -10,6 +11,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
+
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONException;
@@ -38,11 +40,10 @@ public class AskService {
         Object result = new Object();
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
-        ArrayList<ArticleBean> articleBeans = new ArrayList<>();
+        ArrayList<Object> articleBeans = new ArrayList<>();
 
         SearchSourceBuilder searchSourceBuilder;
         searchSourceBuilder = queryTextToBuilder(type, value, ifPrepara, preparaString, page);
-
 
             SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
             searchRequest.source(searchSourceBuilder);
@@ -52,42 +53,45 @@ public class AskService {
             if (searchHits.length < 1){
                 System.out.println("查询结果为空，返回空map");
             }else {
-                ArticleBean articleBean = new ArticleBean();
+//                ArticleBean articleBean = new ArticleBean();
+                ViewBean viewBean = new ViewBean();
                 for (SearchHit searchHit:searchHits){
                     //System.out.println(searchHit.getSourceAsString());
+                    String uuid = (String)searchHit.getSourceAsMap().get("uuid");
                     String title = (String)searchHit.getSourceAsMap().get("title");
                     String source = (String)searchHit.getSourceAsMap().get("source");
                     String writeTime = (String)searchHit.getSourceAsMap().get("writeTime");
                     String creatTime = (String)searchHit.getSourceAsMap().get("creatTime");
                     String sourceURL = (String)searchHit.getSourceAsMap().get("sourceURL");
-                    String fullContent = (String)searchHit.getSourceAsMap().get("fulltext");
+                    String fullContent = (String)searchHit.getSourceAsMap().get("fullContent");
                     String picURL = (String)searchHit.getSourceAsMap().get("picURL");
                     String videoURL = (String)searchHit.getSourceAsMap().get("videoURL");
                     String label = (String)searchHit.getSourceAsMap().get("label");
                     String part = (String)searchHit.getSourceAsMap().get("part");
                     int ifVideo = (int)searchHit.getSourceAsMap().get("ifVideo");
-                    int likes = (int)searchHit.getSourceAsMap().get("like");
+                    int likes = (int)searchHit.getSourceAsMap().get("likes");
                     int views = (int)searchHit.getSourceAsMap().get("views");
                     int download = (int)searchHit.getSourceAsMap().get("download");
                     int berecord = (int)searchHit.getSourceAsMap().get("berecord");
 
-                   articleBean.setTitle(title);
-                   articleBean.setSource(source);
-                   articleBean.setWriteTime(writeTime);
-                   articleBean.setCreatTime(creatTime);
-                   articleBean.setSourceURL(sourceURL);
-                   articleBean.setFullContent(fullContent);
-                   articleBean.setPicURL(picURL);
-                   articleBean.setVideoURL(videoURL);
-                   articleBean.setLabel(label);
-                   articleBean.setPart(part);
-                   articleBean.setIfVideo(ifVideo);
-                   articleBean.setLikes(likes);
-                   articleBean.setViews(views);
-                   articleBean.setDownload(download);
-                   articleBean.setBerecord(berecord);
+                   viewBean.setTitle(title);
+                   viewBean.setUuid(uuid);
+//                   articleBean.setSource(source);
+//                   articleBean.setWriteTime(writeTime);
+//                   articleBean.setCreatTime(creatTime);
+//                   articleBean.setSourceURL(sourceURL);
+                    viewBean.setFullContent(fullContent);
+                    viewBean.setPicURL(picURL);
+//                   articleBean.setVideoURL(videoURL);
+                    viewBean.setLabel(label);
+                    viewBean.setPart(part);
+//                   articleBean.setIfVideo(ifVideo);
+                    viewBean.setLikes(likes);
+                    viewBean.setViews(views);
+                    viewBean.setDownload(download);
+                    viewBean.setBerecord(berecord);
 
-                   articleBeans.add(articleBean);
+                   articleBeans.add(viewBean);
                 }
                 resultMap.put("result",articleBeans);
             }
@@ -96,6 +100,7 @@ public class AskService {
         //return resultMap;
         return result;
     }
+
 
     /**
      * description 返回筛选类型接口，伴随和碰撞不筛选 0、2、3是因为只返回一条没必要筛选
