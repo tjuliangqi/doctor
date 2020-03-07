@@ -39,8 +39,8 @@ public class AskController {
         String preparaString = String.valueOf(map.get("preparaString"));
         Integer page = Integer.valueOf(map.get("page"));
 
-        Object articleBeans = searchList(type, value, ifPrepara, preparaString, page);
-        return RetResponse.makeOKRsp(articleBeans);
+        Object viewBeans = searchList(type, value, ifPrepara, preparaString, page);
+        return RetResponse.makeOKRsp(viewBeans);
     }
 
     @RequestMapping(value = "/prepara", method = RequestMethod.POST)
@@ -53,31 +53,9 @@ public class AskController {
         return RetResponse.makeOKRsp(selectTags);
     }
 
-    @RequestMapping(value = "/file", method = RequestMethod.POST)
-    public RetResult<Map<String,Object>> pic(@RequestParam("ﬁleName") MultipartFile file, @RequestParam("ﬁleType") int ﬁleType) {
-        Map<String, Object> resultMap = new HashMap<>();
-        try {
-            String fileName = System.currentTimeMillis() + file.getOriginalFilename();
-            String destFileName = "D:\\tdwy_upload" + File.separator + fileName;
-
-            File destFile = new File(destFileName);
-            destFile.getParentFile().mkdirs();
-            file.transferTo(destFile);
-
-
-            String ﬁleURL = destFileName;
-            resultMap.put("ﬁleURL", ﬁleURL);
-
-            return RetResponse.makeOKRsp(resultMap);
-        } catch (Exception e) {
-            return RetResponse.makeErrRsp("上传文件出错");
-        }
-    }
-
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public RetResult<String> upload(@RequestBody Map<String,String> map) throws JSONException {
-        JSONObject json = new JSONObject();
-        //RetResult retResult = new RetResult();
+
         String title = String.valueOf(map.get("title"));
         String source = String.valueOf(map.get("source"));
         String writeTime = String.valueOf(map.get("writeTime"));
@@ -90,18 +68,19 @@ public class AskController {
         String part = String.valueOf(map.get("part"));
         Integer ifVideo = Integer.valueOf(map.get("ifVideo"));
         String uuid = UUID.randomUUID().toString();
-        json.put("title", title);
-        json.put("source", source);
-        json.put("writeTime", writeTime);
-        json.put("creatTime", creatTime);
-        json.put("sourceURL", sourceURL);
-        json.put("fullContent", fullContent);
-        json.put("picURL", picURL);
-        json.put("videoURL", videoURL);
-        json.put("label", label);
-        json.put("part", part);
-        json.put("ifVideo", ifVideo);
-
+//        JSONObject json = new JSONObject();
+//        json.put("title", title);
+//        json.put("source", source);
+//        json.put("writeTime", writeTime);
+//        json.put("creatTime", creatTime);
+//        json.put("sourceURL", sourceURL);
+//        json.put("fullContent", fullContent);
+//        json.put("picURL", picURL);
+//        json.put("videoURL", videoURL);
+//        json.put("label", label);
+//        json.put("part", part);
+//        json.put("ifVideo", ifVideo);
+//        String result = addDataToES(json);
         ArticleBean articleBean = new ArticleBean();
         articleBean.setUuid(uuid);
         articleBean.setTitle(title);
@@ -115,8 +94,11 @@ public class AskController {
         articleBean.setLabel(label);
         articleBean.setPart(part);
         articleBean.setIfVideo(ifVideo);
+        articleBean.setViews(0);
+        articleBean.setLikes(0);
+        articleBean.setDownload(0);
+        articleBean.setBerecord(0);
 
-        //String result = addData(json);
         System.out.println(articleBean);
         int result = articleMapper.insertArticle(articleBean);
         return RetResponse.makeOKRsp("ok");
@@ -126,7 +108,6 @@ public class AskController {
         String uuid = map.get("uuid");
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
-        ArrayList<ArticleBean> articleBeans = new ArrayList<>();
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
 
@@ -186,8 +167,6 @@ public class AskController {
                 articleBean.setViews(views);
                 articleBean.setDownload(download);
                 articleBean.setBerecord(berecord);
-
-
             }
             try {
                 esUtils.client.close();
@@ -210,7 +189,7 @@ public class AskController {
         searchSourceBuilder.query(QueryBuilders.matchQuery("label", value));
         SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
         searchRequest.source(searchSourceBuilder);
-        SearchResponse searchResponse = null;
+        SearchResponse searchResponse;
         try {
             searchResponse = client.search(searchRequest);
         } catch (IOException e) {
@@ -230,8 +209,6 @@ public class AskController {
             }
             return RetResponse.makeErrRsp("未找到文章");
         } else {
-//            ArticleBean articleBean = new ArticleBean();
-
             for (SearchHit searchHit : searchHits) {
                 Map<String,String> map1 = new HashMap<>();
                 String title = (String) searchHit.getSourceAsMap().get("title");
@@ -243,7 +220,6 @@ public class AskController {
                 map1.put("fullContent",fullContent.substring(0,10));
                 map1.put("picURL",picURL);
                 Beans.add(map1);
-
             }
             try {
                 esUtils.client.close();
@@ -277,5 +253,26 @@ public class AskController {
 
         return RetResponse.makeOKRsp(map3);
     }
+
+//    @RequestMapping(value = "/file", method = RequestMethod.POST)
+//    public RetResult<Map<String,Object>> pic(@RequestParam("ﬁleName") MultipartFile file, @RequestParam("ﬁleType") int ﬁleType) {
+//        Map<String, Object> resultMap = new HashMap<>();
+//        try {
+//            String fileName = System.currentTimeMillis() + file.getOriginalFilename();
+//            String destFileName = "D:\\tdwy_upload" + File.separator + fileName;
+//
+//            File destFile = new File(destFileName);
+//            destFile.getParentFile().mkdirs();
+//            file.transferTo(destFile);
+//
+//            String ﬁleURL = destFileName;
+//            resultMap.put("ﬁleURL", ﬁleURL);
+//
+//            return RetResponse.makeOKRsp(resultMap);
+//        } catch (Exception e) {
+//            return RetResponse.makeErrRsp("上传文件出错");
+//        }
+//    }
+
 
 }

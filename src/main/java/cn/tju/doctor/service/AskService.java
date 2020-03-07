@@ -1,7 +1,6 @@
 package cn.tju.doctor.service;
 
 import cn.tju.doctor.Config;
-import cn.tju.doctor.daomain.ArticleBean;
 import cn.tju.doctor.daomain.ViewBean;
 import cn.tju.doctor.utils.EsUtils;
 import org.elasticsearch.action.index.IndexRequest;
@@ -36,75 +35,63 @@ public class AskService {
      */
     public static Object searchList(String type, String value, boolean ifPrepara, String preparaString, Integer page) throws IOException, JSONException {
 
-        Map<String,Object> resultMap = new HashMap<>();
-        Object result = new Object();
+        Object result;
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
-        ArrayList<Object> articleBeans = new ArrayList<>();
+        ArrayList<ViewBean> viewBeans = new ArrayList<>();
 
         SearchSourceBuilder searchSourceBuilder;
         searchSourceBuilder = queryTextToBuilder(type, value, ifPrepara, preparaString, page);
 
-            SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
-            searchRequest.source(searchSourceBuilder);
-            SearchResponse searchResponse = client.search(searchRequest);
-            SearchHit[] searchHits = searchResponse.getHits().getHits();
+        SearchRequest searchRequest = new SearchRequest(Config.CAR_INDEX);
+        searchRequest.source(searchSourceBuilder);
+        SearchResponse searchResponse = client.search(searchRequest);
+        SearchHit[] searchHits = searchResponse.getHits().getHits();
 
-            if (searchHits.length < 1){
-                System.out.println("查询结果为空，返回空map");
-            }else {
-//                ArticleBean articleBean = new ArticleBean();
+        if (searchHits.length < 1){
+            System.out.println("查询结果为空，返回空map");
+        }else {
+            for (SearchHit searchHit:searchHits){
                 ViewBean viewBean = new ViewBean();
-                for (SearchHit searchHit:searchHits){
-                    //System.out.println(searchHit.getSourceAsString());
-                    String uuid = (String)searchHit.getSourceAsMap().get("uuid");
-                    String title = (String)searchHit.getSourceAsMap().get("title");
-                    String source = (String)searchHit.getSourceAsMap().get("source");
-                    String writeTime = (String)searchHit.getSourceAsMap().get("writeTime");
-                    String creatTime = (String)searchHit.getSourceAsMap().get("creatTime");
-                    String sourceURL = (String)searchHit.getSourceAsMap().get("sourceURL");
-                    String fullContent = (String)searchHit.getSourceAsMap().get("fullContent");
-                    String picURL = (String)searchHit.getSourceAsMap().get("picURL");
-                    String videoURL = (String)searchHit.getSourceAsMap().get("videoURL");
-                    String label = (String)searchHit.getSourceAsMap().get("label");
-                    String part = (String)searchHit.getSourceAsMap().get("part");
-                    int ifVideo = (int)searchHit.getSourceAsMap().get("ifVideo");
-                    int likes = (int)searchHit.getSourceAsMap().get("likes");
-                    int views = (int)searchHit.getSourceAsMap().get("views");
-                    int download = (int)searchHit.getSourceAsMap().get("download");
-                    int berecord = (int)searchHit.getSourceAsMap().get("berecord");
+                System.out.println(searchHit.getSourceAsString());
+                String uuid = (String)searchHit.getSourceAsMap().get("uuid");
+                String title = (String)searchHit.getSourceAsMap().get("title");
+                String fullContent = (String)searchHit.getSourceAsMap().get("fullContent");
+                String picURL = (String)searchHit.getSourceAsMap().get("picURL");
+                String label = (String)searchHit.getSourceAsMap().get("label");
+                String part = (String)searchHit.getSourceAsMap().get("part");
+                int likes = (int)searchHit.getSourceAsMap().get("likes");
+                int views = (int)searchHit.getSourceAsMap().get("views");
+                int download = (int)searchHit.getSourceAsMap().get("download");
+                int berecord = (int)searchHit.getSourceAsMap().get("berecord");
 
-                   viewBean.setTitle(title);
-                   viewBean.setUuid(uuid);
-//                   articleBean.setSource(source);
-//                   articleBean.setWriteTime(writeTime);
-//                   articleBean.setCreatTime(creatTime);
-//                   articleBean.setSourceURL(sourceURL);
-                    viewBean.setFullContent(fullContent);
-                    viewBean.setPicURL(picURL);
-//                   articleBean.setVideoURL(videoURL);
-                    viewBean.setLabel(label);
-                    viewBean.setPart(part);
-//                   articleBean.setIfVideo(ifVideo);
-                    viewBean.setLikes(likes);
-                    viewBean.setViews(views);
-                    viewBean.setDownload(download);
-                    viewBean.setBerecord(berecord);
+                viewBean.setTitle(title);
+                viewBean.setUuid(uuid);
+                viewBean.setFullContent(fullContent.substring(0,10));
+                viewBean.setPicURL(picURL);
+                viewBean.setLabel(label);
+                viewBean.setPart(part);
+                viewBean.setLikes(likes);
+                viewBean.setViews(views);
+                viewBean.setDownload(download);
+                viewBean.setBerecord(berecord);
 
-                   articleBeans.add(viewBean);
-                }
-                resultMap.put("result",articleBeans);
+                viewBeans.add(viewBean);
             }
-            result = articleBeans;
-
-        //return resultMap;
+        }
+        try {
+            esUtils.client.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        result = viewBeans;
         return result;
     }
 
 
     /**
-     * description 返回筛选类型接口，伴随和碰撞不筛选 0、2、3是因为只返回一条没必要筛选
-     * @param type type只有 1、4、5 三种
+     * description 返回筛选类型接口
+     * @param type type只有 0、1
      * @param value
      * @return
      * @throws IOException
@@ -133,16 +120,18 @@ public class AskService {
         }else {
             for (SearchHit searchHit:searchHits){
                 //System.out.println(searchHit.getSourceAsString());
-                // find all carNumType
+
+                // find all label
                 String label = (String)searchHit.getSourceAsMap().get("label");
                 String[] arr = label.replace("['","").replace("']","").split("', '");
                 for(int i=0; i<arr.length; i++)
                     labelList.add(arr[i]);
-                // labelList.add(label);
-                // find all carNumColor
+
+                // find all part
                 String part = (String)searchHit.getSourceAsMap().get("part");
                 partList.add(part);
-                // find all carColor
+
+                // find all writeTime
                 String writeTime = (String)searchHit.getSourceAsMap().get("writeTime");
                 writeTimeList.add(writeTime);
             }
@@ -165,11 +154,16 @@ public class AskService {
             selectTags.put("part",result2);
             selectTags.put("writeTime",result3);
         }
+        try {
+            esUtils.client.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
         return selectTags;
     }
 
 
-    public static String addData(JSONObject json) {
+    public static String addDataToES(JSONObject json) {
         EsUtils esUtils = new EsUtils();
         RestHighLevelClient client = esUtils.client;
         String uuid = UUID.randomUUID().toString().replaceAll("-","");
