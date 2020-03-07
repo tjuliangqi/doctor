@@ -77,7 +77,7 @@ public class projectController {
         }
         System.out.println(projectState);
         List<ProjectBean> projectBeans;
-        if(firstState == "0")
+        if(firstState.equals("0"))
             projectBeans = projectMapper.getProjectByTimeAndState(projectState);
         else if(firstState.equals("a")) {
             String userID = value.split("\\+")[0];

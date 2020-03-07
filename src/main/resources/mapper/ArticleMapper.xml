@@ -9,5 +9,8 @@
         VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fullContent}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{likes}, #{views}, #{download}, #{berecord})
     </insert>
 
+    <select id="selectSumByDate" parameterType="String">
+        SELECT * FROM base WHERE date = #{date} ;
+    </select>
 
 </mapper>

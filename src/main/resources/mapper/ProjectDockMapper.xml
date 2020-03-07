@@ -9,7 +9,7 @@
     </insert>
 
     <select id="getProjectDockByProjectID" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
-        SELECT * FROM projectDock WHERE projectID = #{projectID}  ORDER BY process DESC;
+        SELECT * FROM projectDock WHERE projectID = #{projectID};
     </select>
 
 

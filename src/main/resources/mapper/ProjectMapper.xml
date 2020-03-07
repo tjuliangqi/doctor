@@ -13,7 +13,7 @@
     </select>
 
     <select id="getProjectByProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
-        SELECT * FROM projects WHERE projectID = #{projectID}  ORDER BY process DESC;
+        SELECT * FROM projects WHERE projectID = #{projectID};
     </select>
 
     <select id="getProjectByUserProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
