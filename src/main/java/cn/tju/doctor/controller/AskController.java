@@ -170,7 +170,7 @@ public class AskController {
                 int views = (int) searchHit.getSourceAsMap().get("views");
                 int download = (int) searchHit.getSourceAsMap().get("download");
                 int berecord = (int) searchHit.getSourceAsMap().get("berecord");
-
+                articleBean.setUuid(uuid);
                 articleBean.setTitle(title);
                 articleBean.setSource(source);
                 articleBean.setWriteTime(writeTime);
@@ -236,7 +236,7 @@ public class AskController {
                 Map<String,String> map1 = new HashMap<>();
                 String title = (String) searchHit.getSourceAsMap().get("title");
                 String uuid = (String) searchHit.getSourceAsMap().get("uuid");
-                String fullContent = (String) searchHit.getSourceAsMap().get("fulltext");
+                String fullContent = (String) searchHit.getSourceAsMap().get("fullContent");
                 String picURL = (String) searchHit.getSourceAsMap().get("picURL");
                 map1.put("title",title);
                 map1.put("uuid",uuid);

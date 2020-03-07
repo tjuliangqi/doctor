@@ -135,7 +135,10 @@ public class AskService {
                 //System.out.println(searchHit.getSourceAsString());
                 // find all carNumType
                 String label = (String)searchHit.getSourceAsMap().get("label");
-                labelList.add(label);
+                String[] arr = label.replace("['","").replace("']","").split("', '");
+                for(int i=0; i<arr.length; i++)
+                    labelList.add(arr[i]);
+                // labelList.add(label);
                 // find all carNumColor
                 String part = (String)searchHit.getSourceAsMap().get("part");
                 partList.add(part);
