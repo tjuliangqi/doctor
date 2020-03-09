@@ -18,11 +18,11 @@ public class ProjectBeanDock {
         this.projectID = projectID;
     }
 
-    public String getMount() {
+    public double getMount() {
         return mount;
     }
 
-    public void setMount(String mount) {
+    public void setMount(double mount) {
         this.mount = mount;
     }
 
@@ -119,7 +119,7 @@ public class ProjectBeanDock {
 
     private String uuid;
     private String projectID;
-    private String mount;
+    private double mount;
     private String projectManager;
     private String company;
     private String process;

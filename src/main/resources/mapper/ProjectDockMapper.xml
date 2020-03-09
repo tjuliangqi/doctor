@@ -19,6 +19,32 @@
         VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting})
     </insert>
 
+    <update id="updateByProjectID" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
+        UPDATE projectDock
+        <set>
+            <if test="projectBeanDock.mount != null">mount=#{projectBeanDock.mount},</if>
+            <if test="projectBeanDock.projectManager != null">projectManager=#{projectBeanDock.projectManager},</if>
+            <if test="projectBeanDock.company != null">company=#{projectBeanDock.company},</if>
+            <if test="projectBeanDock.process != null">process=#{projectBeanDock.process},</if>
+            <if test="projectBeanDock.dataURL != null">dataURL=#{projectBeanDock.dataURL},</if>
+            <if test="projectBeanDock.companyAccount != null">companyAccount=#{projectBeanDock.companyAccount},</if>
+            <if test="projectBeanDock.moneyManager != null">moneyManager=#{projectBeanDock.moneyManager},</if>
+            <if test="projectBeanDock.beginTime != null">beginTime=#{projectBeanDock.beginTime},</if>
+            <if test="projectBeanDock.endtime != null">endtime=#{projectBeanDock.endtime},</if>
+            <if test="projectBeanDock.introduce != null">introduce=#{projectBeanDock.introduce},</if>
+            <if test="projectBeanDock.accounting != null">accounting=#{projectBeanDock.accounting},</if>
+        </set>
+        WHERE projectID=#{projectBeanDock.projectID}
+    </update>
+
+    <update id="updateByProjectID2" parameterType="String">
+        UPDATE projectDock
+        <set>
+            <if test="mount != null">mount=#{mount},</if>
+            <if test="process != null">process=#{process},</if>
+        </set>
+        WHERE projectID=#{projectID}
+    </update>
 
     <update id="updateProjectDock" parameterType="cn.tju.doctor.daomain.ProjectState">
         UPDATE projectDock SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};

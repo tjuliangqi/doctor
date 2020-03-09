@@ -101,7 +101,7 @@ public class projectController {
         String company = json.get("company").toString();
         String actor = json.get("actor").toString();
         String userType = json.get("userType").toString();
-        String mount = json.get("mount").toString();
+        double mount = (double)json.get("mount");
         String projectManager = json.get("projectManager").toString();
         String companyAccount = json.get("companyAccount").toString();
         String moneyManager = json.get("moneyManager").toString();
@@ -118,8 +118,8 @@ public class projectController {
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setUserType(userType);
-        String uuid = UUID.randomUUID().toString();
-        String projectID = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replace("-","");
+        String projectID = UUID.randomUUID().toString().replace("-","");
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
         String beginTime = dateFormat.format(now);
@@ -169,7 +169,7 @@ public class projectController {
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setProcess(process);
-        String uuid = UUID.randomUUID().toString();
+        String uuid = UUID.randomUUID().toString().replace("-","");
         projectBeanAdd.setUuid(uuid);
 
         projectBeanDock.setUuid(uuid);
@@ -204,7 +204,9 @@ public class projectController {
             return RetResponse.makeErrRsp("未项目经理对接，无法指派");
         }
         projectMapper.modifyProject(projectBeanAdd);
-        projectDockMapper.modifyProjectDock(projectBeanDock);
+        //projectDockMapper.modifyProjectDock(projectBeanDock);
+        //projectDockMapper.updateByProjectID(projectBeanDock);
+        projectDockMapper.updateByProjectID2(projectID, process, null);
         return RetResponse.makeOKRsp("ok");
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -268,9 +270,12 @@ public class projectController {
         projectState.setState2("process");
         projectState.setStateValue2(process);
         List<ProjectBean> projectBeans;
+        System.out.println(projectState);
         projectBeans = projectMapper.getProjectByIDAndState(projectState);
+        System.out.println(projectBeans.size());
         HashSet<String> hashSet = new HashSet<>();
         for(ProjectBean each:projectBeans){
+            System.out.println(each);
             hashSet.add(each.getAcceptuser());
         }
         Map result = new HashMap();

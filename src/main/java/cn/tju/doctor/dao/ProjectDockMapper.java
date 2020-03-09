@@ -15,4 +15,6 @@ public interface ProjectDockMapper {
 
     int modifyProjectDock(ProjectBeanDock projectBeanDock);
     int updateProjectDock(ProjectState projectState);
+    int updateByProjectID(ProjectBeanDock projectBeanDock);
+    int updateByProjectID2(String projectID, String process, Object mount);
 }
