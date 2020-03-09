@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProjectDockMapper {
     int insertProjectDock(ProjectBeanDock projectBeanDock);
     List<ProjectBeanDock> getProjectDockByProjectID(String projectID);
+    List<ProjectBeanDock> getByCompanyAccount(String companyAccount);
 
     int modifyProjectDock(ProjectBeanDock projectBeanDock);
     int updateProjectDock(ProjectState projectState);

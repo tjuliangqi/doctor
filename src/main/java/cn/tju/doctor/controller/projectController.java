@@ -301,4 +301,14 @@ public class projectController {
 
         return RetResponse.makeOKRsp("ok");
     }
+
+    @RequestMapping(value = "/searchCompanyAccount", method = RequestMethod.POST)
+    public RetResult<List<ProjectBeanDock>> searchCompanyAccount(@RequestBody Map json) {
+
+        String companyAccount = json.get("companyAccount").toString();
+
+        List<ProjectBeanDock> projectBeanDocks;
+        projectBeanDocks = projectDockMapper.getByCompanyAccount(companyAccount);
+        return RetResponse.makeOKRsp(projectBeanDocks);
+    }
 }

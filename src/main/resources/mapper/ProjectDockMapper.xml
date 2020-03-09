@@ -14,6 +14,10 @@
 
 
 
+    <select id="getByCompanyAccount" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
+        SELECT * FROM projectDock WHERE companyAccount = #{companyAccount};
+    </select>
+
     <insert id="modifyProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
         INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce, accounting)
         VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting})
