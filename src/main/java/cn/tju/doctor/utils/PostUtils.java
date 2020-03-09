@@ -33,7 +33,7 @@ public class PostUtils {
 
             //post.setHeader("Content-Type","application/json;charset=utf-8");
             //post.addHeader("Authorization", "Basic YWRtaW46");
-            post.addHeader("dealer-id", headerMap.get("dealer_id"));
+            post.setHeader("dealer-id", headerMap.get("dealer_id"));
             post.addHeader("request-id", headerMap.get("request_id"));
             StringEntity postingString = new StringEntity(jsonObject.toString(),"utf-8");
             post.setEntity(postingString);
