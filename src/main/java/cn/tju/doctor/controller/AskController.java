@@ -250,14 +250,14 @@ public class AskController {
     }
 
     @RequestMapping(value = "/getdata", method = RequestMethod.POST)
-    public RetResult<Object> data (@RequestBody Map<String,String> map) {
+    public RetResult<Object> getdata (@RequestBody Map<String,String> map) {
         //RetResult retResult = new RetResult();
         List<Data> list = new ArrayList<>();
         Data data1 = dataMapper.getDataById("2000-01-01");
         Data data2 = dataMapper.getDataById(DateUtil.gainDate());
         list.add(data1);
         list.add(data2);
-        return RetResponse.makeOKRsp();
+        return RetResponse.makeOKRsp(list);
     }
 
 }
