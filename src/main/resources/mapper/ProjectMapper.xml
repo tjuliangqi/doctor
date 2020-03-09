@@ -26,8 +26,8 @@
 
 
     <insert id="insertProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">
-        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, createuser, projectaccount, projectmoney, company, actor)
-        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{createuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor})
+        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, createuser, projectaccount, projectmoney, company, actor, userdataURL, userType, acceptuser)
+        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{createuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor}, #{userdataURL}, #{userType}, #{acceptuser})
     </insert>
 
     <insert id="modifyProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">

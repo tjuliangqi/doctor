@@ -82,6 +82,8 @@ public class projectController {
         else if(firstState.equals("a")) {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
+            System.out.println(userID);
+            System.out.println(projectID);
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
         } else
             projectBeans = projectMapper.getProjectByIDAndState(projectState);
@@ -106,6 +108,7 @@ public class projectController {
         String companyAccount = json.get("companyAccount").toString();
         String moneyManager = json.get("moneyManager").toString();
         String accounting = json.get("accounting").toString();
+        String userdataURL = json.get("userdataURL").toString();
 
         ProjectBeanAdd projectBeanAdd = new ProjectBeanAdd();
         projectBeanAdd.setName(name);
@@ -118,6 +121,7 @@ public class projectController {
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setUserType(userType);
+        projectBeanAdd.setUserdataURL(userdataURL);
         String uuid = UUID.randomUUID().toString().replace("-","");
         String projectID = UUID.randomUUID().toString().replace("-","");
         Date now = new Date();
@@ -171,13 +175,25 @@ public class projectController {
         projectBeanAdd.setProcess(process);
         String uuid = UUID.randomUUID().toString().replace("-","");
         projectBeanAdd.setUuid(uuid);
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
+        String beginTime = dateFormat.format(now);
+        projectBeanAdd.setBeginTime(beginTime);
+
 
         projectBeanDock.setUuid(uuid);
         projectBeanDock.setProjectID(projectID);
         projectBeanDock.setCompany(company);
         projectBeanDock.setProcess(process);
         try {
-            List<ProjectBean> projectBeans = projectMapper.getProjectByProjectID(projectID);
+            ProjectState projectState = new ProjectState();
+            projectState.setState1("projectID"); // 根据projectID和process=0找到最开始创建的
+            projectState.setState2("process");
+            projectState.setStateValue1(projectID);
+            projectState.setStateValue2("0");
+            //List<ProjectBean> projectBeans = projectMapper.getProjectByProjectID(projectID);
+            System.out.println(projectState);
+            List<ProjectBean> projectBeans = projectMapper.getProjectByIDAndState(projectState);
             projectBeanAdd.setName(projectBeans.get(0).getName());
             projectBeanAdd.setData(projectBeans.get(0).getData());
             projectBeanAdd.setDataURL(projectBeans.get(0).getDataURL());
@@ -203,7 +219,8 @@ public class projectController {
         } catch (Exception e){
             return RetResponse.makeErrRsp("未项目经理对接，无法指派");
         }
-        projectMapper.modifyProject(projectBeanAdd);
+        System.out.println(projectBeanAdd);
+        projectMapper.insertProject(projectBeanAdd);
         //projectDockMapper.modifyProjectDock(projectBeanDock);
         //projectDockMapper.updateByProjectID(projectBeanDock);
         projectDockMapper.updateByProjectID2(projectID, process, null);
