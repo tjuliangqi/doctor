@@ -22,8 +22,8 @@ public class projectController {
     ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
-        System.out.println(map.get("value"));
-        System.out.println(map.get("type"));
+        System.out.println("查询组合："+map.get("type").toString());
+        System.out.println("查询值："+map.get("value").toString());
 
         String type = map.get("type").toString();
         String value = map.get("value").toString();
@@ -74,19 +74,28 @@ public class projectController {
                 projectState.setState2("process");
                 projectState.setStateValue2("5");
                 break;
+            case "b":
+                projectState.setState2("no_process");
+                break;
         }
         System.out.println(projectState);
         List<ProjectBean> projectBeans;
-        if(firstState.equals("0"))
-            projectBeans = projectMapper.getProjectByTimeAndState(projectState);
-        else if(firstState.equals("a")) {
+//        if(firstState.equals("0"))
+//            projectBeans = projectMapper.getProjectByTimeAndState(projectState);
+//        else if(firstState.equals("a")) {
+//            String userID = value.split("\\+")[0];
+//            String projectID = value.split("\\+")[1];
+//            projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
+//        } else
+//            projectBeans = projectMapper.getProjectByIDAndState(projectState);
+
+        if(firstState.equals("a")){
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
-            System.out.println(userID);
-            System.out.println(projectID);
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
-        } else
-            projectBeans = projectMapper.getProjectByIDAndState(projectState);
+        }else{
+            projectBeans = projectMapper.getProjectByAll(projectState);
+        }
         return RetResponse.makeOKRsp(projectBeans);
 //        return RetResponse.makeErrRsp("查无数据");
     }

@@ -3,6 +3,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.tju.doctor.dao.ProjectMapper">
 
+    <select id="getProjectByAll" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="cn.tju.doctor.daomain.ProjectState">
+        SELECT * FROM projects WHERE
+            <if test='state1 == "beginTime"'>beginTime <![CDATA[<=]]> #{stateValue1}</if>
+            <if test='state1 != "beginTime"'>${state1} = #{stateValue1}</if>
+            <if test='state2 != "no_process"'>AND ${state2} = #{stateValue2}</if>
+    </select>
+
     <select id="getProjectByTimeAndState" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="cn.tju.doctor.daomain.ProjectState">
         SELECT * FROM projects WHERE beginTime <![CDATA[<=]]> #{stateValue1} AND ${state2} = #{stateValue2};
     </select>
