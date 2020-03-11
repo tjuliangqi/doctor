@@ -19,26 +19,28 @@
     </select>
 
     <insert id="modifyProjectDock" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
-        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce, accounting)
-        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting})
+        INSERT INTO projectDock (uuid, projectID, mount, projectManager, company, process, dataURL, companyAccount, moneyManager, beginTime, endtime, introduce, accounting, ifWork)
+        VALUES  (#{uuid}, #{projectID}, #{mount}, #{projectManager}, #{company}, #{process}, #{dataURL}, #{companyAccount}, #{moneyManager}, #{beginTime}, #{endtime}, #{introduce}, #{accounting}, #{ifWork})
     </insert>
 
     <update id="updateByProjectID" parameterType="cn.tju.doctor.daomain.ProjectBeanDock">
-        UPDATE projectDock
-        <set>
-            <if test="projectBeanDock.mount != null">mount=#{projectBeanDock.mount},</if>
-            <if test="projectBeanDock.projectManager != null">projectManager=#{projectBeanDock.projectManager},</if>
-            <if test="projectBeanDock.company != null">company=#{projectBeanDock.company},</if>
-            <if test="projectBeanDock.process != null">process=#{projectBeanDock.process},</if>
-            <if test="projectBeanDock.dataURL != null">dataURL=#{projectBeanDock.dataURL},</if>
-            <if test="projectBeanDock.companyAccount != null">companyAccount=#{projectBeanDock.companyAccount},</if>
-            <if test="projectBeanDock.moneyManager != null">moneyManager=#{projectBeanDock.moneyManager},</if>
-            <if test="projectBeanDock.beginTime != null">beginTime=#{projectBeanDock.beginTime},</if>
-            <if test="projectBeanDock.endtime != null">endtime=#{projectBeanDock.endtime},</if>
-            <if test="projectBeanDock.introduce != null">introduce=#{projectBeanDock.introduce},</if>
-            <if test="projectBeanDock.accounting != null">accounting=#{projectBeanDock.accounting},</if>
-        </set>
-        WHERE projectID=#{projectBeanDock.projectID}
+        UPDATE projectdock
+        <trim prefix="set" suffixOverrides=",">
+            <if test="uuid != null">uuid=#{uuid},</if>
+            <if test="mount != 0.0">mount=#{mount},</if>
+            <if test="projectManager != null">projectManager=#{projectManager},</if>
+            <if test="company != null">company=#{company},</if>
+            <if test="process != null">process=#{process},</if>
+            <if test="dataURL != null">dataURL=#{dataURL},</if>
+            <if test="companyAccount != null">companyAccount=#{companyAccount},</if>
+            <if test="moneyManager != null">moneyManager=#{moneyManager},</if>
+            <if test="beginTime != null">beginTime=#{beginTime},</if>
+            <if test="endtime != null">endtime=#{endtime},</if>
+            <if test="introduce != null">introduce=#{introduce},</if>
+            <if test="accounting != null">accounting=#{accounting},</if>
+            <if test="ifWork != null">ifWork=#{ifWork},</if>
+        </trim>
+        WHERE projectID=#{projectID};
     </update>
 
     <update id="updateByProjectID2" parameterType="String">

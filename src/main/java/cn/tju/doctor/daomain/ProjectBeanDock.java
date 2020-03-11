@@ -114,6 +114,7 @@ public class ProjectBeanDock {
                 ", endtime='" + endtime + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", accounting='" + accounting + '\'' +
+                ", ifWork='" + ifWork + '\'' +
                 '}';
     }
 
@@ -129,6 +130,18 @@ public class ProjectBeanDock {
     private String beginTime;
     private String endtime;
     private String introduce;
+    private int ifWork;
+    private String accounting;
+
+
+    public int getIfWork() {
+        return ifWork;
+    }
+
+    public void setIfWork(int ifWork) {
+        this.ifWork = ifWork;
+    }
+
 
     public String getAccounting() {
         return accounting;
@@ -138,7 +151,7 @@ public class ProjectBeanDock {
         this.accounting = accounting;
     }
 
-    private String accounting;
+
 
 
 }

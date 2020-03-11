@@ -10,6 +10,13 @@
             <if test='state2 != "no_process"'>AND ${state2} = #{stateValue2}</if>
     </select>
 
+    <select id="getProjectByAll_allField" resultType="cn.tju.doctor.daomain.ProjectBeanAdd" parameterType="cn.tju.doctor.daomain.ProjectState">
+        SELECT * FROM projects WHERE
+        <if test='state1 == "beginTime"'>beginTime <![CDATA[<=]]> #{stateValue1}</if>
+        <if test='state1 != "beginTime"'>${state1} = #{stateValue1}</if>
+        <if test='state2 != "no_process"'>AND ${state2} = #{stateValue2}</if>
+    </select>
+
     <select id="getProjectByTimeAndState" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="cn.tju.doctor.daomain.ProjectState">
         SELECT * FROM projects WHERE beginTime <![CDATA[<=]]> #{stateValue1} AND ${state2} = #{stateValue2};
     </select>
@@ -27,37 +34,39 @@
         SELECT * FROM projects WHERE projectID = #{projectID} AND (acceptuser = #{userID} OR createuser = #{userID});
     </select>
 
-<!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->
-<!--        SELECT * FROM works WHERE token = #{token} ;-->
-<!--    </select>-->
 
 
     <insert id="insertProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">
-        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, createuser, projectaccount, projectmoney, company, actor, userdataURL, userType, acceptuser)
-        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{createuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor}, #{userdataURL}, #{userType}, #{acceptuser})
+        INSERT INTO projects (uuid, projectID, beginTime, process, name, data, dataURL, introduce, createuser, projectaccount, projectmoney, company, actor, userdataURL, userType, acceptuser, projectManager, ifWork)
+        VALUES  (#{uuid}, #{projectID}, #{beginTime}, #{process}, #{name}, #{data}, #{dataURL}, #{introduce}, #{createuser}, #{projectaccount}, #{projectmoney}, #{company}, #{actor}, #{userdataURL}, #{userType}, #{acceptuser}, #{projectManager}, #{ifWork})
     </insert>
-
-    <insert id="modifyProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">
-        INSERT INTO projects (uuid, projectID, name, acceptuser, userdataURL, userType, company, actor)
-        VALUES  (#{uuid}, #{projectID}, #{name}, #{acceptuser}, #{userdataURL}, #{userType}, #{company}, #{actor})
-    </insert>
-
-<!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->
-<!--        DELETE FROM users WHERE id = #{id}-->
-<!--    </delete>-->
-
-    <update id="updateWork" parameterType="cn.tju.doctor.daomain.WorkState">
-        UPDATE works
-        <set>
-            <if test='workState.type == "0"'>ifRead="1",</if>
-            <if test='workState.type == "1"'>ifFinish="1",</if>
-            <if test="workState.workfile != null">workfile=#{workState.workfile}</if>
-        </set>
-        WHERE uuid=#{workState.uuid}
-    </update>
 
 
     <update id="updateProject" parameterType="cn.tju.doctor.daomain.ProjectState">
         UPDATE projects SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
     </update>
+
+
+
+
+    <!--<insert id="modifyProject" parameterType="cn.tju.doctor.daomain.ProjectBeanAdd">-->
+        <!--INSERT INTO projects (uuid, projectID, name, acceptuser, userdataURL, userType, company, actor)-->
+        <!--VALUES  (#{uuid}, #{projectID}, #{name}, #{acceptuser}, #{userdataURL}, #{userType}, #{company}, #{actor})-->
+    <!--</insert>-->
+
+<!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->
+<!--        DELETE FROM users WHERE id = #{id}-->
+<!--    </delete>-->
+
+    <!--<update id="updateWork" parameterType="cn.tju.doctor.daomain.WorkState">-->
+        <!--UPDATE works-->
+        <!--<set>-->
+            <!--<if test='workState.type == "0"'>ifRead="1",</if>-->
+            <!--<if test='workState.type == "1"'>ifFinish="1",</if>-->
+            <!--<if test="workState.workfile != null">workfile=#{workState.workfile}</if>-->
+        <!--</set>-->
+        <!--WHERE uuid=#{workState.uuid}-->
+    <!--</update>-->
+
+
 </mapper>

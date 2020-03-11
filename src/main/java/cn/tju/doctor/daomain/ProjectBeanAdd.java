@@ -146,6 +146,14 @@ public class ProjectBeanAdd {
         this.actor = actor;
     }
 
+    public String getProjectManager() {
+        return projectManager;
+    }
+
+    public void setProjectManager(String projectManager) {
+        this.projectManager = projectManager;
+    }
+
     @Override
     public String toString() {
         return "ProjectBeanAdd{" +
@@ -167,6 +175,7 @@ public class ProjectBeanAdd {
                 ", userType='" + userType + '\'' +
                 ", company='" + company + '\'' +
                 ", actor='" + actor + '\'' +
+                ", projectManager='" + projectManager + '\'' +
                 '}';
     }
 
@@ -188,4 +197,5 @@ public class ProjectBeanAdd {
     private String userType;
     private String company;
     private String actor;
+    private String projectManager;
 }

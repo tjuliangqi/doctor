@@ -1,5 +1,6 @@
 package cn.tju.doctor.utils;
 
+import cn.tju.doctor.daomain.ProjectState;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
@@ -137,6 +138,68 @@ public class ToBuildersUtils {
 
 
         return builder0;
+    }
+
+    /**
+     *
+     * @param projectState
+     * @param firstState
+     * @param secondState
+     * @param value
+     * @return
+     */
+    public static ProjectState intoState(ProjectState projectState, String firstState, String secondState, String value) {
+        projectState.setStateValue1(value);
+        switch (firstState) {
+            case "0":
+                projectState.setState1("beginTime");
+                break;
+            case "1":
+                projectState.setState1("projectID");
+                break;
+            case "2":
+                projectState.setState1("createuser");
+                break;
+            case "3":
+                projectState.setState1("acceptuser");
+                break;
+            case "4":
+                projectState.setState1("uuid");
+                break;
+            case "5":
+                projectState.setState1("projectManager");
+                break;
+        }
+        switch (secondState) {
+            case "0":
+                projectState.setState2("process");
+                projectState.setStateValue2("0");
+                break;
+            case "1":
+                projectState.setState2("process");
+                projectState.setStateValue2("1");
+                break;
+            case "2":
+                projectState.setState2("process");
+                projectState.setStateValue2("2");
+                break;
+            case "3":
+                projectState.setState2("process");
+                projectState.setStateValue2("3");
+                break;
+            case "4":
+                projectState.setState2("process");
+                projectState.setStateValue2("4");
+                break;
+            case "5":
+                projectState.setState2("process");
+                projectState.setStateValue2("5");
+                break;
+            case "b":
+                projectState.setState2("no_process");
+                break;
+        }
+        return projectState;
     }
 
 

@@ -11,6 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static cn.tju.doctor.utils.ToBuildersUtils.intoState;
 
 @RestController
 
@@ -31,63 +34,10 @@ public class projectController {
         String secondState = type.substring(1, 2);
 
         ProjectState projectState = new ProjectState();
-        projectState.setStateValue1(value);
-        switch (firstState){
-            case "0":
-                projectState.setState1("beginTime");
-                break;
-            case "1":
-                projectState.setState1("projectID");
-                break;
-            case "2":
-                projectState.setState1("createuser");
-                break;
-            case "3":
-                projectState.setState1("acceptuser");
-                break;
-            case "4":
-                projectState.setState1("uuid");
-                break;
-        }
-        switch (secondState){
-            case "0":
-                projectState.setState2("process");
-                projectState.setStateValue2("0");
-                break;
-            case "1":
-                projectState.setState2("process");
-                projectState.setStateValue2("1");
-                break;
-            case "2":
-                projectState.setState2("process");
-                projectState.setStateValue2("2");
-                break;
-            case "3":
-                projectState.setState2("process");
-                projectState.setStateValue2("3");
-                break;
-            case "4":
-                projectState.setState2("process");
-                projectState.setStateValue2("4");
-                break;
-            case "5":
-                projectState.setState2("process");
-                projectState.setStateValue2("5");
-                break;
-            case "b":
-                projectState.setState2("no_process");
-                break;
-        }
+        projectState = intoState(projectState, firstState, secondState, value);
         System.out.println(projectState);
+
         List<ProjectBean> projectBeans;
-//        if(firstState.equals("0"))
-//            projectBeans = projectMapper.getProjectByTimeAndState(projectState);
-//        else if(firstState.equals("a")) {
-//            String userID = value.split("\\+")[0];
-//            String projectID = value.split("\\+")[1];
-//            projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
-//        } else
-//            projectBeans = projectMapper.getProjectByIDAndState(projectState);
 
         if(firstState.equals("a")){
             String userID = value.split("\\+")[0];
@@ -95,10 +45,29 @@ public class projectController {
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
         }else{
             projectBeans = projectMapper.getProjectByAll(projectState);
+            // 根据 ProjectID 去重
+            if(type.equals("0b") || type.equals("2b") || type.equals("3b") || type.equals("5b")){
+                List<ProjectBean> unique = projectBeans.stream().collect(
+                        Collectors.collectingAndThen(
+                                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ProjectBean::getProjectID))), ArrayList::new)
+                );
+                //unique.forEach(p -> System.out.println(p));
+                projectBeans = unique;
+            }
+            // 根据 Process 去重
+            if(type.equals("1b")){
+                List<ProjectBean> unique = projectBeans.stream().collect(
+                        Collectors.collectingAndThen(
+                                Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ProjectBean::getProcess))), ArrayList::new)
+                );
+                //unique.forEach(p -> System.out.println(p));
+                projectBeans = unique;
+            }
         }
         return RetResponse.makeOKRsp(projectBeans);
-//        return RetResponse.makeErrRsp("查无数据");
     }
+
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Map json) {
 
@@ -131,6 +100,7 @@ public class projectController {
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setUserType(userType);
         projectBeanAdd.setUserdataURL(userdataURL);
+        projectBeanAdd.setProjectManager(projectManager);
         String uuid = UUID.randomUUID().toString().replace("-","");
         String projectID = UUID.randomUUID().toString().replace("-","");
         Date now = new Date();
@@ -140,6 +110,7 @@ public class projectController {
         projectBeanAdd.setProjectID(projectID);
         projectBeanAdd.setBeginTime(beginTime);
         projectBeanAdd.setProcess("0");
+        projectBeanAdd.setIfWork(0);
 
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanDock.setUuid(uuid);
@@ -153,6 +124,7 @@ public class projectController {
         projectBeanDock.setProjectManager(projectManager);
         projectBeanDock.setMount(mount);
         projectBeanDock.setProcess("0");
+        projectBeanDock.setIfWork(0);
         projectBeanDock.setAccounting(accounting);
         System.out.println(projectBeanAdd);
         projectMapper.insertProject(projectBeanAdd);
@@ -174,7 +146,6 @@ public class projectController {
         String process = json.get("process").toString();
 
         ProjectBeanAdd projectBeanAdd = new ProjectBeanAdd();
-        ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanAdd.setProjectID(projectID);
         projectBeanAdd.setAcceptuser(acceptuser);
         projectBeanAdd.setUserdataURL(userdataURL);
@@ -182,6 +153,7 @@ public class projectController {
         projectBeanAdd.setCompany(company);
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setProcess(process);
+        projectBeanAdd.setIfWork(0);
         String uuid = UUID.randomUUID().toString().replace("-","");
         projectBeanAdd.setUuid(uuid);
         Date now = new Date();
@@ -189,11 +161,6 @@ public class projectController {
         String beginTime = dateFormat.format(now);
         projectBeanAdd.setBeginTime(beginTime);
 
-
-        projectBeanDock.setUuid(uuid);
-        projectBeanDock.setProjectID(projectID);
-        projectBeanDock.setCompany(company);
-        projectBeanDock.setProcess(process);
         try {
             ProjectState projectState = new ProjectState();
             projectState.setState1("projectID"); // 根据projectID和process=0找到最开始创建的
@@ -202,37 +169,32 @@ public class projectController {
             projectState.setStateValue2("0");
             //List<ProjectBean> projectBeans = projectMapper.getProjectByProjectID(projectID);
             System.out.println(projectState);
-            List<ProjectBean> projectBeans = projectMapper.getProjectByIDAndState(projectState);
+            List<ProjectBeanAdd> projectBeans = projectMapper.getProjectByAll_allField(projectState);
             projectBeanAdd.setName(projectBeans.get(0).getName());
             projectBeanAdd.setData(projectBeans.get(0).getData());
             projectBeanAdd.setDataURL(projectBeans.get(0).getDataURL());
             projectBeanAdd.setIntroduce(projectBeans.get(0).getIntroduce());
             projectBeanAdd.setCreateuser(projectBeans.get(0).getCreateuser());
+            projectBeanAdd.setProjectManager(projectBeans.get(0).getProjectManager());
             //projectBeanAdd.setIfWork(projectBeans.get(0).getIfWork());
 
         } catch (Exception e){
             return RetResponse.makeErrRsp("项目还未创建，无法指派");
         }
 
-        try {
-            List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
-            projectBeanDock.setDataURL(projectBeanDocks.get(0).getDataURL());
-            projectBeanDock.setMount(projectBeanDocks.get(0).getMount());
-            projectBeanDock.setMoneyManager(projectBeanDocks.get(0).getMoneyManager());
-            projectBeanDock.setIntroduce(projectBeanDocks.get(0).getIntroduce());
-            projectBeanDock.setCompanyAccount(projectBeanDocks.get(0).getCompanyAccount());
-            projectBeanDock.setBeginTime(projectBeanDocks.get(0).getBeginTime());
-            projectBeanDock.setProjectManager(projectBeanDocks.get(0).getProjectManager());
-            projectBeanDock.setAccounting(projectBeanDocks.get(0).getAccounting());
-
-        } catch (Exception e){
-            return RetResponse.makeErrRsp("未项目经理对接，无法指派");
-        }
-        System.out.println(projectBeanAdd);
+        ProjectBeanDock projectBeanDock = new ProjectBeanDock();
+        projectBeanDock.setCompany(company);
+        projectBeanDock.setProcess(process);
+        projectBeanDock.setIfWork(0);
+        System.out.println(projectBeanDock);
         projectMapper.insertProject(projectBeanAdd);
-        //projectDockMapper.modifyProjectDock(projectBeanDock);
-        //projectDockMapper.updateByProjectID(projectBeanDock);
-        projectDockMapper.updateByProjectID2(projectID, process, null);
+        //int i =projectDockMapper.modifyProjectDock(projectBeanDock);
+        //System.out.println(i);
+        int i = projectDockMapper.updateByProjectID(projectBeanDock);
+        System.out.println(i);
+
+        //Object mount = null;
+        //projectDockMapper.updateByProjectID2(projectID, process, mount);
         return RetResponse.makeOKRsp("ok");
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -246,39 +208,7 @@ public class projectController {
         String secondState = type.substring(1, 2);
 
         ProjectState projectState = new ProjectState();
-        projectState.setStateValue1(value);
-        switch (firstState){
-            case "0":
-                projectState.setState1("beginTime");
-                break;
-            case "1":
-                projectState.setState1("projectID");
-                break;
-            case "2":
-                projectState.setState1("createuser");
-                break;
-            case "3":
-                projectState.setState1("acceptuser");
-                break;
-            case "4":
-                projectState.setState1("uuid");
-                break;
-        }
-        switch (secondState){
-            case "0":
-                projectState.setState2("process");
-                projectState.setStateValue2("0");
-                break;
-            case "1":
-                projectState.setState2("process");
-                projectState.setStateValue2("1");
-                break;
-            case "2":
-                projectState.setState2("process");
-                projectState.setStateValue2("2");
-                break;
-        }
-        System.out.println(projectState);
+
         Map result = new HashMap();
         result.put("url","");
         return RetResponse.makeOKRsp(result);

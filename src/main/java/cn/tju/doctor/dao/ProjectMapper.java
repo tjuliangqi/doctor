@@ -13,6 +13,7 @@ import java.util.List;
 public interface ProjectMapper {
 
     List<ProjectBean> getProjectByAll(ProjectState projectState);
+    List<ProjectBeanAdd> getProjectByAll_allField(ProjectState projectState);
     List<ProjectBean> getProjectByTimeAndState(ProjectState projectState);
     List<ProjectBean> getProjectByIDAndState(ProjectState projectState);
     List<ProjectBean> getProjectByProjectID(String projectID);
