@@ -183,18 +183,14 @@ public class projectController {
         }
 
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
-        projectBeanDock.setCompany(company);
+        projectBeanDock.setProjectID(projectID);
+        //projectBeanDock.setCompany(company);
         projectBeanDock.setProcess(process);
         projectBeanDock.setIfWork(0);
         System.out.println(projectBeanDock);
         projectMapper.insertProject(projectBeanAdd);
-        //int i =projectDockMapper.modifyProjectDock(projectBeanDock);
-        //System.out.println(i);
-        int i = projectDockMapper.updateByProjectID(projectBeanDock);
-        System.out.println(i);
+        projectDockMapper.updateByProjectID(projectBeanDock);
 
-        //Object mount = null;
-        //projectDockMapper.updateByProjectID2(projectID, process, mount);
         return RetResponse.makeOKRsp("ok");
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -252,6 +248,7 @@ public class projectController {
         List<ProjectBean> projectBeans;
         int res = projectMapper.updateProject(projectState);
         int res2 = projectDockMapper.updateProjectDock(projectState);
+        //
 
         Map result = new HashMap();
 
