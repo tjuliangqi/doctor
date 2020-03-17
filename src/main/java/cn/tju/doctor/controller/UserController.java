@@ -227,4 +227,30 @@ public class UserController {
         return RetResponse.makeOKRsp(list);
     }
 
+    @RequestMapping(value = "/getHealthy", method = RequestMethod.POST)
+    public RetResult<Map> getHealthy(@RequestBody Map<String,String> map){
+        List<User> list = userMapper.getUserByArea(map.get("local"));
+        Map<String,Object> data = new HashMap<>();
+        if (list.size()==0){
+            return RetResponse.makeErrRsp("用户不存在");
+        }else {
+            User user;
+            try{
+                user = list.get(0);
+            }catch (Exception e){
+                e.printStackTrace();
+                return RetResponse.makeErrRsp("获取用户信息出错");
+            }
+            data.put("username",user.getUsername());
+            data.put("wechatQun",user.getWechatQun());
+            data.put("active",user.getActive());
+            data.put("online",user.getOnline());
+            data.put("area",user.getArea());
+            data.put("region",user.getRegion());
+            data.put("unit",user.getUnit());
+            data.put("part",user.getPart());
+            return RetResponse.makeOKRsp(data);
+        }
+    }
+
 }
