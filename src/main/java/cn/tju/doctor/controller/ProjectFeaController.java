@@ -1,6 +1,7 @@
 package cn.tju.doctor.controller;
 
 
+import cn.tju.doctor.dao.ProjectDockMapper;
 import cn.tju.doctor.dao.ProjectManagerMapper;
 import cn.tju.doctor.dao.ProjectfundingMapper;
 import cn.tju.doctor.dao.UserMapper;
@@ -24,7 +25,7 @@ public class ProjectFeaController {
     @Autowired
     UserMapper userMapper;
     @Autowired
-    ProjectManagerMapper projectManagerMapper;
+    ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Projectfunding>> search(@RequestBody Map<String,String> map)  {
         List<Projectfunding> result = new ArrayList<>();
@@ -69,10 +70,10 @@ public class ProjectFeaController {
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Projectfunding projectfunding) {
-        ProjectManagerBean user = new ProjectManagerBean();
+        ProjectBeanDock user = new ProjectBeanDock();
         User go = new User();
         if (projectfunding.getOut() == 1){
-            List<ProjectManagerBean> list = projectManagerMapper.getProjectManagerByProjectID(projectfunding.getProjectID());
+            List<ProjectBeanDock> list = projectDockMapper.getProjectDockByProjectID(projectfunding.getProjectID());
             List<User> golist = userMapper.getUserByAuthorID(projectfunding.getGo());
             if (list.size() == 0){
                 return RetResponse.makeErrRsp("扣款账户不存在");
@@ -97,7 +98,7 @@ public class ProjectFeaController {
         user.setMount(user.getMount() - projectfunding.getMount());
         go.setMoney(go.getMoney() + projectfunding.getMount());
         try{
-            projectManagerMapper.updateProjectManager(user);
+            projectDockMapper.updateByProjectID2(user.getProjectID(),null,user.getMount());
         }catch (Exception e){
             System.out.println("扣款出错:" + e);
             projectfunding.setTest(2);
@@ -111,7 +112,7 @@ public class ProjectFeaController {
         }catch (Exception e){
             System.out.println("放款出错：" + e);
             user.setMount(user.getMount() + projectfunding.getMount());
-            projectManagerMapper.updateProjectManager(user);
+            projectDockMapper.updateByProjectID2(user.getProjectID(),null,user.getMount());
             return RetResponse.makeErrRsp("放款出错");
         }
 

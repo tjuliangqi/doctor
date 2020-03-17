@@ -16,9 +16,9 @@ import java.util.Map;
 @RequestMapping("/file")
 public class fileController {
 
-    @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public RetResult<String> upload(@RequestParam("file") MultipartFile file, @RequestBody Map<String,String> map) {
-        String username = String.valueOf(map.get("username"));
+    @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
+    public RetResult<String> upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) {
+        System.out.println(username);
         try {
             String fileName = file.getOriginalFilename();
             String destFileName = Config.UPLOAD_DIR + File.separator + username + File.separator + fileName;

@@ -213,6 +213,7 @@ public class UserController {
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
+        //调用审核未写
         int flag = userMapper.insertUser(user);
         if (flag==1){
             return RetResponse.makeOKRsp("ok");
