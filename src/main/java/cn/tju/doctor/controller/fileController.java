@@ -18,7 +18,7 @@ public class fileController {
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST, produces = "application/json;charset=utf-8")
     public RetResult<String> upload(@RequestParam("file") MultipartFile file, @RequestParam("username") String username) {
-        System.out.println(username);
+
         try {
             String fileName = file.getOriginalFilename();
             String destFileName = Config.UPLOAD_DIR + File.separator + username + File.separator + fileName;
@@ -34,6 +34,9 @@ public class fileController {
             return RetResponse.makeErrRsp("文件上传失败");
         }
     }
+
+
+
 
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     public RetResult<List<String>> list(@RequestBody Map<String,String> map) {
