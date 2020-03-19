@@ -39,7 +39,15 @@ public class User implements Serializable {
     private String modifyString;
     private String getmoneyrecord;
     private int state;
+    private String result;
 
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
 
     public User() {
     }

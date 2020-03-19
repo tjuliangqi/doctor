@@ -17,16 +17,15 @@ import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
 
 import static cn.tju.doctor.service.AskService.articlePrepara;
 import static cn.tju.doctor.service.AskService.searchList;
+import static cn.tju.doctor.utils.fileUtil.upload;
 
 @RestController
 
@@ -60,19 +59,22 @@ public class AskController {
     }
 
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public RetResult<String> upload(@RequestBody Map<String,String> map) throws JSONException {
+    //public RetResult<String> upload2(@RequestBody Map<String,Object> map) throws JSONException {
+    public RetResult<String> upload2(@RequestParam("file") MultipartFile file,
+                                     @RequestParam("title") String title,
+                                     @RequestParam("source") String source,
+                                     @RequestParam("writeTime") String writeTime,
+                                     @RequestParam("creatTime") String creatTime,
+                                     @RequestParam("sourceURL") String sourceURL,
+                                     @RequestParam("fullContent") String fullContent,
+                                     @RequestParam("videoURL") String videoURL,
+                                     @RequestParam("label") String label,
+                                     @RequestParam("part") String part,
+                                     @RequestParam("username") String username,
+                                     @RequestParam("ifVideo") Integer ifVideo) {
 
-        String title = String.valueOf(map.get("title"));
-        String source = String.valueOf(map.get("source"));
-        String writeTime = String.valueOf(map.get("writeTime"));
-        String creatTime = String.valueOf(map.get("creatTime"));
-        String sourceURL = String.valueOf(map.get("sourceURL"));
-        String fullContent = String.valueOf(map.get("fullContent"));
-        String picURL = String.valueOf(map.get("picURL"));
-        String videoURL = String.valueOf(map.get("videoURL"));
-        String label = String.valueOf(map.get("label"));
-        String part = String.valueOf(map.get("part"));
-        Integer ifVideo = Integer.valueOf(map.get("ifVideo"));
+        //String picURL = String.valueOf(map.get("picURL"));
+        String picURL = upload(file,username);
         String uuid = UUID.randomUUID().toString();
 //        JSONObject json = new JSONObject();
 //        json.put("title", title);

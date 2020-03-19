@@ -229,28 +229,26 @@ public class UserController {
     }
 
     @RequestMapping(value = "/getHealthy", method = RequestMethod.POST)
-    public RetResult<Map> getHealthy(@RequestBody Map<String,String> map){
-        List<User> list = userMapper.getUserByArea(map.get("local"));
-        Map<String,Object> data = new HashMap<>();
-        if (list.size()==0){
-            return RetResponse.makeErrRsp("用户不存在");
+    public RetResult<List> getHealthy(@RequestBody Map<String,String> map){
+        List<User> users = userMapper.getUserByArea(map.get("local"));
+        List<Map> list = new ArrayList<>();
+        if (users.size()==0){
+            return RetResponse.makeOKRsp(list);
         }else {
-            User user;
-            try{
-                user = list.get(0);
-            }catch (Exception e){
-                e.printStackTrace();
-                return RetResponse.makeErrRsp("获取用户信息出错");
+            for(User each:users){
+                Map<String,Object> data = new HashMap<>();
+                data.put("pic","https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png");
+                //data.put("username",each.getUsername());
+                data.put("wechatQun",each.getWechatQun());
+                data.put("active",each.getActive());
+                data.put("online",each.getOnline());
+                data.put("area",each.getArea());
+                data.put("region",each.getRegion());
+                data.put("unit",each.getUnit());
+                data.put("result",each.getResult());
+                list.add(data);
             }
-            data.put("username",user.getUsername());
-            data.put("wechatQun",user.getWechatQun());
-            data.put("active",user.getActive());
-            data.put("online",user.getOnline());
-            data.put("area",user.getArea());
-            data.put("region",user.getRegion());
-            data.put("unit",user.getUnit());
-            data.put("part",user.getPart());
-            return RetResponse.makeOKRsp(data);
+            return RetResponse.makeOKRsp(list);
         }
     }
 
