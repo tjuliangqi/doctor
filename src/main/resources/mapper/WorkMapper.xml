@@ -4,7 +4,7 @@
 <mapper namespace="cn.tju.doctor.dao.WorkMapper" >
 
     <select id="getWorkByIDAndState" resultType="cn.tju.doctor.daomain.Work" parameterType="cn.tju.doctor.daomain.WorkState">
-        SELECT * FROM works WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2} AND process = #{stateValue3};
+        SELECT * FROM works WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2} AND ${state3} = #{stateValue3};
     </select>
 
 <!--    <select id="getWorkByEmail" resultType="cn.tju.doctor.daomain.Work" parameterType="String">-->

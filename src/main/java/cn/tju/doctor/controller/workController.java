@@ -35,6 +35,11 @@ public class workController {
         String secondState = type.substring(1, 2);
         WorkState workState = new WorkState();
         workState.setStateValue3(valueMap.get("process").toString());
+        if(valueMap.get("process").toString().equals("a")){
+            workState.setState3("'a'");
+        }else {
+            workState.setState3("process");
+        }
         switch (firstState){
             case "0":
                 workState.setState1("publishTime");
