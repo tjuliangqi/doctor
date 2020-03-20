@@ -1,6 +1,7 @@
 package cn.tju.doctor.controller;
 
 
+import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.WorkMapper;
 import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
@@ -9,11 +10,10 @@ import cn.tju.doctor.daomain.WorkState;
 import cn.tju.doctor.utils.JsonToMapUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -84,16 +84,42 @@ public class workController {
 //        return RetResponse.makeErrRsp("查无数据");
     }
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public RetResult<String> add(@RequestBody Map json) {
-        String workID = json.get("workID").toString();
-        String name = json.get("name").toString();
-        String publishID = json.get("publishID").toString();
-        String publishName = json.get("publishName").toString();
-        String acceptID = json.get("acceptID").toString();
-        String acceptName = json.get("acceptName").toString();
-        String introduce = json.get("introduce").toString();
-        String workfile = json.get("workfile").toString();
-        String process = json.get("process").toString();
+    public RetResult<String> add(@RequestParam("file") MultipartFile file,
+                                 @RequestParam("workID") String workID,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("publishID") String publishID,
+                                 @RequestParam("publishName") String publishName,
+                                 @RequestParam("acceptID") String acceptID,
+                                 @RequestParam("acceptName") String acceptName,
+                                 @RequestParam("introduce") String introduce,
+                                 @RequestParam("process") String process) {
+//        String workID = json.get("workID").toString();
+//        String name = json.get("name").toString();
+//        String publishID = json.get("publishID").toString();
+//        String publishName = json.get("publishName").toString();
+//        String acceptID = json.get("acceptID").toString();
+//        String acceptName = json.get("acceptName").toString();
+//        String introduce = json.get("introduce").toString();
+////        String workfile = json.get("workfile").toString();
+        String workfile = null;
+//        String process = json.get("process").toString();
+        try {
+            String fileName = file.getOriginalFilename();
+            String destFileName = Config.UPLOAD_DIR + File.separator + name + File.separator + fileName;
+
+            File destFile = new File(destFileName);
+            if (!destFile.getParentFile().exists()){
+                destFile.getParentFile().mkdir();
+            }
+            file.transferTo(destFile);
+
+            workfile="http://39.96.65.14/doctorfile/upload/" + name + "/" + fileName;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return RetResponse.makeErrRsp("文件上传失败");
+        }
+
+
         Work work = new Work();
         work.setWorkID(workID);
         work.setName(name);
