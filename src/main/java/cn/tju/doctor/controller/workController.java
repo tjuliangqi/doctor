@@ -93,14 +93,7 @@ public class workController {
                                  @RequestParam("acceptName") String acceptName,
                                  @RequestParam("introduce") String introduce,
                                  @RequestParam("process") String process) {
-//        String workID = json.get("workID").toString();
-//        String name = json.get("name").toString();
-//        String publishID = json.get("publishID").toString();
-//        String publishName = json.get("publishName").toString();
-//        String acceptID = json.get("acceptID").toString();
-//        String acceptName = json.get("acceptName").toString();
-//        String introduce = json.get("introduce").toString();
-////        String workfile = json.get("workfile").toString();
+
         String workfile = null;
 //        String process = json.get("process").toString();
         try {
