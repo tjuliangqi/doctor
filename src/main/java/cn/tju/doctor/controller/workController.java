@@ -130,10 +130,27 @@ public class workController {
 //        return RetResponse.makeErrRsp("查无数据");
     }
     @RequestMapping(value = "/modify", method = RequestMethod.POST)
-    public RetResult<String> modify(@RequestBody Map json) {
-        String uuid = json.get("uuid").toString();
-        String type = json.get("type").toString();
-        String workfile = json.get("workfile").toString();
+    public RetResult<String> modify(@RequestParam("file") MultipartFile file,
+                                    @RequestParam("uuid") String uuid,
+                                    @RequestParam("type") String type,
+                                    @RequestParam("name") String name) {
+        String workfile = null;
+//        String process = json.get("process").toString();
+        try {
+            String fileName = file.getOriginalFilename();
+            String destFileName = Config.UPLOAD_DIR + File.separator + name + File.separator + fileName;
+
+            File destFile = new File(destFileName);
+            if (!destFile.getParentFile().exists()){
+                destFile.getParentFile().mkdir();
+            }
+            file.transferTo(destFile);
+
+            workfile="http://39.96.65.14/doctorfile/upload/" + name + "/" + fileName;
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+            return RetResponse.makeErrRsp("文件上传失败");
+        }
         WorkState workState = new WorkState();
         workState.setType(type);
         workState.setUuid(uuid);
