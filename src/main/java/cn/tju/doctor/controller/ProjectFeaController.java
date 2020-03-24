@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/projectFea")
@@ -117,6 +118,21 @@ public class ProjectFeaController {
         }
 
         return RetResponse.makeOKRsp("ok");
+    }
+
+    @RequestMapping(value = "/searchList", method = RequestMethod.POST)
+    public RetResult<List<Projectfunding>> searchList(@RequestBody Map<String,String> map){
+        List<Projectfunding> result = new ArrayList<>();
+        if (map.keySet().size() == 0){
+            return RetResponse.makeErrRsp("未传参数");
+        }
+        for (String key : map.keySet()){
+            if (key.equals("source")){
+                result = projectfundingMapper.getProjectfundingBySource(map.get("source"));
+                break;
+            }
+        }
+        return RetResponse.makeOKRsp(result);
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)

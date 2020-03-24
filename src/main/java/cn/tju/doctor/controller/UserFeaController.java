@@ -82,6 +82,25 @@ public class UserFeaController {
         return RetResponse.makeOKRsp("ok");
     }
 
+    @RequestMapping(value = "/searchList", method = RequestMethod.POST)
+    public RetResult<List<Userfunding>> searchList(@RequestBody Map<String,String> map){
+        List<Userfunding> result = new ArrayList<>();
+        if (map.keySet().size() == 0){
+            return RetResponse.makeErrRsp("未传参数");
+        }
+        for (String key : map.keySet()){
+            if (key.equals("source")){
+                result = userfundingMapper.getUserfundingBySource(map.get("source"));
+                break;
+            }
+            if (key.equals("authorID")){
+                result = userfundingMapper.getUserfundingByAuthorID(map.get("authorID"));
+                break;
+            }
+        }
+        return RetResponse.makeOKRsp(result);
+    }
+
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public RetResult<String> verify(@RequestBody Userfunding userfunding)  {
         //RetResult retResult = new RetResult();
