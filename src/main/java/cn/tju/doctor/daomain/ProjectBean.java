@@ -149,6 +149,8 @@ public class ProjectBean {
                 ", userType='" + userType + '\'' +
                 ", company='" + company + '\'' +
                 ", actor='" + actor + '\'' +
+                ", uuid='" + uuid + '\'' +
+                ", ifRead='" + ifRead + '\'' +
                 '}';
     }
 
@@ -168,6 +170,25 @@ public class ProjectBean {
     private String userType;
     private String company;
     private String actor;
+    private int ifRead;
+
+    public int getIfRead() {
+        return ifRead;
+    }
+
+    public void setIfRead(int ifRead) {
+        this.ifRead = ifRead;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    private String uuid;
 
 
 }

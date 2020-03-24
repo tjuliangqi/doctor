@@ -264,4 +264,19 @@ public class projectController {
         projectBeanDocks = projectDockMapper.getByCompanyAccount(companyAccount);
         return RetResponse.makeOKRsp(projectBeanDocks);
     }
+
+    @RequestMapping(value = "/workCheck", method = RequestMethod.POST)
+    public RetResult<String> workCheck(@RequestBody Map json) {
+        String uuid = json.get("uuid").toString();
+        int ifRead = (int)json.get("ifRead");
+        List<ProjectBeanDock> projectBeanDocks;
+        try {
+            projectMapper.updateProjectRead(uuid);
+            return RetResponse.makeOKRsp("ok");
+        }catch (Exception e){
+            return RetResponse.makeErrRsp("不成功");
+        }
+
+    }
+
 }
