@@ -208,6 +208,14 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/serachList", method = RequestMethod.POST)
+    public RetResult<List<User>> searchList(@RequestBody Map<String,String> map){
+        String type = map.get("type");
+        List<User> list = userMapper.getUserByType(type);
+        return RetResponse.makeOKRsp(list);
+    }
+
+
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
         user.setTest("10000");
