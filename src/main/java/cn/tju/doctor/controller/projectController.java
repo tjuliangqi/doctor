@@ -43,17 +43,12 @@ public class projectController {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
-            //删除0期
-            for (int i = 0; i < projectBeans.size(); i++) {
-                if ("d".equals(projectBeans.get(i)))
-                    projectBeans.remove(i);
-            }
 
         }else{
             projectBeans = projectMapper.getProjectByAll(projectState);
             //删除0期
             for (int i = 0; i < projectBeans.size(); i++) {
-                if ("d".equals(projectBeans.get(i)))
+                if ("0".equals(projectBeans.get(i).getProcess()))
                     projectBeans.remove(i);
             }
             // 根据 ProjectID 去重
@@ -263,12 +258,9 @@ public class projectController {
         projectState.setStateValue1(projectID);
         projectState.setState2("process");
         projectState.setStateValue2(process);
-        List<ProjectBean> projectBeans;
+
         int res = projectMapper.updateProject(projectState);
         int res2 = projectDockMapper.updateProjectDock(projectState);
-        //
-
-        Map result = new HashMap();
 
         return RetResponse.makeOKRsp("ok");
     }
@@ -287,14 +279,12 @@ public class projectController {
     public RetResult<String> workCheck(@RequestBody Map json) {
         String uuid = json.get("uuid").toString();
         int ifRead = (int)json.get("ifRead");
-        List<ProjectBeanDock> projectBeanDocks;
         try {
             projectMapper.updateProjectRead(uuid);
             return RetResponse.makeOKRsp("ok");
         }catch (Exception e){
             return RetResponse.makeErrRsp("不成功");
         }
-
     }
 
     @RequestMapping(value = "/finishAll", method = RequestMethod.POST)
@@ -304,16 +294,12 @@ public class projectController {
         ProjectState projectState = new ProjectState();
         projectState.setState1("projectID");
         projectState.setStateValue1(projectID);
-        List<ProjectBean> projectBeans;
         List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
         if(projectBeanDocks.get(0).getProcess() != "0" && projectBeanDocks.get(0).getIfWork() == 0){
-            return RetResponse.makeErrRsp("上一期还未完成，无法指派");
+            return RetResponse.makeErrRsp("最后一期还未完成，无法完成整个项目");
         }
         int res = projectMapper.updateProject2(projectState);
         int res2 = projectDockMapper.updateProjectDock2(projectState);
-        //
-
-        Map result = new HashMap();
 
         return RetResponse.makeOKRsp("ok");
     }
