@@ -296,4 +296,22 @@ public class UserController {
         return RetResponse.makeOKRsp(res);
     }
 
+    @RequestMapping(value = "/serachList3", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList3(@RequestBody Map<String,String> map){
+        String gong_username = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> gong_list = userMapper.getUserByUsername(gong_username);
+            String company = gong_list.get(0).getCompany();
+            List<User> guan_list = userMapper.getUserByCompany(company,"7");
+            for(User user:guan_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的管理人员");
+        }
+
+        return RetResponse.makeOKRsp(res);
+    }
+
 }
