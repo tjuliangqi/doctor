@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -213,6 +214,23 @@ public class UserController {
         String type = map.get("type");
         List<User> list = userMapper.getUserByType(type);
         return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/selectByName", method = RequestMethod.POST)
+    public RetResult<List<Map<String,String>>> selectByName(@RequestBody Map<String,String> map){
+        String company = map.get("text");
+        List<String> list = userMapper.selectByName(company);
+        List<Map<String,String>> result = new ArrayList<>();
+        List<String> newList = list.stream().distinct().collect(Collectors.toList());
+        for(int i =0; i<newList.size();i++){
+            if (i==10){
+                return RetResponse.makeOKRsp(result);
+            }
+            Map<String,String> map1 = new HashMap<>();
+            map1.put("value",newList.get(i));
+            result.add(map1);
+        }
+        return RetResponse.makeOKRsp(result);
     }
 
 
