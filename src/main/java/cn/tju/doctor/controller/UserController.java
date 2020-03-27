@@ -260,4 +260,22 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/serachList2", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList2(@RequestBody Map<String,String> map){
+        String guan_username = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> guan_list = userMapper.getUserByUsername(guan_username);
+            String company = guan_list.get(0).getCompany();
+            List<User> pu_list = userMapper.getUserByCompany(company,"0");
+            for(User user:pu_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的指派用户");
+        }
+
+        return RetResponse.makeOKRsp(res);
+    }
+
 }

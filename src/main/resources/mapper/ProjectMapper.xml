@@ -46,6 +46,11 @@
         UPDATE projects SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
     </update>
 
+    <update id="updateProject2" parameterType="cn.tju.doctor.daomain.ProjectState">
+        UPDATE projects SET label="1" WHERE ${state1} = #{stateValue1};
+    </update>
+
+
     <update id="updateProjectRead" parameterType="String">
         UPDATE projects SET ifRead="1" WHERE uuid = #{uuid};
     </update>

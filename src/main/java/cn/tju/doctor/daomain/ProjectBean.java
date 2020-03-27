@@ -171,6 +171,16 @@ public class ProjectBean {
     private String company;
     private String actor;
     private int ifRead;
+    private int label;
+    public int getLabel() {
+        return label;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
+    }
+
+
 
     public int getIfRead() {
         return ifRead;

@@ -43,10 +43,22 @@ public class projectController {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
+            //删除0期
+            for (int i = 0; i < projectBeans.size(); i++) {
+                if ("d".equals(projectBeans.get(i)))
+                    projectBeans.remove(i);
+            }
+
         }else{
             projectBeans = projectMapper.getProjectByAll(projectState);
+            //删除0期
+            for (int i = 0; i < projectBeans.size(); i++) {
+                if ("d".equals(projectBeans.get(i)))
+                    projectBeans.remove(i);
+            }
             // 根据 ProjectID 去重
             if(type.equals("0b") || type.equals("2b") || type.equals("3b") || type.equals("5b")){
+                Collections.reverse(projectBeans); // 先反向排序
                 List<ProjectBean> unique = projectBeans.stream().collect(
                         Collectors.collectingAndThen(
                                 Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ProjectBean::getProjectID))), ArrayList::new)
@@ -62,6 +74,7 @@ public class projectController {
                 );
                 //unique.forEach(p -> System.out.println(p));
                 projectBeans = unique;
+
             }
         }
         return RetResponse.makeOKRsp(projectBeans);
@@ -81,7 +94,7 @@ public class projectController {
         String company = json.get("company").toString();
         String actor = json.get("actor").toString();
         String userType = json.get("userType").toString();
-        double mount = (double)json.get("mount");
+        double mount = Double.valueOf(json.get("mount").toString());
         String projectManager = json.get("projectManager").toString();
         String companyAccount = json.get("companyAccount").toString();
         String moneyManager = json.get("moneyManager").toString();
@@ -181,7 +194,12 @@ public class projectController {
         } catch (Exception e){
             return RetResponse.makeErrRsp("项目还未创建，无法指派");
         }
-
+        List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
+        System.out.println(projectBeanDocks.get(0).getProcess());
+        System.out.println(projectBeanDocks.get(0).getIfWork());
+        if(!"0".equals(projectBeanDocks.get(0).getProcess())  && projectBeanDocks.get(0).getIfWork() == 0){
+            return RetResponse.makeErrRsp("上一期还未完成，无法指派");
+        }
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanDock.setProjectID(projectID);
         //projectBeanDock.setCompany(company);
@@ -277,6 +295,27 @@ public class projectController {
             return RetResponse.makeErrRsp("不成功");
         }
 
+    }
+
+    @RequestMapping(value = "/finishAll", method = RequestMethod.POST)
+    public RetResult<String> finishAll(@RequestBody Map json) {
+
+        String projectID = json.get("projectID").toString();
+        ProjectState projectState = new ProjectState();
+        projectState.setState1("projectID");
+        projectState.setStateValue1(projectID);
+        List<ProjectBean> projectBeans;
+        List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
+        if(projectBeanDocks.get(0).getProcess() != "0" && projectBeanDocks.get(0).getIfWork() == 0){
+            return RetResponse.makeErrRsp("上一期还未完成，无法指派");
+        }
+        int res = projectMapper.updateProject2(projectState);
+        int res2 = projectDockMapper.updateProjectDock2(projectState);
+        //
+
+        Map result = new HashMap();
+
+        return RetResponse.makeOKRsp("ok");
     }
 
 }

@@ -21,6 +21,7 @@ public interface ProjectMapper {
     int insertProject(ProjectBeanAdd projectBeanAdd);
     int modifyProject(ProjectBeanAdd projectBeanAdd);
     int updateProject(ProjectState projectState);
+    int updateProject2(ProjectState projectState);
 
     int updateProjectRead(String uuid);
 }
