@@ -20,8 +20,8 @@
 <!--    </select>-->
 
     <insert id="insertWork" parameterType="cn.tju.doctor.daomain.Work">
-        INSERT INTO works (uuid, workID, name, publishID, publishName, acceptID, acceptName, introduce, workfile, process)
-        VALUES  (#{uuid}, #{workID}, #{name}, #{publishID}, #{publishName}, #{acceptID}, #{acceptName}, #{introduce}, #{workfile}, #{process})
+        INSERT INTO works (uuid, workID, name, publishID, publishName, acceptID, acceptName, introduce, workfile, process, publishTime)
+        VALUES  (#{uuid}, #{workID}, #{name}, #{publishID}, #{publishName}, #{acceptID}, #{acceptName}, #{introduce}, #{workfile}, #{process}, #{publishTime})
     </insert>
 
 <!--    <delete id="deleteWorkById" parameterType="java.lang.Integer">-->

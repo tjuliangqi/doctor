@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @RestController
@@ -56,6 +57,10 @@ public class workController {
             case "3":
                 workState.setState1("acceptID");
                 workState.setStateValue1(valueMap.get("acceptID").toString());
+                break;
+            case "4":
+                workState.setState1("acceptName");
+                workState.setStateValue1(valueMap.get("acceptName").toString());
                 break;
         }
         switch (secondState){
@@ -112,8 +117,12 @@ public class workController {
             return RetResponse.makeErrRsp("文件上传失败");
         }
 
+        Date date = new Date();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String s = simpleDateFormat.format(date);
 
         Work work = new Work();
+        work.setPublishTime(s);
         work.setWorkID(workID);
         work.setName(name);
         work.setPublishID(publishID);
