@@ -138,7 +138,7 @@ public class AskService {
 
             Set result1 = new HashSet(labelList);
             Set result2 = new HashSet(partList);
-            String[] result3 = new String[]{writeTimeList.get(0), writeTimeList.get(writeTimeList.size()-1)};
+            String[] result3 = new String[]{writeTimeList.get(writeTimeList.size()-1), writeTimeList.get(0)};
 
             if (result1.size()>10) {
                 List <String> list = new ArrayList<String>(result1);

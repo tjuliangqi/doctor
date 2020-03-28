@@ -55,4 +55,8 @@
     <update id="updateProjectDock" parameterType="cn.tju.doctor.daomain.ProjectState">
         UPDATE projectDock SET ifWork="1", endtime=NOW() WHERE ${state1} = #{stateValue1} AND ${state2} = #{stateValue2};
     </update>
+
+    <update id="updateProjectDock2" parameterType="cn.tju.doctor.daomain.ProjectState">
+        UPDATE projectDock SET label=1 WHERE ${state1} = #{stateValue1};
+    </update>
 </mapper>

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -208,6 +209,31 @@ public class UserController {
 
     }
 
+    @RequestMapping(value = "/serachList", method = RequestMethod.POST)
+    public RetResult<List<User>> searchList(@RequestBody Map<String,String> map){
+        String type = map.get("type");
+        List<User> list = userMapper.getUserByType(type);
+        return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/selectByName", method = RequestMethod.POST)
+    public RetResult<List<Map<String,String>>> selectByName(@RequestBody Map<String,String> map){
+        String company = map.get("text");
+        List<String> list = userMapper.selectByName(company);
+        List<Map<String,String>> result = new ArrayList<>();
+        List<String> newList = list.stream().distinct().collect(Collectors.toList());
+        for(int i =0; i<newList.size();i++){
+            if (i==10){
+                return RetResponse.makeOKRsp(result);
+            }
+            Map<String,String> map1 = new HashMap<>();
+            map1.put("value",newList.get(i));
+            result.add(map1);
+        }
+        return RetResponse.makeOKRsp(result);
+    }
+
+
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
         user.setTest("10000");
@@ -250,6 +276,42 @@ public class UserController {
             }
             return RetResponse.makeOKRsp(list);
         }
+    }
+
+    @RequestMapping(value = "/serachList2", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList2(@RequestBody Map<String,String> map){
+        String guan_username = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> guan_list = userMapper.getUserByUsername(guan_username);
+            String company = guan_list.get(0).getCompany();
+            List<User> pu_list = userMapper.getUserByCompany(company,"0");
+            for(User user:pu_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的指派用户");
+        }
+
+        return RetResponse.makeOKRsp(res);
+    }
+
+    @RequestMapping(value = "/serachList3", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList3(@RequestBody Map<String,String> map){
+        String gong_username = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> gong_list = userMapper.getUserByUsername(gong_username);
+            String company = gong_list.get(0).getCompany();
+            List<User> guan_list = userMapper.getUserByCompany(company,"7");
+            for(User user:guan_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的管理人员");
+        }
+
+        return RetResponse.makeOKRsp(res);
     }
 
 }
