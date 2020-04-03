@@ -88,10 +88,10 @@ public class DoctorApplicationTests {
 
         //测试查询
         System.out.println("查询：");
-        System.out.println(projectfundingMapper.getProjectfundingByNumber("6000000789359373202002242102769").getApplyID());
+        System.out.println(projectfundingMapper.getProjectfundingByNumber("6000000789359373202002242102769").get(0).getApplyID());
         //测试更新
         System.out.println("更新：");
-        Projectfunding update = projectfundingMapper.getProjectfundingByNumber("6000000789359373202002242102769");
+        Projectfunding update = projectfundingMapper.getProjectfundingByNumber("6000000789359373202002242102769").get(0);
         update.setIfWork(1);
         System.out.println(projectfundingMapper.updateProjectfundingWork(update));
     }
