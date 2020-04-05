@@ -117,7 +117,7 @@ public class UserFeaController {
         String number = map.get("number");
         String testResult = map.get("testResult");
         Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
-        List<User> userList = userMapper.getUserByAuthorID(userfunding.getApplyID());
+        List<User> userList = userMapper.getUserByAuthorID(userfunding.getAuthorID());
         User user = userList.get(0);
         if (testResult == "2"){
             userfunding.setTest(2);
