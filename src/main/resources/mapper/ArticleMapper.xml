@@ -9,8 +9,22 @@
         VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fullContent}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{likes}, #{views}, #{download}, #{berecord})
     </insert>
 
+    <select id="selectArticle" resultType="cn.tju.doctor.daomain.ArticleBean" parameterType="String">
+        SELECT * FROM article WHERE uuid = #{uuid} ;
+    </select>
+
     <select id="selectSumByDate" parameterType="String">
         SELECT * FROM base WHERE date = #{date} ;
     </select>
+
+    <update id="updateByuuid" parameterType="String">
+        UPDATE article
+        <set>
+            <if test="type == 1">download=download+1,</if>
+            <if test="type == 2">likes=likes+1,</if>
+            <if test="type == 4">views=views+1,</if>
+        </set>
+        WHERE uuid = #{uuid};
+    </update>
 
 </mapper>

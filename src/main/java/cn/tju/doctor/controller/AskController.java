@@ -249,6 +249,7 @@ public class AskController {
         Base base = (Base) list.get(0);
         base.getLike();
         /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
+        articleMapper.updateByuuid(uuid, type);
 
         /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/
         return RetResponse.makeOKRsp("ok");
