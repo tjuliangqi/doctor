@@ -70,6 +70,10 @@
             <if test="user.type != null">type=#{user.type},</if>
             <if test="user.money != null">money=#{user.money},</if>
             <if test="user.test != null">test=#{user.test},</if>
+            <if test="user.articleIncome != null">articleIncome=#{user.articleIncome},</if>
+            <if test="user.projectIncome != null">projectIncome=#{user.projectIncome},</if>
+            <if test="user.trainingIncome != null">trainingIncome=#{user.trainingIncome},</if>
+            <if test="user.healthIncome != null">healthIncome=#{user.healthIncome},</if>
         </set>
         WHERE authorID=#{user.authorID}
     </update>

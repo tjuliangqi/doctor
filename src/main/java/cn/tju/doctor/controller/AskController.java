@@ -247,7 +247,7 @@ public class AskController {
         DateUtil.update(dataMapper,Integer.valueOf(type),"2000-01-01");
         List list = baseMapper.getBaseList();
         Base base = (Base) list.get(0);
-        base.getLike();
+        double money = base.getLike();
         /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
 
         /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/

@@ -22,6 +22,15 @@ public class Projectfunding {
     private String applyTime;
     private String testRecord;
     private String workRecord;
+    private int type;
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     public String getNumber() {
         return number;

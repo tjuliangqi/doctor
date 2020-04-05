@@ -178,6 +178,13 @@ public class ProjectFeaController {
     public RetResult<String> add(@RequestBody Projectfunding projectfunding) {
         ProjectBeanDock projectBeanDock;
         User user;
+        switch (projectfunding.getType()){
+            case 1:projectfunding.setProjectID("c42b26cb8dc544ad8b1cc034df6fc09e");break;
+            case 2:break;
+            case 3:projectfunding.setProjectID("c42b26cb8dc544ad8b1cc034df6fc09e");break;
+            case 4:projectfunding.setProjectID("c42b26cb8dc544ad8b1cc034df6fc09e");break;
+            default:return RetResponse.makeErrRsp("type错误");
+        }
         if (projectfunding.getOut() != 1){
             return RetResponse.makeErrRsp("未设置标志位");
         }
@@ -205,7 +212,7 @@ public class ProjectFeaController {
             return RetResponse.makeErrRsp("交易流水出错");
         }
         try{
-            projectFeaServer.add(projectBeanDock,user,projectfunding.getMount(),true);
+            projectFeaServer.add(projectBeanDock,user,projectfunding,true);
         }catch (Exception e){
             System.out.println("扣款出错:" + e);
             projectfunding.setTest(0);
@@ -247,6 +254,7 @@ public class ProjectFeaController {
         projectfunding1.setGo(userID);
         projectfunding1.setIfWork(1);
         projectfunding1.setTest(1);
+        projectfunding1.setType(projectfunding.getType());
         projectfunding1.setRecord("撤销操作");
         try{
             projectfundingMapper.insertProjectfunding(projectfunding1);
@@ -255,7 +263,7 @@ public class ProjectFeaController {
             return RetResponse.makeErrRsp("插入projectfunding出错");
         }
         try{
-            projectFeaServer.add(projectBeanDock,user,projectfunding.getMount(),false);
+            projectFeaServer.add(projectBeanDock,user,projectfunding,false);
         }catch (Exception e){
             System.out.println("撤销出错:" + e);
             projectfunding.setTest(1);

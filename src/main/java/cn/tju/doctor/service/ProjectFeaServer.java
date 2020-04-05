@@ -24,13 +24,26 @@ public class ProjectFeaServer {
     ProjectDockMapper projectDockMapper;
 
     @Transactional(rollbackFor = Exception.class)
-    public void add(ProjectBeanDock projectBeanDock, User user, double money, boolean flag) throws Exception {
+    public void add(ProjectBeanDock projectBeanDock, User user, Projectfunding projectfunding, boolean flag) throws Exception {
+        double money = projectfunding.getMount();
         if (flag){
             projectBeanDock.setMount(projectBeanDock.getMount() - money);
             user.setMoney(user.getMoney() + money);
+            switch (projectfunding.getType()){
+                case 1:user.setArticleIncome(user.getArticleIncome()+money);break;
+                case 2:user.setProjectIncome(user.getProjectIncome()+money);break;
+                case 3:user.setTrainingIncome(user.getTrainingIncome()+money);break;
+                case 4:user.setHealthIncome(user.getHealthIncome()+money);break;
+            }
         }else {
             projectBeanDock.setMount(projectBeanDock.getMount() + money);
             user.setMoney(user.getMoney() - money);
+            switch (projectfunding.getType()){
+                case 1:user.setArticleIncome(user.getArticleIncome()-money);break;
+                case 2:user.setProjectIncome(user.getProjectIncome()-money);break;
+                case 3:user.setTrainingIncome(user.getTrainingIncome()-money);break;
+                case 4:user.setHealthIncome(user.getHealthIncome()-money);break;
+            }
         }
 
         try {

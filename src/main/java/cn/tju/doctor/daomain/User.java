@@ -40,19 +40,16 @@ public class User implements Serializable {
     private String getmoneyrecord;
     private int state;
     private String result;
+    private double articleIncome;
+    private double projectIncome;
+    private double trainingIncome;
+    private double healthIncome;
 
-    public String getResult() {
-        return result;
+    public User(){
+
     }
 
-    public void setResult(String result) {
-        this.result = result;
-    }
-
-    public User() {
-    }
-
-    public User(String username, String authorID, String area, String region, String unit, String part, String wechatQun, int active, int online, int article, String test, String name, String actureID, int ifDoc, String docID, String phone, String address, String bankID, Double money, int vaild, String company, String type, String like, String download, String record, String view, String token, String email, String password, String docIDurl, int modify, int getMoney, String modifyString, String getmoneyrecord, int state) {
+    public User(String username, String authorID, String area, String region, String unit, String part, String wechatQun, int active, int online, int article, String test, String name, String actureID, int ifDoc, String docID, String phone, String address, String bankID, Double money, int vaild, String company, String type, String like, String download, String record, String view, String token, String email, String password, String docIDurl, int modify, int getMoney, String modifyString, String getmoneyrecord, int state, String result, double articleIncome, double projectIncome, double trainingIncome, double healthIncome) {
         this.username = username;
         this.authorID = authorID;
         this.area = area;
@@ -88,6 +85,11 @@ public class User implements Serializable {
         this.modifyString = modifyString;
         this.getmoneyrecord = getmoneyrecord;
         this.state = state;
+        this.result = result;
+        this.articleIncome = articleIncome;
+        this.projectIncome = projectIncome;
+        this.trainingIncome = trainingIncome;
+        this.healthIncome = healthIncome;
     }
 
     public String getUsername() {
@@ -368,5 +370,45 @@ public class User implements Serializable {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    public String getResult() {
+        return result;
+    }
+
+    public void setResult(String result) {
+        this.result = result;
+    }
+
+    public double getArticleIncome() {
+        return articleIncome;
+    }
+
+    public void setArticleIncome(double articleIncome) {
+        this.articleIncome = articleIncome;
+    }
+
+    public double getProjectIncome() {
+        return projectIncome;
+    }
+
+    public void setProjectIncome(double projectIncome) {
+        this.projectIncome = projectIncome;
+    }
+
+    public double getTrainingIncome() {
+        return trainingIncome;
+    }
+
+    public void setTrainingIncome(double trainingIncome) {
+        this.trainingIncome = trainingIncome;
+    }
+
+    public double getHealthIncome() {
+        return healthIncome;
+    }
+
+    public void setHealthIncome(double healthIncome) {
+        this.healthIncome = healthIncome;
     }
 }
