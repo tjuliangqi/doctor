@@ -7,17 +7,22 @@ import cn.tju.doctor.daomain.RetResult;
 import cn.tju.doctor.daomain.User;
 import cn.tju.doctor.daomain.Userfunding;
 import cn.tju.doctor.utils.numberUtils;
+import org.apache.tomcat.jni.Thread;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import yzhpay.sdk.constant.ConfigPath;
+import yzhpay.sdk.pay.order.BankCardOrder;
+import yzhpay.sdk.pay.verify.FourFactorVerify;
+import yzhpay.sdk.util.HttpUtil;
+import yzhpay.sdk.util.Property;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static cn.tju.doctor.service.AskService.searchList;
 
@@ -33,18 +38,30 @@ public class UserFeaController {
         //RetResult retResult = new RetResult();
         //这里扣钱变成云账户提现
         User user = new User();
-        User go = new User();
+        List<User> list = userMapper.getUserByAuthorID(userfunding.getApplyID());
+        if (list.size() == 0){
+            return RetResponse.makeErrRsp("扣款账户不存在");
+        }
+        user = list.get(0);
         if (userfunding.getOut() == 1){
-            List<User> list = userMapper.getUserByAuthorID(userfunding.getApplyID());
-            List<User> golist = userMapper.getUserByAuthorID(userfunding.getGo());
-            if (list.size() == 0){
-                return RetResponse.makeErrRsp("扣款账户不存在");
+
+            FourFactorVerify fourFactorVerify = new FourFactorVerify();
+            fourFactorVerify.setRealName(user.getName());
+            fourFactorVerify.setIdNumber(user.getActureID());
+            fourFactorVerify.setCardNumber(user.getBankID());
+            fourFactorVerify.setPhoneNumber(user.getPhone());
+            Map<String, Object> result = null;
+            try {
+                result = HttpUtil.post(fourFactorVerify.assembleRequest(), Property.getUrl(ConfigPath.YZH_FOUR_FACTOR_BANK_CARD_VERIFY));
+            } catch (Exception e) {
+                return RetResponse.makeErrRsp("验证失败");
             }
-            if (golist.size() == 0){
+            String code = (String) result.get("code");
+            if (code != "0000"){
                 return RetResponse.makeErrRsp("目标账户不存在");
             }
-            user = list.get(0);
-            go = golist.get(0);
+
+            userfunding.setGo(user.getBankID());
             if (user.getMoney() < userfunding.getMount()){
                 return RetResponse.makeErrRsp("账户余额不足");
             }
@@ -58,25 +75,18 @@ public class UserFeaController {
             return RetResponse.makeErrRsp("交易流水出错");
         }
         user.setMoney(user.getMoney() - userfunding.getMount());
-        go.setMoney(go.getMoney() + userfunding.getMount());
         try{
             userMapper.updateUser(user);
         }catch (Exception e){
 
             System.out.println("扣款出错:" + e);
             userfunding.setTest(2);
+            userfunding.setTestRecord("扣款失败");
+            userfunding.setTestuser("admin");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            userfunding.setTesttime(df.format(new Date()));
             userfundingMapper.updateUserfundingTest(userfunding);
-            userfunding.setIfWork(2);
-            userfundingMapper.updateUserfundingWork(userfunding);
             return RetResponse.makeErrRsp("扣款出错");
-        }
-        try{
-            userMapper.updateUser(go);
-        }catch (Exception e){
-            System.out.println("放款出错：" + e);
-            user.setMoney(user.getMoney() + userfunding.getMount());
-            userMapper.updateUser(user);
-            return RetResponse.makeErrRsp("放款出错");
         }
 
         return RetResponse.makeOKRsp("ok");
@@ -102,23 +112,134 @@ public class UserFeaController {
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public RetResult<String> verify(@RequestBody Userfunding userfunding)  {
+    public RetResult<String> verify(Map<String,String> map)  {
         //RetResult retResult = new RetResult();
-        userfundingMapper.updateUserfundingTest(userfunding);
-        return RetResponse.makeOKRsp("ok");
+        String number = map.get("number");
+        String testResult = map.get("testResult");
+        Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
+        List<User> userList = userMapper.getUserByAuthorID(userfunding.getApplyID());
+        User user = userList.get(0);
+        if (testResult == "2"){
+            userfunding.setTest(2);
+            userfunding.setTestRecord("error");
+            userfunding.setTestuser("admin");
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            userfunding.setTesttime(df.format(new Date()));
+            userfundingMapper.updateUserfundingTest(userfunding);
+            user.setMoney(user.getMoney()+userfunding.getMount());
+            userMapper.updateUser(user);
+            return RetResponse.makeOKRsp("ok");
+        }
+        if (testResult.equals("1")){
+
+
+            FourFactorVerify fourFactorVerify = new FourFactorVerify();
+            fourFactorVerify.setRealName(user.getName());
+            fourFactorVerify.setIdNumber(user.getActureID());
+            fourFactorVerify.setCardNumber(user.getBankID());
+            fourFactorVerify.setPhoneNumber(user.getPhone());
+            Map<String, Object> result = null;
+            try {
+                result = HttpUtil.post(fourFactorVerify.assembleRequest(), Property.getUrl(ConfigPath.YZH_FOUR_FACTOR_BANK_CARD_VERIFY));
+            } catch (Exception e) {
+                return RetResponse.makeErrRsp("验证失败");
+            }
+            String code = (String) result.get("code");
+            if (code != "0000"){
+                userfunding.setTest(2);
+                userfunding.setTestRecord("目标账户不存在");
+                userfunding.setTestuser("admin");
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                userfunding.setTesttime(df.format(new Date()));
+                userfundingMapper.updateUserfundingTest(userfunding);
+                user.setMoney(user.getMoney()+userfunding.getMount());
+                userMapper.updateUser(user);
+                return RetResponse.makeErrRsp("目标账户不存在");
+            }else {
+                userfunding.setTest(1);
+                userfunding.setTestRecord("ok");
+                userfunding.setTestuser("admin");
+                SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                userfunding.setTesttime(df.format(new Date()));
+                userfundingMapper.updateUserfundingTest(userfunding);
+                BankCardOrder bankOrder = new BankCardOrder();
+                bankOrder.setRealName(user.getName());
+                bankOrder.setCardNumber(user.getBankID());
+                bankOrder.setPhoneNumber(user.getPhone());
+                bankOrder.setIdNumber(user.getActureID());
+                bankOrder.setPayMoney(String.valueOf(userfunding.getMount()));
+                bankOrder.setPayRemark("提现");
+                try {
+                    Map<String, Object> payResult = HttpUtil.post(bankOrder.assembleRequest(), Property.getUrl(ConfigPath.YZH_BANK_CARD_REAL_TIME_ORDER));
+                    String paycode = (String) payResult.get("code");
+                    if (paycode == "0000") {
+                        userfunding.setIfWork(1);
+                        userfunding.setWorkRecord("ok");
+                        userfunding.setWorkUser("no");
+                        userfunding.setWorkTime(df.format(new Date()));
+                        userfundingMapper.updateUserfundingWork(userfunding);
+                        return RetResponse.makeOKRsp("ok");
+                    } else {
+                        userfunding.setIfWork(2);
+                        userfunding.setWorkRecord("网络错误");
+                        userfunding.setWorkUser("no");
+                        userfunding.setWorkTime(df.format(new Date()));
+                        userfundingMapper.updateUserfundingWork(userfunding);
+                        user.setMoney(user.getMoney() + userfunding.getMount());
+                        userMapper.updateUser(user);
+                        return RetResponse.makeErrRsp("提现失败");
+                    }
+                } catch (Exception e) {
+                    userfunding.setIfWork(2);
+                    userfunding.setWorkRecord("网络错误");
+                    userfunding.setWorkUser("no");
+                    userfunding.setWorkTime(df.format(new Date()));
+                    userfundingMapper.updateUserfundingWork(userfunding);
+                    user.setMoney(user.getMoney() + userfunding.getMount());
+                    userMapper.updateUser(user);
+                    return RetResponse.makeErrRsp("提现失败，网络错误");
+                }
+            }
+        }else {
+            return RetResponse.makeErrRsp("参数错误");
+        }
     }
 
-    @RequestMapping(value = "/work", method = RequestMethod.POST)
-    public RetResult<String> work(@RequestBody Userfunding userfunding)  {
-        //RetResult retResult = new RetResult();
-        userfundingMapper.updateUserfundingWork(userfunding);
-        return RetResponse.makeOKRsp("ok");
-    }
+//    @RequestMapping(value = "/work", method = RequestMethod.POST)
+//    public RetResult<String> work(@RequestBody Userfunding userfunding)  {
+//        //RetResult retResult = new RetResult();
+//        userfundingMapper.updateUserfundingWork(userfunding);
+//        return RetResponse.makeOKRsp("ok");
+//    }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> search(@RequestBody Map<String,String> map)  {
         List<Userfunding> result = new ArrayList<>();
         String type = map.get("type");
+        if (type.length() == 2){
+            String typea = type.substring(0,1);
+            String typeb = type.substring(1,2);
+            if (typea.equals("a")){
+                switch (typeb){
+                    case "0" : result = userfundingMapper.getUserfundingByTest(0);break;
+                    case "1" : result = userfundingMapper.getUserfundingByTest(1);break;
+                    case "2" : result = userfundingMapper.getUserfundingByTest(2);break;
+                    default:return RetResponse.makeErrRsp("参数错误");
+                }
+                return RetResponse.makeOKRsp(result);
+            }else if (typea.equals("b")){
+                switch (typeb){
+                    case "0" : result = userfundingMapper.getUserfundingByIfWork(0);break;
+                    case "1" : result = userfundingMapper.getUserfundingByIfWork(1);break;
+                    case "2" : result = userfundingMapper.getUserfundingByIfWork(2);break;
+                    default:return RetResponse.makeErrRsp("参数错误");
+                }
+                return RetResponse.makeOKRsp(result);
+            }else {
+                return RetResponse.makeErrRsp("参数错误");
+            }
+
+        }
         String value = map.get("value");
         String token = map.get("token");
         int usertype = 0;

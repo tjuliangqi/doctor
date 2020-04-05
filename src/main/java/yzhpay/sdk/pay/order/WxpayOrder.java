@@ -14,14 +14,14 @@ public class WxpayOrder extends BasePay<WxpayOrderRequest> {
                 .order_id(OrderUtil.getOrderId(OrderPrefixEnum.BANK_CARD_ORDER.getValue()))
                 .dealer_id(Property.getProperties(ConfigPath.YZH_DEALERID))
                 .broker_id(Property.getProperties(ConfigPath.YZH_BROKERID))
-                .real_name("张三")
-                .id_card("5326123123123211")
+                .real_name("梁祺")
+                .id_card("140729199412060070")
                 .openid("wxpayOrder")
                 .pay("100000.00")
                 .notes("备注")
                 .pay_remark("测试数据")
                 .notify_url("https://www.baidu.com")
-                .wx_app_id("")
+                .wx_app_id("qq296301852")
                 .wxpay_mode("wxpayOrder")
                 .build();
     }

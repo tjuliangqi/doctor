@@ -17,13 +17,13 @@ public class AlipayOrder extends BasePay<AlipayOrderRequest> {
                 .order_id(OrderUtil.getOrderId(OrderPrefixEnum.BANK_CARD_ORDER.getValue()))
                 .dealer_id(Property.getProperties(ConfigPath.YZH_DEALERID))
                 .broker_id(Property.getProperties(ConfigPath.YZH_BROKERID))
-                .real_name("张三")
-                .card_no("6228880199872220")
-                .id_card("5326123123123211")
-                .pay("100000.00")
+                .real_name("梁祺")
+                .card_no("13835427123")
+                .id_card("140729199412060070")
+                .pay("1.00")
                 .pay_remark("测试数据")
                 .check_name(CheckNameEnum.NOCHECK.getValue())
-                .notify_url("https://www.baidu.com")
+//                .notify_url("https://www.baidu.com")
                 .build();
     }
 }

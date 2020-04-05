@@ -8,7 +8,7 @@ public class OrderQuery extends BasePay<OrderQueryRequest> {
 
     public OrderQueryRequest assembleParam() {
         return OrderQueryRequest.builder()
-                .order_id("1234123412341234")
+                .order_id("384035607703241283")
                 .channel(ChannelEnum.BANKCARD.getValue())
                 .data_type("encryption")
                 .build();

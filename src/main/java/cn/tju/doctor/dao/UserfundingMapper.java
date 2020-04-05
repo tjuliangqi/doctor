@@ -10,6 +10,10 @@ import java.util.List;
 public interface UserfundingMapper {
     @Select("SELECT * FROM `userfunding` WHERE `number` = #{number}")
     Userfunding getUserfundingByNumber(@Param("number") String number);
+    @Select("SELECT * FROM `userfunding` WHERE `test` = #{test}")
+    List<Userfunding> getUserfundingByTest(@Param("test") int test);
+    @Select("SELECT * FROM `userfunding` WHERE `ifWork` = #{ifWork}")
+    List<Userfunding> getUserfundingByIfWork(@Param("ifWork") int ifWork);
     @Select("SELECT * FROM `userfunding` WHERE `authorID` = #{authorID}")
     List<Userfunding> getUserfundingByAuthorID(String authorID);
     @Select("SELECT * FROM `userfunding` WHERE `source` = #{source}")

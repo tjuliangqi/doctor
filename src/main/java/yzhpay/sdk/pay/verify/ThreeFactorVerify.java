@@ -6,9 +6,9 @@ import yzhpay.sdk.pay.BasePay;
 public class ThreeFactorVerify extends BasePay<ThreeFactorVerifyRequest> {
     public ThreeFactorVerifyRequest assembleParam() {
         return ThreeFactorVerifyRequest.builder()
-                .real_name("张三")
-                .id_card("2341242341234124")
-                .card_no("9037258375085093")
+                .real_name("梁祺")
+                .id_card("140729199412060070")
+                .card_no("6227000267060459672")
                 .build();
     }
 }

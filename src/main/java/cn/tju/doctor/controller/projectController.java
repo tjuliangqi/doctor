@@ -25,6 +25,9 @@ public class projectController {
     ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
+        // 2b+公司用户id，查公司有哪些项目
+        // 1b+项目id，查项目有哪些期数
+        // 11+项目id，查这个项目的第一期
         System.out.println("查询组合："+map.get("type").toString());
         System.out.println("查询值："+map.get("value").toString());
 
@@ -225,27 +228,52 @@ public class projectController {
     }
 
     @RequestMapping(value = "/lookUser", method = RequestMethod.POST)
-    public RetResult<Map> lookUser(@RequestBody Map json) {
+    public RetResult<List> lookUser(@RequestBody Map json) {
 
         String projectID = json.get("projectID").toString();
-        String process = json.get("process").toString();
-        ProjectState projectState = new ProjectState();
-        projectState.setState1("projectID");
-        projectState.setStateValue1(projectID);
-        projectState.setState2("process");
-        projectState.setStateValue2(process);
+
         List<ProjectBean> projectBeans;
-        System.out.println(projectState);
-        projectBeans = projectMapper.getProjectByIDAndState(projectState);
+        projectBeans = projectMapper.getProjectByProjectID(projectID);
         System.out.println(projectBeans.size());
         HashSet<String> hashSet = new HashSet<>();
+        List<Map> list = new ArrayList<>();
         for(ProjectBean each:projectBeans){
             System.out.println(each);
-            hashSet.add(each.getAcceptuser());
+            String acceptuser = each.getAcceptuser();
+            if(acceptuser!=null && !hashSet.contains(acceptuser)) {
+                hashSet.add(acceptuser);
+                Map<String, String> map = new HashMap<>();
+                map.put("acceptuser", acceptuser);
+                map.put("company", each.getCompany());
+                map.put("introduce", each.getIntroduce());
+                list.add(map);
+            }
         }
-        Map result = new HashMap();
-        result.put("acceptuser",hashSet);
-        return RetResponse.makeOKRsp(result);
+        return RetResponse.makeOKRsp(list);
+    }
+    @RequestMapping(value = "/lookUserGuan", method = RequestMethod.POST)
+    public RetResult<List> lookUserGuan(@RequestBody Map json) {
+
+        String projectID = json.get("projectID").toString();
+
+        List<ProjectBeanDock> projectBeanDocks;
+        projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
+        System.out.println(projectBeanDocks.size());
+        HashSet<String> hashSet = new HashSet<>();
+        List<Map> list = new ArrayList<>();
+        for(ProjectBeanDock each:projectBeanDocks){
+            System.out.println(each);
+            String guan = each.getProjectManager();
+            if(guan!=null && !hashSet.contains(guan)) {
+                hashSet.add(guan);
+                Map<String, String> map = new HashMap<>();
+                map.put("projectManager", guan);
+                map.put("company", each.getCompany());
+                map.put("introduce", each.getIntroduce());
+                list.add(map);
+            }
+        }
+        return RetResponse.makeOKRsp(list);
     }
 
     @RequestMapping(value = "/finish", method = RequestMethod.POST)
@@ -302,6 +330,28 @@ public class projectController {
         int res2 = projectDockMapper.updateProjectDock2(projectState);
 
         return RetResponse.makeOKRsp("ok");
+    }
+
+    @RequestMapping(value = "/waitProject", method = RequestMethod.POST)
+    public RetResult<Map> waitProject(@RequestBody Map json) {
+        String createuser = json.get("createuser").toString();
+        ProjectState projectState = new ProjectState();
+        projectState = intoState(projectState, "2", "b", createuser);
+        List<ProjectBean> projectBeans;
+        try {
+            projectBeans = projectMapper.getProjectByAll(projectState);
+            HashSet<String> hashSet = new HashSet<>();
+            for(ProjectBean each:projectBeans){
+                String projectID = each.getProjectID();
+                if(projectID != null)
+                    hashSet.add(projectID);
+            }
+            Map result = new HashMap();
+            result.put("ProjectID",hashSet);
+            return RetResponse.makeOKRsp(result);
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("错误");
+        }
     }
 
 }

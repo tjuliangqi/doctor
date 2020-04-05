@@ -43,14 +43,14 @@ public class ProjectFeaController {
             usertype = Integer.valueOf(user.getType());
         }
         String type1 = type.substring(0,1);
-        int type2 = Integer.valueOf(type.substring(1,2));
+        String type2 = type.substring(1,2);
         int type3 = Integer.valueOf(type.substring(2,3));
         int test = 0;
         int ifWork = 0;
         switch (type2){
-            case 0:break;
-            case 1:test = 1;break;
-            case 2:test = 1;ifWork = 1;break;
+            case "0":break;
+            case "1":test = 1;break;
+            case "2":test = 1;ifWork = 1;break;
             default:return RetResponse.makeErrRsp("type2 error");
         }
         switch (type1){

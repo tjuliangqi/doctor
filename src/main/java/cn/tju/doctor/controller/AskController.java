@@ -2,11 +2,9 @@ package cn.tju.doctor.controller;
 
 import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.ArticleMapper;
+import cn.tju.doctor.dao.BaseMapper;
 import cn.tju.doctor.dao.DataMapper;
-import cn.tju.doctor.daomain.ArticleBean;
-import cn.tju.doctor.daomain.Data;
-import cn.tju.doctor.daomain.RetResponse;
-import cn.tju.doctor.daomain.RetResult;
+import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.utils.DateUtil;
 import cn.tju.doctor.utils.EsUtils;
 import org.elasticsearch.action.search.SearchRequest;
@@ -35,6 +33,8 @@ public class AskController {
     ArticleMapper articleMapper;
     @Autowired
     DataMapper dataMapper;
+    @Autowired
+    BaseMapper baseMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<Object> search(@RequestBody Map<String,String> map) throws IOException, JSONException {
         //RetResult retResult = new RetResult();
@@ -245,6 +245,9 @@ public class AskController {
         String uuid = String.valueOf(map.get("uuid"));
         DateUtil.update(dataMapper,Integer.valueOf(type),DateUtil.gainDate());
         DateUtil.update(dataMapper,Integer.valueOf(type),"2000-01-01");
+        List list = baseMapper.getBaseList();
+        Base base = (Base) list.get(0);
+        base.getLike();
         /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
 
         /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/
@@ -252,7 +255,7 @@ public class AskController {
     }
 
     @RequestMapping(value = "/getdata", method = RequestMethod.POST)
-    public RetResult<Object> getdata (@RequestBody Map<String,String> map) {
+    public RetResult<Object> getdata () {
         //RetResult retResult = new RetResult();
         List<Data> list = new ArrayList<>();
         Data data1 = dataMapper.getDataById("2000-01-01");
