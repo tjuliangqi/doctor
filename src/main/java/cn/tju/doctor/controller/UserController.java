@@ -313,5 +313,17 @@ public class UserController {
 
         return RetResponse.makeOKRsp(res);
     }
+    @RequestMapping(value = "/serachList4", method = RequestMethod.POST)
+    public RetResult<Map<String,Double>> searchList4(@RequestBody Map<String,String> map){
+        String authorID = map.get("authorID");
+        List<User> users = userMapper.getUserByAuthorID(authorID);
+        Map<String,Double> result = new HashMap<>();
+        result.put("articleIncome",users.get(0).getArticleIncome());
+        result.put("projectIncome",users.get(0).getProjectIncome());
+        result.put("trainingIncome",users.get(0).getTrainingIncome());
+        result.put("healthIncome",users.get(0).getHealthIncome());
+        return RetResponse.makeOKRsp(result);
+    }
+
 
 }
