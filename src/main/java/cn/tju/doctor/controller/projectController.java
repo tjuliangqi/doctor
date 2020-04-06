@@ -245,6 +245,7 @@ public class projectController {
             if(acceptuser!=null && !hashSet.contains(acceptuser)) {
                 hashSet.add(acceptuser);
                 Map<String, String> map = new HashMap<>();
+                map.put("projectID", projectID);
                 map.put("acceptuser", acceptuser);
                 map.put("company", each.getCompany());
                 map.put("introduce", each.getIntroduce());
@@ -269,6 +270,7 @@ public class projectController {
             if(guan!=null && !hashSet.contains(guan)) {
                 hashSet.add(guan);
                 Map<String, String> map = new HashMap<>();
+                map.put("projectID", projectID);
                 map.put("projectManager", guan);
                 map.put("company", each.getCompany());
                 map.put("introduce", each.getIntroduce());
@@ -291,7 +293,7 @@ public class projectController {
         try {
             int res = projectMapper.updateProject(projectState);
             int res2 = projectDockMapper.updateProjectDock(projectState);
-            return RetResponse.makeOKRsp(projectID);
+            return RetResponse.makeOKRsp("完成"+projectID+"的"+process+"期成功");
         } catch (Exception e){
             return RetResponse.makeErrRsp("完成"+projectID+"的"+process+"期失败");
         }
