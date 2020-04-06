@@ -50,9 +50,11 @@ public class projectController {
         }else{
             projectBeans = projectMapper.getProjectByAll(projectState);
             //删除0期
-            for (int i = 0; i < projectBeans.size(); i++) {
-                if ("0".equals(projectBeans.get(i).getProcess()))
-                    projectBeans.remove(i);
+            if(projectBeans.size()>1){
+                for (int i = 0; i < projectBeans.size(); i++) {
+                    if ("0".equals(projectBeans.get(i).getProcess()))
+                        projectBeans.remove(i);
+                }
             }
             // 根据 ProjectID 去重
             if(type.equals("0b") || type.equals("2b") || type.equals("3b") || type.equals("5b")){
@@ -286,11 +288,13 @@ public class projectController {
         projectState.setStateValue1(projectID);
         projectState.setState2("process");
         projectState.setStateValue2(process);
-
-        int res = projectMapper.updateProject(projectState);
-        int res2 = projectDockMapper.updateProjectDock(projectState);
-
-        return RetResponse.makeOKRsp("ok");
+        try {
+            int res = projectMapper.updateProject(projectState);
+            int res2 = projectDockMapper.updateProjectDock(projectState);
+            return RetResponse.makeOKRsp(projectID);
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("完成"+projectID+"的"+process+"期失败");
+        }
     }
 
     @RequestMapping(value = "/searchCompanyAccount", method = RequestMethod.POST)
