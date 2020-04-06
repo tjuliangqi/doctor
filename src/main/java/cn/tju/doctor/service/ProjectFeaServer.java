@@ -27,6 +27,7 @@ public class ProjectFeaServer {
 
     @Transactional(rollbackFor = Exception.class)
     public void add(ProjectBeanDock projectBeanDock, User user, Projectfunding projectfunding, boolean flag) throws Exception {
+
         double money = projectfunding.getMount();
         if (flag){
             projectBeanDock.setMount(projectBeanDock.getMount() - money);
