@@ -34,34 +34,7 @@ public class DoctorApplicationTests {
 
     @Test
     public void testUserfunding(){
-        Date date = new Date();
-        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String time = sf.format(date);
-        Userfunding userfunding = new Userfunding();
-        userfunding.setNumber(numberUtils.getOrderNo());
-        userfunding.setApplyID("lq");
-        userfunding.setApplyTime(time);
-        userfunding.setRecord("tixian");
-        userfunding.setAuthorID("wy");
-        userfunding.setGo("tixianzhanghu");
-        userfunding.setGoaccount("wyaccount");
-        userfunding.setSource("project");
-        userfunding.setSourceAccount("national");
-        userfunding.setIfWork(0);
-        userfunding.setIn(1);
-        userfunding.setMount(400.21);
-        userfunding.setOut(0);
-        userfunding.setRest(100.35);
-//        userfundingMapper.insertUserfunding(userfunding);
-
-        //测试查询
-        System.out.println("查询：");
-        System.out.println(userfundingMapper.getUserfundingByNumber("1000002064526948202002241102195").getApplyID());
-        //测试更新
-        System.out.println("更新：");
-        Userfunding update = userfundingMapper.getUserfundingByNumber("1000002064526948202002241102195");
-        update.setTest(1);
-        System.out.println(userfundingMapper.updateUserfundingTest(update));
+        System.out.println(userfundingMapper.getUserfundingByNumber("8000000974884809202002242002510").getMount());
     }
 
     @Test

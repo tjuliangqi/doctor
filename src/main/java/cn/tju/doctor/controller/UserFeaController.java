@@ -15,10 +15,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import yzhpay.sdk.constant.ConfigPath;
+import yzhpay.sdk.constant.XmlData;
+import yzhpay.sdk.dto.response.Response;
 import yzhpay.sdk.pay.order.BankCardOrder;
 import yzhpay.sdk.pay.verify.FourFactorVerify;
 import yzhpay.sdk.util.HttpUtil;
+import yzhpay.sdk.util.JsonUtil;
 import yzhpay.sdk.util.Property;
+import yzhpay.sdk.util.StringUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -38,7 +42,7 @@ public class UserFeaController {
         //RetResult retResult = new RetResult();
         //这里扣钱变成云账户提现
         User user = new User();
-        List<User> list = userMapper.getUserByAuthorID(userfunding.getApplyID());
+        List<User> list = userMapper.getUserByUsername(userfunding.getApplyID());
         if (list.size() == 0){
             return RetResponse.makeErrRsp("扣款账户不存在");
         }
@@ -62,7 +66,7 @@ public class UserFeaController {
             }
 
             userfunding.setGo(user.getBankID());
-            if (user.getMoney() < userfunding.getMount()){
+            if (user.getMoney() < userfunding.getMount() && user.getMoney()>0){
                 return RetResponse.makeErrRsp("账户余额不足");
             }
         }
@@ -112,14 +116,15 @@ public class UserFeaController {
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
-    public RetResult<String> verify(Map<String,String> map)  {
+    public RetResult<String> verify(@RequestBody Map<String,String> map)  {
         //RetResult retResult = new RetResult();
         String number = map.get("number");
         String testResult = map.get("testResult");
         Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
+        System.out.println(userfunding.getMount());
         List<User> userList = userMapper.getUserByAuthorID(userfunding.getAuthorID());
         User user = userList.get(0);
-        if (testResult == "2"){
+        if (testResult.equals("2")){
             userfunding.setTest(2);
             userfunding.setTestRecord("error");
             userfunding.setTestuser("admin");
@@ -131,8 +136,6 @@ public class UserFeaController {
             return RetResponse.makeOKRsp("ok");
         }
         if (testResult.equals("1")){
-
-
             FourFactorVerify fourFactorVerify = new FourFactorVerify();
             fourFactorVerify.setRealName(user.getName());
             fourFactorVerify.setIdNumber(user.getActureID());
@@ -144,8 +147,16 @@ public class UserFeaController {
             } catch (Exception e) {
                 return RetResponse.makeErrRsp("验证失败");
             }
-            String code = (String) result.get("code");
-            if (code != "0000"){
+            Response verresponse = null;
+            try {
+                if("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))){
+                    verresponse = JsonUtil.fromJson(StringUtils.trim(result.get(XmlData.DATA)), Response.class);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            System.out.println(verresponse.getCode());
+            if (!verresponse.getCode().equals("0000") ){
                 userfunding.setTest(2);
                 userfunding.setTestRecord("目标账户不存在");
                 userfunding.setTestuser("admin");
@@ -171,8 +182,15 @@ public class UserFeaController {
                 bankOrder.setPayRemark("提现");
                 try {
                     Map<String, Object> payResult = HttpUtil.post(bankOrder.assembleRequest(), Property.getUrl(ConfigPath.YZH_BANK_CARD_REAL_TIME_ORDER));
-                    String paycode = (String) payResult.get("code");
-                    if (paycode == "0000") {
+                    Response response = null;
+                    try {
+                        if("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))){
+                            response = JsonUtil.fromJson(StringUtils.trim(payResult.get(XmlData.DATA)), Response.class);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (response.getCode().equals("0000")) {
                         userfunding.setIfWork(1);
                         userfunding.setWorkRecord("ok");
                         userfunding.setWorkUser("no");
@@ -276,5 +294,17 @@ public class UserFeaController {
             }
         }
         return RetResponse.makeOKRsp(result);
+    }
+
+    public Response sysoutResult(Map<String, Object> result) {
+        Response response = null;
+        try {
+            if("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))){
+                response = JsonUtil.fromJson(StringUtils.trim(result.get(XmlData.DATA)), Response.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
     }
 }

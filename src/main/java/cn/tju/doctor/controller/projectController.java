@@ -133,6 +133,7 @@ public class projectController {
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanDock.setUuid(uuid);
         projectBeanDock.setProjectID(projectID);
+        projectBeanDock.setName(name);
         projectBeanDock.setBeginTime(beginTime);
         projectBeanDock.setCompany(company);
         projectBeanDock.setCompanyAccount(companyAccount);

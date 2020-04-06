@@ -120,6 +120,16 @@ public class ProjectBeanDock {
 
     private String uuid;
     private String projectID;
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     private double mount;
     private String projectManager;
     private String company;
