@@ -22,6 +22,8 @@ public class ProjectFeaServer {
     UserMapper userMapper;
     @Autowired
     ProjectDockMapper projectDockMapper;
+    @Autowired
+    ProjectfundingMapper projectfundingMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void add(ProjectBeanDock projectBeanDock, User user, Projectfunding projectfunding, boolean flag) throws Exception {
@@ -47,6 +49,9 @@ public class ProjectFeaServer {
             }
         }
         try {
+            if (!flag){
+                projectfundingMapper.updateProjectfundingRecord(projectfunding);
+            }
             projectDockMapper.updateByProjectID2(projectBeanDock.getProjectID(),null, projectBeanDock.getMount());
             userMapper.updateUser(user);
         }catch (Exception e){

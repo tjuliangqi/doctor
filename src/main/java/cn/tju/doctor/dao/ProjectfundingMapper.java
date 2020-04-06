@@ -38,4 +38,7 @@ public interface ProjectfundingMapper {
             "workTime = #{projectfunding.workTime}, workUser = #{projectfunding.workUser} " +
             "WHERE number = #{projectfunding.number}")
     int updateProjectfundingWork(@Param("projectfunding") Projectfunding projectfunding);
+    @Update("UPDATE `projectfunding` SET record = #{projectfunding.record} " +
+            "WHERE number = #{projectfunding.number}")
+    int updateProjectfundingRecord(@Param("projectfunding") Projectfunding projectfunding);
 }

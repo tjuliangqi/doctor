@@ -12,10 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RestController
 @RequestMapping("/projectFea")
@@ -202,9 +200,13 @@ public class ProjectFeaController {
             return RetResponse.makeErrRsp("账户余额不足");
         }
         String number = numberUtils.getOrderNo();
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sf.format(date);
         projectfunding.setNumber(number);
         projectfunding.setTest(1);
         projectfunding.setIfWork(0);
+        projectfunding.setApplyTime(time);
         try{
             projectfundingMapper.insertProjectfunding(projectfunding);
         }catch (Exception e){
@@ -229,6 +231,12 @@ public class ProjectFeaController {
     public RetResult<String> recall(@RequestBody Map<String,String> map) {
         String number = map.get("number");
         Projectfunding projectfunding = projectfundingMapper.getProjectfundingByNumber(number).get(0);
+        //添加撤销判断
+        if (projectfunding.getRecord().equals("111")){
+            return RetResponse.makeErrRsp("重复撤销");
+        }
+        //否则添加已撤销
+        projectfunding.setRecord("111");
         String userID = projectfunding.getGo();
         String projectID = projectfunding.getProjectID();
         Double mount = projectfunding.getMount();
