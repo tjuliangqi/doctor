@@ -164,6 +164,16 @@ public class ArticleBean {
     private String videoURL;
     private String label;
     private String part;
+    private String author;
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
     private int ifVideo;
     private int likes;
     private int views;
