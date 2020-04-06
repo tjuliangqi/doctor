@@ -232,11 +232,11 @@ public class ProjectFeaController {
         String number = map.get("number");
         Projectfunding projectfunding = projectfundingMapper.getProjectfundingByNumber(number).get(0);
         //添加撤销判断
-        if (projectfunding.getRecord().equals("111")){
+        if (projectfunding.getRecord().equals("已撤销")){
             return RetResponse.makeErrRsp("重复撤销");
         }
         //否则添加已撤销
-        projectfunding.setRecord("111");
+        projectfunding.setRecord("已撤销");
         String userID = projectfunding.getGo();
         String projectID = projectfunding.getProjectID();
         Double mount = projectfunding.getMount();
