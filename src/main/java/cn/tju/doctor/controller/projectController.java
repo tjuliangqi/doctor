@@ -25,7 +25,7 @@ public class projectController {
     ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
-        // 2b+公司用户id，查公司有哪些项目
+        // 2b+公司用户id，查公司有哪些项目，管理员5b， 普通用户3b
         // 1b+项目id，查项目有哪些期数
         // 11+项目id，查这个项目的第一期
         System.out.println("查询组合："+map.get("type").toString());
@@ -41,13 +41,18 @@ public class projectController {
         System.out.println(projectState);
 
         List<ProjectBean> projectBeans;
+        List<ProjectBeanDock> projectBeanDocks;
 
         if(firstState.equals("a")){
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
 
-        }else{
+        } else if(type.equals("2b") || type.equals("5b")){
+            projectBeanDocks = projectDockMapper.getALLPJList(type, value);
+            return RetResponse.makeOKRsp(projectBeanDocks);
+        }
+        else{
             projectBeans = projectMapper.getProjectByAll(projectState);
             //删除0期
             if(projectBeans.size()>1){

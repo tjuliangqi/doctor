@@ -12,7 +12,12 @@
         SELECT * FROM projectDock WHERE projectID = #{projectID};
     </select>
 
-
+<!--查询公司用户、管理员的项目列表，只有最新期数-->
+    <select id="getALLPJList" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
+        SELECT * FROM projectDock WHERE
+        <if test='type == "2b"'>createuser = #{value}</if>
+        <if test='type == "5b"'>projectManager = #{value}</if>
+    </select>
 
     <select id="getByCompanyAccount" resultType="cn.tju.doctor.daomain.ProjectBeanDock" parameterType="String">
         SELECT * FROM projectDock WHERE companyAccount = #{companyAccount};

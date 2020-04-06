@@ -131,9 +131,17 @@ public class ProjectBeanDock {
     private String endtime;
     private String introduce;
     private int ifWork;
+    private int label;
     private String accounting;
 
 
+    public int getLabel() {
+        return label;
+    }
+
+    public void setLabel(int label) {
+        this.label = label;
+    }
     public int getIfWork() {
         return ifWork;
     }
