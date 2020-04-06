@@ -25,7 +25,7 @@ public class projectController {
     ProjectDockMapper projectDockMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
-        // 2b+公司用户id，查公司有哪些项目
+        // 2b+公司用户id，查公司有哪些项目，管理员5b， 普通用户3b
         // 1b+项目id，查项目有哪些期数
         // 11+项目id，查这个项目的第一期
         System.out.println("查询组合："+map.get("type").toString());
@@ -41,18 +41,25 @@ public class projectController {
         System.out.println(projectState);
 
         List<ProjectBean> projectBeans;
+        List<ProjectBeanDock> projectBeanDocks;
 
         if(firstState.equals("a")){
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
 
-        }else{
+        } else if(type.equals("2b") || type.equals("5b")){
+            projectBeanDocks = projectDockMapper.getALLPJList(type, value);
+            return RetResponse.makeOKRsp(projectBeanDocks);
+        }
+        else{
             projectBeans = projectMapper.getProjectByAll(projectState);
             //删除0期
-            for (int i = 0; i < projectBeans.size(); i++) {
-                if ("0".equals(projectBeans.get(i).getProcess()))
-                    projectBeans.remove(i);
+            if(projectBeans.size()>1){
+                for (int i = 0; i < projectBeans.size(); i++) {
+                    if ("0".equals(projectBeans.get(i).getProcess()))
+                        projectBeans.remove(i);
+                }
             }
             // 根据 ProjectID 去重
             if(type.equals("0b") || type.equals("2b") || type.equals("3b") || type.equals("5b")){
@@ -243,6 +250,7 @@ public class projectController {
             if(acceptuser!=null && !hashSet.contains(acceptuser)) {
                 hashSet.add(acceptuser);
                 Map<String, String> map = new HashMap<>();
+                map.put("projectID", projectID);
                 map.put("acceptuser", acceptuser);
                 map.put("company", each.getCompany());
                 map.put("introduce", each.getIntroduce());
@@ -267,6 +275,7 @@ public class projectController {
             if(guan!=null && !hashSet.contains(guan)) {
                 hashSet.add(guan);
                 Map<String, String> map = new HashMap<>();
+                map.put("projectID", projectID);
                 map.put("projectManager", guan);
                 map.put("company", each.getCompany());
                 map.put("introduce", each.getIntroduce());
@@ -286,11 +295,13 @@ public class projectController {
         projectState.setStateValue1(projectID);
         projectState.setState2("process");
         projectState.setStateValue2(process);
-
-        int res = projectMapper.updateProject(projectState);
-        int res2 = projectDockMapper.updateProjectDock(projectState);
-
-        return RetResponse.makeOKRsp("ok");
+        try {
+            int res = projectMapper.updateProject(projectState);
+            int res2 = projectDockMapper.updateProjectDock(projectState);
+            return RetResponse.makeOKRsp("完成"+projectID+"的"+process+"期成功");
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("完成"+projectID+"的"+process+"期失败");
+        }
     }
 
     @RequestMapping(value = "/searchCompanyAccount", method = RequestMethod.POST)
