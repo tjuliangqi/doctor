@@ -4,6 +4,7 @@ import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.ArticleMapper;
 import cn.tju.doctor.dao.BaseMapper;
 import cn.tju.doctor.dao.DataMapper;
+import cn.tju.doctor.dao.UserMapper;
 import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.utils.DateUtil;
 import cn.tju.doctor.utils.EsUtils;
@@ -35,6 +36,8 @@ public class AskController {
     DataMapper dataMapper;
     @Autowired
     BaseMapper baseMapper;
+    @Autowired
+    UserMapper userMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<Object> search(@RequestBody Map<String,String> map) throws IOException, JSONException {
         //RetResult retResult = new RetResult();
@@ -250,7 +253,12 @@ public class AskController {
         double money = base.getLike();
         /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
         articleMapper.updateByuuid(uuid, type);
-
+        /*ArticleBean articleBean = articleMapper.selectArticle(uuid);
+        List<User> users = userMapper.getUserByUsername(articleBean.getAuthor());
+        User user = users.get(0);
+        user.setArticleIncome(user.getArticleIncome()+money);
+        user.setMoney(user.getMoney()+ money);
+        userMapper.updateUser(user);*/
         /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/
         return RetResponse.makeOKRsp("ok");
     }

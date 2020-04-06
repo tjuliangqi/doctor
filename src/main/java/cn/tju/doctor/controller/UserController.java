@@ -313,7 +313,7 @@ public class UserController {
 
         return RetResponse.makeOKRsp(res);
     }
-    @RequestMapping(value = "/serachList4", method = RequestMethod.POST)
+    @RequestMapping(value = "/searchList4", method = RequestMethod.POST)
     public RetResult<Map<String,Double>> searchList4(@RequestBody Map<String,String> map){
         String authorID = map.get("authorID");
         List<User> users = userMapper.getUserByAuthorID(authorID);

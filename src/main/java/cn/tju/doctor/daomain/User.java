@@ -22,14 +22,14 @@ public class User implements Serializable {
     private String phone;
     private String address;
     private String bankID;
-    private Double money;
+    private double money;
     private int vaild;
     private String company;
     private String type;
-    private String like;
-    private String download;
+    private int like;
+    private int download;
     private String record;
-    private String view;
+    private int view;
     private String token;
     private String email;
     private String password;
@@ -47,49 +47,6 @@ public class User implements Serializable {
 
     public User(){
 
-    }
-
-    public User(String username, String authorID, String area, String region, String unit, String part, String wechatQun, int active, int online, int article, String test, String name, String actureID, int ifDoc, String docID, String phone, String address, String bankID, Double money, int vaild, String company, String type, String like, String download, String record, String view, String token, String email, String password, String docIDurl, int modify, int getMoney, String modifyString, String getmoneyrecord, int state, String result, double articleIncome, double projectIncome, double trainingIncome, double healthIncome) {
-        this.username = username;
-        this.authorID = authorID;
-        this.area = area;
-        this.region = region;
-        this.unit = unit;
-        this.part = part;
-        this.wechatQun = wechatQun;
-        this.active = active;
-        this.online = online;
-        this.article = article;
-        this.test = test;
-        this.name = name;
-        this.actureID = actureID;
-        this.ifDoc = ifDoc;
-        this.docID = docID;
-        this.phone = phone;
-        this.address = address;
-        this.bankID = bankID;
-        this.money = money;
-        this.vaild = vaild;
-        this.company = company;
-        this.type = type;
-        this.like = like;
-        this.download = download;
-        this.record = record;
-        this.view = view;
-        this.token = token;
-        this.email = email;
-        this.password = password;
-        this.docIDurl = docIDurl;
-        this.modify = modify;
-        this.getMoney = getMoney;
-        this.modifyString = modifyString;
-        this.getmoneyrecord = getmoneyrecord;
-        this.state = state;
-        this.result = result;
-        this.articleIncome = articleIncome;
-        this.projectIncome = projectIncome;
-        this.trainingIncome = trainingIncome;
-        this.healthIncome = healthIncome;
     }
 
     public String getUsername() {
@@ -236,11 +193,11 @@ public class User implements Serializable {
         this.bankID = bankID;
     }
 
-    public Double getMoney() {
+    public double getMoney() {
         return money;
     }
 
-    public void setMoney(Double money) {
+    public void setMoney(double money) {
         this.money = money;
     }
 
@@ -268,19 +225,19 @@ public class User implements Serializable {
         this.type = type;
     }
 
-    public String getLike() {
+    public int getLike() {
         return like;
     }
 
-    public void setLike(String like) {
+    public void setLike(int like) {
         this.like = like;
     }
 
-    public String getDownload() {
+    public int getDownload() {
         return download;
     }
 
-    public void setDownload(String download) {
+    public void setDownload(int download) {
         this.download = download;
     }
 
@@ -292,11 +249,11 @@ public class User implements Serializable {
         this.record = record;
     }
 
-    public String getView() {
+    public int getView() {
         return view;
     }
 
-    public void setView(String view) {
+    public void setView(int view) {
         this.view = view;
     }
 
