@@ -232,7 +232,7 @@ public class ProjectFeaController {
         String number = map.get("number");
         Projectfunding projectfunding = projectfundingMapper.getProjectfundingByNumber(number).get(0);
         //添加撤销判断
-        if (projectfunding.getRecord().equals("已撤销")){
+        if (projectfunding.getRecord() != null && projectfunding.getRecord().equals("已撤销")){
             return RetResponse.makeErrRsp("重复撤销");
         }
         //否则添加已撤销
@@ -254,6 +254,9 @@ public class ProjectFeaController {
         }
         Projectfunding projectfunding1 = new Projectfunding();
         String uuid = numberUtils.getOrderNo();
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sf.format(date);
         projectfunding1.setNumber(uuid);
         projectfunding1.setProjectID(projectID);
         projectfunding1.setIn(1);
@@ -263,6 +266,7 @@ public class ProjectFeaController {
         projectfunding1.setType(projectfunding.getType());
         projectfunding1.setMount(projectfunding.getMount());
         projectfunding1.setRecord("撤销操作");
+        projectfunding1.setApplyTime(time);
         try{
             projectfundingMapper.insertProjectfunding(projectfunding1);
         }catch (Exception e){

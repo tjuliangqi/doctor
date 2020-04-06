@@ -161,6 +161,16 @@ public class ProjectBean {
     private String introduce;
     private String createuser;
     private String acceptuser;
+
+    public String getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(String beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    private String beginTime;
     private String endTime;
     private int ifWork;
     private String projectaccount;

@@ -83,11 +83,11 @@ public class ProjectBeanDock {
     }
 
     public String getEndtime() {
-        return endtime;
+        return endTime;
     }
 
     public void setEndtime(String endtime) {
-        this.endtime = endtime;
+        this.endTime = endtime;
     }
 
     public String getIntroduce() {
@@ -111,7 +111,7 @@ public class ProjectBeanDock {
                 ", companyAccount='" + companyAccount + '\'' +
                 ", moneyManager='" + moneyManager + '\'' +
                 ", beginTime='" + beginTime + '\'' +
-                ", endtime='" + endtime + '\'' +
+                ", endTime='" + endTime + '\'' +
                 ", introduce='" + introduce + '\'' +
                 ", accounting='" + accounting + '\'' +
                 ", ifWork='" + ifWork + '\'' +
@@ -121,15 +121,6 @@ public class ProjectBeanDock {
     private String uuid;
     private String projectID;
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     private double mount;
     private String projectManager;
     private String company;
@@ -138,12 +129,27 @@ public class ProjectBeanDock {
     private String companyAccount;
     private String moneyManager;
     private String beginTime;
-    private String endtime;
+    private String endTime;
     private String introduce;
     private int ifWork;
     private int label;
     private String accounting;
+    private String createuser;
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    public String getCreateuser() {
+        return createuser;
+    }
+
+    public void setCreateuser(String createuser) {
+        this.createuser = createuser;
+    }
 
     public int getLabel() {
         return label;

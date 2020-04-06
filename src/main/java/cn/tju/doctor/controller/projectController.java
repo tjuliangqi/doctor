@@ -47,8 +47,9 @@ public class projectController {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
-
-        } else if(type.equals("2b") || type.equals("5b")){
+        }
+        // 2b+公司用户id，查公司有哪些项目，管理员5b
+        else if(type.equals("2b") || type.equals("5b")){
             projectBeanDocks = projectDockMapper.getALLPJList(type, value);
             return RetResponse.makeOKRsp(projectBeanDocks);
         }
@@ -62,7 +63,7 @@ public class projectController {
                 }
             }
             // 根据 ProjectID 去重
-            if(type.equals("0b") || type.equals("2b") || type.equals("3b") || type.equals("5b")){
+            if(type.equals("0b") || type.equals("3b")){
                 Collections.reverse(projectBeans); // 先反向排序
                 List<ProjectBean> unique = projectBeans.stream().collect(
                         Collectors.collectingAndThen(
@@ -134,6 +135,7 @@ public class projectController {
         projectBeanDock.setUuid(uuid);
         projectBeanDock.setProjectID(projectID);
         projectBeanDock.setName(name);
+        projectBeanDock.setCreateuser(createuser);
         projectBeanDock.setBeginTime(beginTime);
         projectBeanDock.setCompany(company);
         projectBeanDock.setCompanyAccount(companyAccount);
