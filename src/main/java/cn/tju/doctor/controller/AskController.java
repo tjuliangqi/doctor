@@ -253,12 +253,16 @@ public class AskController {
         double money = base.getLike();
         /*更新对应uuid的各项参数（view，download...）可参考DateUtil*/
         articleMapper.updateByuuid(uuid, type);
-        /*ArticleBean articleBean = articleMapper.selectArticle(uuid);
+        ArticleBean articleBean = articleMapper.selectArticle(uuid);
         List<User> users = userMapper.getUserByUsername(articleBean.getAuthor());
         User user = users.get(0);
         user.setArticleIncome(user.getArticleIncome()+money);
         user.setMoney(user.getMoney()+ money);
-        userMapper.updateUser(user);*/
+        switch (type){
+            case "1":user.setDownload(user.getDownload()+1);break;
+            case "2":user.setLike(user.getLike()+1);
+        }
+        userMapper.updateUser(user);
         /*更新文章对应作者的各项参数（view，download...）可参考DateUtil,同时根据参数给用户发放经费，来源是医之研*/
         return RetResponse.makeOKRsp("ok");
     }

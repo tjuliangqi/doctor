@@ -38,6 +38,7 @@ public class ProjectFeaServer {
         }else {
             projectBeanDock.setMount(projectBeanDock.getMount() + money);
             user.setMoney(user.getMoney() - money);
+
             switch (projectfunding.getType()){
                 case 1:user.setArticleIncome(user.getArticleIncome()-money);break;
                 case 2:user.setProjectIncome(user.getProjectIncome()-money);break;
@@ -45,7 +46,6 @@ public class ProjectFeaServer {
                 case 4:user.setHealthIncome(user.getHealthIncome()-money);break;
             }
         }
-
         try {
             projectDockMapper.updateByProjectID2(projectBeanDock.getProjectID(),null, projectBeanDock.getMount());
             userMapper.updateUser(user);

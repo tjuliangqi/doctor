@@ -189,7 +189,7 @@ public class ProjectFeaController {
             return RetResponse.makeErrRsp("未设置标志位");
         }
         List<ProjectBeanDock> list = projectDockMapper.getProjectDockByProjectID(projectfunding.getProjectID());
-        List<User> golist = userMapper.getUserByAuthorID(projectfunding.getGo());
+        List<User> golist = userMapper.getUserByUsername(projectfunding.getGo());
         if (list.size() == 0){
             return RetResponse.makeErrRsp("管理员账户不存在");
         }
@@ -232,15 +232,13 @@ public class ProjectFeaController {
         String userID = projectfunding.getGo();
         String projectID = projectfunding.getProjectID();
         Double mount = projectfunding.getMount();
-        List<User> users = userMapper.getUserByAuthorID(userID);
+        List<User> users = userMapper.getUserByUsername(userID);
         List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
-        User user = new User();
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
-        if (users.size()>0){
-            user = users.get(0);
-        }else {
+        if (users.size()==0){
             RetResponse.makeErrRsp("用户不存在");
         }
+        User user = users.get(0);
         if (projectBeanDocks.size()>0){
             projectBeanDock = projectBeanDocks.get(0);
         }else {
@@ -255,6 +253,7 @@ public class ProjectFeaController {
         projectfunding1.setIfWork(1);
         projectfunding1.setTest(1);
         projectfunding1.setType(projectfunding.getType());
+        projectfunding1.setMount(projectfunding.getMount());
         projectfunding1.setRecord("撤销操作");
         try{
             projectfundingMapper.insertProjectfunding(projectfunding1);
