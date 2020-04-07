@@ -1,6 +1,7 @@
 package cn.tju.doctor.service;
 
 import cn.tju.doctor.dao.ProjectDockMapper;
+import cn.tju.doctor.dao.ProjectMapper;
 import cn.tju.doctor.dao.ProjectfundingMapper;
 import cn.tju.doctor.dao.UserMapper;
 import cn.tju.doctor.daomain.ProjectBeanDock;
@@ -24,14 +25,17 @@ public class ProjectFeaServer {
     ProjectDockMapper projectDockMapper;
     @Autowired
     ProjectfundingMapper projectfundingMapper;
+    @Autowired
+    ProjectMapper projectMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void add(ProjectBeanDock projectBeanDock, User user, Projectfunding projectfunding, boolean flag) throws Exception {
-
+        int projectflag = 0;
         double money = projectfunding.getMount();
         if (flag){
             projectBeanDock.setMount(projectBeanDock.getMount() - money);
             user.setMoney(user.getMoney() + money);
+            projectflag = 1;
             switch (projectfunding.getType()){
                 case 1:user.setArticleIncome(user.getArticleIncome()+money);break;
                 case 2:user.setProjectIncome(user.getProjectIncome()+money);break;
@@ -55,6 +59,7 @@ public class ProjectFeaServer {
             }
             projectDockMapper.updateByProjectID2(projectBeanDock.getProjectID(),null, projectBeanDock.getMount());
             userMapper.updateUser(user);
+            projectMapper.updateFlag(projectfunding.getProjectID(),user.getUsername(),projectflag);
         }catch (Exception e){
 
             System.out.println(e.getMessage());

@@ -24,5 +24,5 @@ public interface ProjectMapper {
     int updateProject(ProjectState projectState);
     int updateProject2(ProjectState projectState);
     int updateProjectRead(String uuid);
-    int updateFlag(String projectID,String userID);
+    int updateFlag(String projectID,String userID,int flag);
 }
