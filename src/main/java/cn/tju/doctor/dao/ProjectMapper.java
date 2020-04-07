@@ -17,11 +17,12 @@ public interface ProjectMapper {
     List<ProjectBean> getProjectByTimeAndState(ProjectState projectState);
     List<ProjectBean> getProjectByIDAndState(ProjectState projectState);
     List<ProjectBean> getProjectByProjectID(String projectID);
+    List<ProjectBean> getProjectByProjectID2(String projectID);
     List<ProjectBean> getProjectByUserProjectID(String userID, String projectID);
     int insertProject(ProjectBeanAdd projectBeanAdd);
     int modifyProject(ProjectBeanAdd projectBeanAdd);
     int updateProject(ProjectState projectState);
     int updateProject2(ProjectState projectState);
-
     int updateProjectRead(String uuid);
+    int updateFlag(String projectID,String userID);
 }

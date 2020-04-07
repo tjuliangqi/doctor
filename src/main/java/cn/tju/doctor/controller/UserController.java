@@ -322,6 +322,7 @@ public class UserController {
         result.put("projectIncome",users.get(0).getProjectIncome());
         result.put("trainingIncome",users.get(0).getTrainingIncome());
         result.put("healthIncome",users.get(0).getHealthIncome());
+        result.put("amountAvailable",users.get(0).getMoney());
         return RetResponse.makeOKRsp(result);
     }
 

@@ -30,6 +30,10 @@
         SELECT * FROM projects WHERE projectID = #{projectID};
     </select>
 
+    <select id="getProjectByProjectID2" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
+        SELECT * FROM projects WHERE projectID = #{projectID} AND flag=0;
+    </select>
+
     <select id="getProjectByUserProjectID" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="String">
         SELECT * FROM projects WHERE projectID = #{projectID} AND (acceptuser = #{userID} OR createuser = #{userID});
     </select>
@@ -55,6 +59,9 @@
         UPDATE projects SET ifRead="1" WHERE uuid = #{uuid};
     </update>
 
+    <update id="updateFlag" parameterType="String">
+        UPDATE projects SET flag=1 WHERE projectID = #{projectID} AND acceptuser=#{userID};
+    </update>
 
 
 

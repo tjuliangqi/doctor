@@ -4,16 +4,15 @@ import cn.tju.doctor.dao.ProjectDockMapper;
 import cn.tju.doctor.dao.ProjectMapper;
 import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static cn.tju.doctor.utils.ToBuildersUtils.intoState;
+import static cn.tju.doctor.utils.fileUtil.upload;
 
 @RestController
 
@@ -86,7 +85,29 @@ public class projectController {
         return RetResponse.makeOKRsp(projectBeans);
     }
 
+    @RequestMapping(value = "/add2", method = RequestMethod.POST)
+    public RetResult<String> add2(@RequestParam("file") MultipartFile file,
+                                     @RequestParam("name") String name,
+                                     @RequestParam("data") String data,
+                                     @RequestParam("dataURL") String dataURL,
+                                     @RequestParam("introduce") String introduce,
+                                     @RequestParam("createuser") String createuser,
+                                     @RequestParam("projectaccount") String projectaccount,
+                                     @RequestParam("projectmoney") String projectmoney,
+                                     @RequestParam("company") String company,
+                                     @RequestParam("actor") String actor,
+                                     @RequestParam("userType") String userType,
+                                     @RequestParam("mount") double mount,
+                                     @RequestParam("projectManager") String projectManager,
+                                     @RequestParam("companyAccount") String companyAccount,
+                                     @RequestParam("moneyManager") String moneyManager,
+                                    @RequestParam("accounting") String accounting,
+                                    @RequestParam("userdataURL") String userdataURL) {
 
+        dataURL = upload(file,createuser);
+
+        return RetResponse.makeOKRsp("ok");
+    }
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Map json) {
 
@@ -203,6 +224,7 @@ public class projectController {
             return RetResponse.makeErrRsp("项目还未创建，无法指派");
         }
         List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
+        String process2 = projectBeanDocks.get(0).getProcess();
         System.out.println(projectBeanDocks.get(0).getProcess());
         System.out.println(projectBeanDocks.get(0).getIfWork());
         if(!"0".equals(projectBeanDocks.get(0).getProcess())  && projectBeanDocks.get(0).getIfWork() == 0){
@@ -211,6 +233,7 @@ public class projectController {
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         projectBeanDock.setProjectID(projectID);
         //projectBeanDock.setCompany(company);
+        //process = Integer.toString (Integer.valueOf(process2) + 1);
         projectBeanDock.setProcess(process);
         projectBeanDock.setIfWork(0);
         System.out.println(projectBeanDock);
@@ -243,7 +266,7 @@ public class projectController {
         String projectID = json.get("projectID").toString();
 
         List<ProjectBean> projectBeans;
-        projectBeans = projectMapper.getProjectByProjectID(projectID);
+        projectBeans = projectMapper.getProjectByProjectID2(projectID);
         System.out.println(projectBeans.size());
         HashSet<String> hashSet = new HashSet<>();
         List<Map> list = new ArrayList<>();

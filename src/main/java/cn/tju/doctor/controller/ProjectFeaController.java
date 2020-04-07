@@ -244,13 +244,16 @@ public class ProjectFeaController {
         List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
         if (users.size()==0){
-            RetResponse.makeErrRsp("用户不存在");
+            return RetResponse.makeErrRsp("用户不存在");
         }
         User user = users.get(0);
+        if (user.getMoney() < mount){
+            return RetResponse.makeErrRsp("用户已提现无法撤销");
+        }
         if (projectBeanDocks.size()>0){
             projectBeanDock = projectBeanDocks.get(0);
         }else {
-            RetResponse.makeErrRsp("管理员账户不存在");
+            return RetResponse.makeErrRsp("管理员账户不存在");
         }
         Projectfunding projectfunding1 = new Projectfunding();
         String uuid = numberUtils.getOrderNo();
