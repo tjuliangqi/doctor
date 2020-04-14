@@ -346,10 +346,10 @@ public class UserController {
 
     @RequestMapping(value = "/updateCompanyMount", method = RequestMethod.POST)
     public RetResult<String> updateCompanyMount(@RequestBody Map<String,String> map){
-        String username = map.get("username");
+        String company = map.get("username");
         String money = (map.get("money"));
         try {
-            userMapper.updateMoney(username, money);
+            userMapper.updateMoney(company, money);
             return RetResponse.makeOKRsp("ok");
         } catch (Exception e){
             return RetResponse.makeErrRsp("更新失败");

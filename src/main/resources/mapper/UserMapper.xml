@@ -79,7 +79,7 @@
     </update>
 
     <update id="updateMoney" parameterType="String">
-        UPDATE users SET money=#{money} WHERE username = #{username};
+        UPDATE users SET money=#{money} WHERE company = #{company};
     </update>
 
 
