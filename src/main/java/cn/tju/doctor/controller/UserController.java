@@ -348,13 +348,16 @@ public class UserController {
     public RetResult<String> updateCompanyMount(@RequestBody Map<String,String> map){
         String company = map.get("username");
         String money = (map.get("money"));
+        List<User> list = userMapper.getUserByCompany(company,"3");
+        Double m = list.get(0).getMoney();
+        m = m + Double.valueOf(money);
         try {
-            userMapper.updateMoney(company, money);
+            userMapper.updateMoney(company, String.valueOf(m));
             return RetResponse.makeOKRsp("ok");
         } catch (Exception e){
             return RetResponse.makeErrRsp("更新失败");
         }
-
     }
+
 
 }
