@@ -28,8 +28,8 @@ import yzhpay.sdk.util.StringUtils;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-
-import static cn.tju.doctor.service.AskService.searchList;
+//这个是谁的？？？
+//import static cn.tju.doctor.service.AskService.searchList;
 
 @RestController
 @RequestMapping("/userFea")
@@ -145,7 +145,7 @@ public class UserFeaController {
         userfunding.setTestRecord(testRecord);
         userfunding.setTest(test);
         userfunding.setTesttime(testtime);
-        User user = userMapper.getUserByUsername(userfunding.getApplyID()).get(0);
+        User user = userMapper.getUserByUsername(userfunding.getAuthorID()).get(0);
         try {
             userFeaServer.money(user,userfunding);
         }catch (Exception e){

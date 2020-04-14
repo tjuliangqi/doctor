@@ -79,6 +79,7 @@ public class UserFeaServer {
                     System.out.println(e);
                     throw new Exception("审核失败");
                 }
+                throw new Exception("目标账户不存在");
 
 
             }else {
