@@ -50,6 +50,9 @@ public class UserFeaController {
             return RetResponse.makeErrRsp("扣款账户不存在");
         }
         user = list.get(0);
+        if (user.getMoney()<=0 && user.getMoney() - userfunding.getMount() < 0){
+            return RetResponse.makeErrRsp("账户余额不足");
+        }
         if (userfunding.getOut() == 1){
 
             FourFactorVerify fourFactorVerify = new FourFactorVerify();
