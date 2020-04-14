@@ -60,7 +60,7 @@
     </update>
 
     <update id="updateFlag" parameterType="String">
-        UPDATE projects SET flag=${flag} WHERE projectID = #{projectID} AND acceptuser=#{userID};
+        UPDATE projects SET flag=#{flag} WHERE projectID = #{projectID} AND acceptuser=#{userID};
     </update>
 
 

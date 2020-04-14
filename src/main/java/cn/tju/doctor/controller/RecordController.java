@@ -3,6 +3,7 @@ package cn.tju.doctor.controller;
 import cn.tju.doctor.dao.RecordMapper;
 import cn.tju.doctor.dao.WorkMapper;
 import cn.tju.doctor.daomain.*;
+import cn.tju.doctor.service.UserFeaServer;
 import cn.tju.doctor.utils.JsonToMapUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,12 +29,18 @@ public class RecordController {
         String moneyS = json.get("money").toString();
         String username = json.get("username").toString();
         String sourcename = json.get("sourcename").toString();
-
+        UserFeaServer userFeaServer = new UserFeaServer();
+        String IdNumber;
+        try {
+            IdNumber = userFeaServer.getID(sourcename,username,Double.valueOf(moneyS));
+        } catch (Exception e) {
+            return RetResponse.makeErrRsp(e.getMessage());
+        }
         int money = Integer.parseInt(moneyS);
         int number = ((money%1000)==0)?(money/1000):(money/1000+1);
         List<String> paper = recordMapper.getPaper(number);
         Record r = new Record();
-        r.setNumber("123");//流水号
+        r.setNumber(IdNumber);//流水号
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         r.setPublishTime(sdf.format(date));

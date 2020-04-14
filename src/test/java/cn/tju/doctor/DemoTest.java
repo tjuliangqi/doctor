@@ -1,50 +1,37 @@
-//package cn.tju.doctor;
-//
-//import yzhpay.sdk.constant.ConfigPath;
-//import yzhpay.sdk.constant.XmlData;
-//import yzhpay.sdk.dto.request.ExemotedInfoListQueryRequest;
-//import yzhpay.sdk.dto.request.RechargeRecordQueryRequest;
-//import yzhpay.sdk.dto.response.*;
-//import yzhpay.sdk.pay.invoice.InvoiceStatQuery;
-//import yzhpay.sdk.pay.order.AlipayOrder;
-//import yzhpay.sdk.pay.order.BankCardOrder;
-//import yzhpay.sdk.pay.order.CancelOrder;
-//import yzhpay.sdk.pay.order.WxpayOrder;
-//import yzhpay.sdk.pay.query.*;
-//import yzhpay.sdk.pay.upload.ExemptedInfoListQuery;
-//import yzhpay.sdk.pay.upload.UploadExemptedInfoList;
-//import yzhpay.sdk.pay.verify.*;
-//import yzhpay.sdk.util.HttpUtil;
-//import yzhpay.sdk.util.JsonUtil;
-//import yzhpay.sdk.util.Property;
-//import yzhpay.sdk.util.StringUtils;
-//import org.junit.Test;
-//
-//import java.util.Map;
-//
-//public class DemoTest {
-//
-//    public void sysoutResult(Map<String, Object> result) {
-//        Response response = null;
-//        try {
-//            if("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))){
-//                response = JsonUtil.fromJson(StringUtils.trim(result.get(XmlData.DATA)), Response.class);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        System.out.println(response);
-//    }
-//
-//    /**
-//     * 银行卡实时下单
-//     */
-//    @Test
-//    public void bankCardOrder() throws Exception {
-//        Map<String, Object> result = HttpUtil.post(new BankCardOrder().assembleRequest(), Property.getUrl(ConfigPath.YZH_BANK_CARD_REAL_TIME_ORDER));
-//        sysoutResult(result);
-//    }
-//
+package cn.tju.doctor;
+
+import yzhpay.sdk.constant.ConfigPath;
+import yzhpay.sdk.constant.XmlData;
+import yzhpay.sdk.dto.response.*;
+import yzhpay.sdk.pay.order.BankCardOrder;
+import yzhpay.sdk.pay.verify.*;
+import yzhpay.sdk.util.HttpUtil;
+import yzhpay.sdk.util.JsonUtil;
+import yzhpay.sdk.util.Property;
+import yzhpay.sdk.util.StringUtils;
+import org.junit.Test;
+
+import java.util.Map;
+
+public class DemoTest {
+
+    public Response sysoutResult(Map<String, Object> result) {
+        Response response = null;
+        try {
+            if("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))){
+                response = JsonUtil.fromJson(StringUtils.trim(result.get(XmlData.DATA)), Response.class);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return response;
+    }
+
+    /**
+     * 银行卡实时下单
+     */
+
+
 //    @Test
 //    public void alipayOrder() throws Exception {
 //        Map<String, Object> result = HttpUtil.post(new AlipayOrder().assembleRequest(), Property.getUrl(ConfigPath.YZH_ALIPAY_REAL_TIME_ORDER));
@@ -111,11 +98,7 @@
 //        sysoutResult(result);
 //    }
 //
-//    @Test
-//    public void fourFactorVerify() throws Exception {
-//        Map<String, Object> result = HttpUtil.post(new FourFactorVerify().assembleRequest(), Property.getUrl(ConfigPath.YZH_FOUR_FACTOR_BANK_CARD_VERIFY));
-//        sysoutResult(result);
-//    }
+
 //
 //    @Test
 //    public void threeFactorVerify() throws Exception {
@@ -152,4 +135,4 @@
 //        Map<String, Object> result = HttpUtil.get(new InvoiceStatQuery().assembleRequest(), Property.getUrl(ConfigPath.YZH_INVOICE_STAT_QUERY));
 //        sysoutResult(result);
 //    }
-//}
+}

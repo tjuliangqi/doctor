@@ -41,7 +41,7 @@ public class VideoServer {
         for (SearchHit searchHit : searchHits){
             Map<String,Object> map = searchHit.getSourceAsMap();
             Map<String,String> resultMap = new HashMap<>();
-            if (result.size()>24){
+            if (result.size()>8){
                 break;
             }
             if (map.get("videoURL").toString().length()>3){
