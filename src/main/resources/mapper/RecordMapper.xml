@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.RecordMapper" >
+
+    <select id="getRecord" resultType="cn.tju.doctor.daomain.Record" parameterType="String">
+        SELECT * FROM recording WHERE number = #{number};
+    </select>
+
+
+    <insert id="insertRecord" parameterType="cn.tju.doctor.daomain.Record">
+        INSERT INTO recording (number, articleID, views, download, likes, hides, publishTime, viewsMoney, downloadsMoney, likesMoney, hidesMoney)
+        VALUES  (#{number}, #{articleID}, #{views}, #{download}, #{likes}, #{hides}, #{publishTime}, #{viewsMoney}, #{downloadsMoney}, #{likesMoney}, #{hidesMoney})
+    </insert>
+
+    <select id="getPaper" resultType="String" parameterType="int">
+        SELECT uuid FROM article WHERE likes = 0 LIMIT #{number};
+    </select>
+</mapper>
