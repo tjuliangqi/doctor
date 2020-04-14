@@ -362,7 +362,7 @@ public class ProjectFeaController {
         userfunding.setTestRecord(testRecord);
         userfunding.setTest(test);
         userfunding.setTesttime(testtime);
-        User from = userMapper.getUserByUsername(userfunding.getApplyID()).get(0);
+        User from = userMapper.getUserByUsername(userfunding.getAuthorID()).get(0);
         User to = userMapper.getUserByUsername(userfunding.getGo()).get(0);
         try {
             //转账

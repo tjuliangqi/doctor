@@ -96,7 +96,7 @@ public class ProjectFeaServer {
             userfunding.setIfWork(1);
             userfunding.setTestRecord("ok");
             try {
-                userMapper.updateUser(from);
+                userMapper.updateUser(to);
                 userfundingMapper.updateUserfundingTest(userfunding);
                 userfundingMapper.updateUserfundingWork(userfunding);
             }catch (Exception e){
