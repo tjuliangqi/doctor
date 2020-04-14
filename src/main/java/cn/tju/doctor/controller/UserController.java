@@ -344,6 +344,17 @@ public class UserController {
         return RetResponse.makeOKRsp(list);
     }
 
+    @RequestMapping(value = "/searchOneCompany", method = RequestMethod.POST)
+    public RetResult<Map> searchOneCompany(@RequestBody Map<String,String> map){
+        String username = map.get("username");
+        List<User> users = userMapper.getUserByUsername(username);
+        if(users.size()<1) return RetResponse.makeErrRsp("查询数量为0");
+        double money = users.get(0).getMoney();
+        Map<String, Double> amap = new HashMap<>();
+        amap.put("money", money);
+        return RetResponse.makeOKRsp(amap);
+    }
+
     @RequestMapping(value = "/updateCompanyMount", method = RequestMethod.POST)
     public RetResult<String> updateCompanyMount(@RequestBody Map<String,String> map){
         String company = map.get("username");
