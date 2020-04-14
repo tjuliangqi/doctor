@@ -78,4 +78,9 @@
         WHERE authorID=#{user.authorID}
     </update>
 
+    <update id="updateMoney" parameterType="String">
+        UPDATE users SET money=#{money} WHERE username = #{username};
+    </update>
+
+
 </mapper>
