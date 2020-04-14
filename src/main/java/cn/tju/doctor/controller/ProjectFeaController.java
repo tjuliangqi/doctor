@@ -1,10 +1,7 @@
 package cn.tju.doctor.controller;
 
 
-import cn.tju.doctor.dao.ProjectDockMapper;
-import cn.tju.doctor.dao.ProjectManagerMapper;
-import cn.tju.doctor.dao.ProjectfundingMapper;
-import cn.tju.doctor.dao.UserMapper;
+import cn.tju.doctor.dao.*;
 import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.service.ProjectFeaServer;
 import cn.tju.doctor.utils.numberUtils;
@@ -26,6 +23,8 @@ public class ProjectFeaController {
     ProjectDockMapper projectDockMapper;
     @Autowired
     ProjectFeaServer projectFeaServer;
+    @Autowired
+    UserfundingMapper userfundingMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Projectfunding>> search(@RequestBody Map<String,String> map)  {
         List<Projectfunding> result = new ArrayList<>();
@@ -172,6 +171,7 @@ public class ProjectFeaController {
 
     }*/
 
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Projectfunding projectfunding) {
         ProjectBeanDock projectBeanDock;
@@ -226,6 +226,46 @@ public class ProjectFeaController {
         return RetResponse.makeOKRsp("ok");
 
     }
+
+    @RequestMapping(value = "/addManager", method = RequestMethod.POST)
+    public RetResult<String> addManager(@RequestBody Map<String,String> map) {
+        String source = map.get("source");
+        String go = map.get("go");
+        double mount = Double.valueOf(map.get("mount"));
+        User from;
+        User to;
+        List<User> list1 = userMapper.getUserByUsername(source);
+        List<User> list2 = userMapper.getUserByUsername(go);
+        if (list1.size()==0) return RetResponse.makeErrRsp("公司账户不存在");
+        if (list2.size()==0) return RetResponse.makeErrRsp("管理员账户不存在");
+        from = list1.get(0);
+        to =list2.get(0);
+        if (from.getMoney() < mount) return RetResponse.makeErrRsp("公司账户余额不足");
+        Userfunding userfunding = new Userfunding();
+        String testUser = userMapper.getUserByCompany(from.getCompany(),"7").get(0).getUsername();
+        String number = numberUtils.getOrderNo();
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sf.format(date);
+        userfunding.setNumber(number);
+        userfunding.setApplyID(source);
+        userfunding.setSource(source);
+        userfunding.setGo(go);
+        userfunding.setMount(mount);
+        userfunding.setTest(0);
+        userfunding.setIfWork(0);
+        userfunding.setApplyTime(time);
+        userfunding.setTestuser(testUser);
+        //公司给管理员打钱
+        userfunding.setType(1);
+        try{
+            projectFeaServer.cTOm(from,userfunding);
+        } catch (Exception e) {
+            return RetResponse.makeErrRsp("扣款失败");
+        }
+        return RetResponse.makeOKRsp("ok");
+    }
+
 
     @RequestMapping(value = "/recall", method = RequestMethod.POST)
     public RetResult<String> recall(@RequestBody Map<String,String> map) {
@@ -301,6 +341,7 @@ public class ProjectFeaController {
                 break;
             }
         }
+
         return RetResponse.makeOKRsp(result);
     }
 
@@ -308,6 +349,28 @@ public class ProjectFeaController {
     public RetResult<String> verify(@RequestBody Projectfunding projectfunding)  {
         //RetResult retResult = new RetResult();
         projectfundingMapper.updateProjectfundingTest(projectfunding);
+        return RetResponse.makeOKRsp("ok");
+    }
+
+    @RequestMapping(value = "/verifyUser", method = RequestMethod.POST)
+    public RetResult<String> verifyUser(@RequestBody Map<String,String> map)  {
+        String number = map.get("number");
+        int test = Integer.valueOf(map.get("test"));
+        String testRecord =map.get("testRecord");
+        String testtime = map.get("testtime");
+        Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
+        userfunding.setTestRecord(testRecord);
+        userfunding.setTest(test);
+        userfunding.setTesttime(testtime);
+        User from = userMapper.getUserByUsername(userfunding.getApplyID()).get(0);
+        User to = userMapper.getUserByUsername(userfunding.getGo()).get(0);
+        try {
+            //转账
+            projectFeaServer.money(from,to,userfunding);
+        }catch (Exception e){
+            System.out.println(e);
+            return RetResponse.makeErrRsp(e.getMessage());
+        }
         return RetResponse.makeOKRsp("ok");
     }
 

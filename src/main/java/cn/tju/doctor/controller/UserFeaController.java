@@ -6,6 +6,7 @@ import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
 import cn.tju.doctor.daomain.User;
 import cn.tju.doctor.daomain.Userfunding;
+import cn.tju.doctor.service.UserFeaServer;
 import cn.tju.doctor.utils.numberUtils;
 import org.apache.tomcat.jni.Thread;
 import org.json.JSONException;
@@ -37,6 +38,8 @@ public class UserFeaController {
     UserfundingMapper userfundingMapper;
     @Autowired
     UserMapper userMapper;
+    @Autowired
+    UserFeaServer userFeaServer;
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Userfunding userfunding) {
         //RetResult retResult = new RetResult();
@@ -96,6 +99,8 @@ public class UserFeaController {
         return RetResponse.makeOKRsp("ok");
     }
 
+
+
     @RequestMapping(value = "/searchList", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> searchList(@RequestBody Map<String,String> map){
         List<Userfunding> result = new ArrayList<>();
@@ -113,6 +118,41 @@ public class UserFeaController {
             }
         }
         return RetResponse.makeOKRsp(result);
+    }
+
+    /*@RequestMapping(value = "/verifyUser", method = RequestMethod.POST)
+    public RetResult<String> verifyUser(@RequestBody Map<String,String> map)  {
+        String number = map.get("number");
+        String testResult = map.get("testResult");
+        Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
+        System.out.println(userfunding.getMount());
+        User to;
+        List<User> toList = userMapper.getUserByAuthorID(userfunding.getAuthorID());
+        if (toList.size() != 0){
+            to = toList.get(0);
+        }else {
+            return RetResponse.makeErrRsp("目标用户不存在");
+        }
+    }*/
+
+    @RequestMapping(value = "/verifyUser", method = RequestMethod.POST)
+    public RetResult<String> verifyUser(@RequestBody Map<String,String> map)  {
+        String number = map.get("number");
+        int test = Integer.valueOf(map.get("test"));
+        String testRecord =map.get("testRecord");
+        String testtime = map.get("testtime");
+        Userfunding userfunding = userfundingMapper.getUserfundingByNumber(number);
+        userfunding.setTestRecord(testRecord);
+        userfunding.setTest(test);
+        userfunding.setTesttime(testtime);
+        User user = userMapper.getUserByUsername(userfunding.getApplyID()).get(0);
+        try {
+            userFeaServer.money(user,userfunding);
+        }catch (Exception e){
+            System.out.println(e);
+            return RetResponse.makeErrRsp(e.getMessage());
+        }
+        return RetResponse.makeOKRsp("ok");
     }
 
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
@@ -229,6 +269,21 @@ public class UserFeaController {
 //        userfundingMapper.updateUserfundingWork(userfunding);
 //        return RetResponse.makeOKRsp("ok");
 //    }
+
+    @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
+    public RetResult<List<Userfunding>> searchUnverify(@RequestBody Map<String,String> map)  {
+        String testUser = map.get("testUser");
+        int type = Integer.valueOf(map.get("type"));
+        List<Userfunding> result = new ArrayList<>();
+        try {
+            result = userfundingMapper.getUserfundingListByTest(type,0,testUser);
+        }catch (Exception e){
+            System.out.println(e);
+            return RetResponse.makeErrRsp("查询错误");
+        }
+
+        return RetResponse.makeOKRsp(result);
+    }
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> search(@RequestBody Map<String,String> map)  {
