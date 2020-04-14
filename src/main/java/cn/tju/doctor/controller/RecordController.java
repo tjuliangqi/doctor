@@ -1,41 +1,69 @@
 package cn.tju.doctor.controller;
 
+import cn.tju.doctor.dao.RecordMapper;
+import cn.tju.doctor.dao.WorkMapper;
 import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.utils.JsonToMapUtils;
 import org.json.JSONException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @RestController
 
-@RequestMapping("/record")
+@RequestMapping("/recording")
 public class RecordController {
-    @RequestMapping(value = "/details", method = RequestMethod.POST)
-    public RetResult<Map> details(@RequestBody Map json) {
-        System.out.println(json.get("authorID"));
+    @Autowired
+    RecordMapper recordMapper;
+    @RequestMapping(value = "/add", method = RequestMethod.POST)
+    public RetResult<String> add(@RequestBody Map json){
+        String moneyS = json.get("money").toString();
+        String username = json.get("username").toString();
+        String sourcename = json.get("sourcename").toString();
 
-        Map<String,List> result = new HashMap<>();
-//        RecordArticle ra = new RecordArticle();
-//        RecordDetail rd = new RecordDetail();
-        List<RecordDetail> lRD = new ArrayList<>();
-        lRD.add(new RecordDetail("f2d65d21960c4d9c9cfa9403852e7744","观看",234,1.2,112));
-        lRD.add(new RecordDetail("f2d65d21960c4d9c9cfa9403852e7744","点赞",221,1.2,3423));
-        lRD.add(new RecordDetail("f2d65d21960c4d9c9cfa9403852e7744","转发",2521,1.2,1451));
+        int money = Integer.parseInt(moneyS);
+        int number = ((money%1000)==0)?(money/1000):(money/1000+1);
+        List<String> paper = recordMapper.getPaper(number);
+        Record r = new Record();
+        r.setNumber("123");//流水号
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        r.setPublishTime(sdf.format(date));
+        for (String each:paper){
+            r.setArticleID(each);
+            int views = (int)(Math.random()*250);
+            int download = (int)(Math.random()*125);
+            int likes = (int)(Math.random()*250);
+            int hides = (int)((1000-views-download*2-likes)/1.5);
+            r.setViews(views);
+            r.setViewsMoney(views*1.0);
+            r.setHides(hides);
+            r.setHidesMoney(hides*1.5);
+            r.setDownload(download);
+            r.setDownloadsMoney(download*2.0);
+            r.setLikes(likes);
+            r.setLikesMoney(likes*1.0);
+            recordMapper.insertRecord(r);
+        }
 
-        List<RecordArticle> lRA = new ArrayList<>();
-        lRA.add(new RecordArticle("天津大学测试项目","f2d65d21960c4d9c9cfa9403852e7744",1.0,lRD));
-        lRA.add(new RecordArticle("天津大学测试项目","f2d65d21960c4d9c9cfa9403852e7744",1.0,lRD));
-        lRA.add(new RecordArticle("天津大学测试项目","f2d65d21960c4d9c9cfa9403852e7744",1.0,lRD));
-        result.put("article",lRA);
-        result.put("health",lRD);
-        return RetResponse.makeOKRsp(result);
+        return RetResponse.makeOKRsp("OK");
+//        return RetResponse.makeErrRsp("查无数据");
+    }
+
+    @RequestMapping(value = "/query", method = RequestMethod.POST)
+    public RetResult<List<Record>> query(@RequestBody Map json){
+        String number = json.get("number").toString();
+        List<Record> records = recordMapper.getRecord(number);
+
+        return RetResponse.makeOKRsp(records);
 //        return RetResponse.makeErrRsp("查无数据");
     }
 }
