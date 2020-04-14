@@ -5,7 +5,6 @@ import cn.tju.doctor.daomain.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,4 +23,5 @@ public interface UserMapper {
     int insertUser(@Param("user") User user);
     int deleteUserById(@Param("authorID") String authorID);
     int updateUser(@Param("user") User user);
+    int updateMoney(@Param("username") String username, @Param("money") String money);
 }

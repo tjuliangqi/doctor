@@ -44,6 +44,8 @@ public class User implements Serializable {
     private double projectIncome;
     private double trainingIncome;
     private double healthIncome;
+    private String testUser;
+
 
     public User(){
 
@@ -367,5 +369,13 @@ public class User implements Serializable {
 
     public void setHealthIncome(double healthIncome) {
         this.healthIncome = healthIncome;
+    }
+
+    public String getTestUser() {
+        return testUser;
+    }
+
+    public void setTestUser(String testUser) {
+        this.testUser = testUser;
     }
 }

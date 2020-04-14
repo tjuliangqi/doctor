@@ -1,19 +1,15 @@
 package cn.tju.doctor.service;
 
-import cn.tju.doctor.dao.ProjectDockMapper;
-import cn.tju.doctor.dao.ProjectMapper;
-import cn.tju.doctor.dao.ProjectfundingMapper;
-import cn.tju.doctor.dao.UserMapper;
-import cn.tju.doctor.daomain.ProjectBeanDock;
-import cn.tju.doctor.daomain.Projectfunding;
-import cn.tju.doctor.daomain.RetResponse;
-import cn.tju.doctor.daomain.User;
+import cn.tju.doctor.dao.*;
+import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.utils.numberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service("ProjectFeaServer")
@@ -27,6 +23,8 @@ public class ProjectFeaServer {
     ProjectfundingMapper projectfundingMapper;
     @Autowired
     ProjectMapper projectMapper;
+    @Autowired
+    UserfundingMapper userfundingMapper;
 
     @Transactional(rollbackFor = Exception.class)
     public void add(ProjectBeanDock projectBeanDock, User user, Projectfunding projectfunding, boolean flag) throws Exception {
@@ -64,6 +62,49 @@ public class ProjectFeaServer {
 
             System.out.println(e.getMessage());
             throw new Exception("回滚");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void cTOm(User user , Userfunding userfunding) throws Exception {
+        try {
+            userMapper.updateUser(user);
+            userfundingMapper.insertUserfunding(userfunding);
+        }catch (Exception e){
+            System.out.println(e);
+            throw new Exception("回滚");
+        }
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void money(User from , User to, Userfunding userfunding) throws Exception {
+        if (userfunding.getTest() == 2){
+            from.setMoney(from.getMoney()+userfunding.getMount());
+            try {
+                userMapper.updateUser(from);
+                userfundingMapper.updateUserfundingTest(userfunding);
+            }catch (Exception e){
+                System.out.println(e);
+                throw new Exception("审核失败回滚");
+            }
+        }else if (userfunding.getTest() == 1){
+            to.setMoney(to.getMoney()+userfunding.getMount());
+            Date date = new Date();
+            SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String time = sf.format(date);
+            userfunding.setWorkTime(time);
+            userfunding.setIfWork(1);
+            userfunding.setTestRecord("ok");
+            try {
+                userMapper.updateUser(from);
+                userfundingMapper.updateUserfundingTest(userfunding);
+                userfundingMapper.updateUserfundingWork(userfunding);
+            }catch (Exception e){
+                System.out.println(e);
+                throw new Exception("转账失败回滚");
+            }
+        }else {
+            throw new Exception("检查审核状态");
         }
     }
 }

@@ -10,6 +10,8 @@ import java.util.List;
 public interface ProjectfundingMapper {
     @Select("SELECT * FROM `projectfunding` WHERE `number` = #{number}")
     List<Projectfunding> getProjectfundingByNumber(String number);
+    @Select("SELECT * FROM `projectfunding` WHERE `go` = #{go}")
+    List<Projectfunding> getProjectfundingByGo(String go);
     @Select("SELECT * FROM `projectfunding` WHERE `authorID` = #{authorID}")
     List<Projectfunding> getProjectfundingByAuthorID(String authorID);
     @Select("SELECT * FROM `projectfunding` WHERE `source` = #{source}")

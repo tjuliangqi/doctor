@@ -326,5 +326,35 @@ public class UserController {
         return RetResponse.makeOKRsp(result);
     }
 
+    @RequestMapping(value = "/searchAllCompany", method = RequestMethod.POST)
+    public RetResult<List<Map>> searchAllCompany(){
+        List<User> users = userMapper.getUserByType("3");
+        if(users.size()<1) return RetResponse.makeErrRsp("查询数量为0");
+        List<Map> list = new ArrayList<>();
+        for(User each:users){
+            Map<String,Object> map = new HashMap<>();
+            map.put("company",each.getCompany());
+            map.put("address",each.getAddress());
+            map.put("phone",each.getPhone());
+            map.put("money",each.getMoney());
+            map.put("testUser",each.getTestUser());
+
+            list.add(map);
+        }
+        return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/updateCompanyMount", method = RequestMethod.POST)
+    public RetResult<String> updateCompanyMount(@RequestBody Map<String,String> map){
+        String username = map.get("username");
+        String money = (map.get("money"));
+        try {
+            userMapper.updateMoney(username, money);
+            return RetResponse.makeOKRsp("ok");
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("更新失败");
+        }
+
+    }
 
 }
