@@ -24,12 +24,12 @@ public interface ProjectfundingMapper {
     List<Projectfunding> getProjectfundingByprojectID(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Insert({"INSERT INTO `projectfunding` (`number`, `projectID` ,`mount` ,`rest` ," +
             "`in`, `out`, `applyID`, `applyTime`," +
-            "`record`, `source`, `sourceAccount`, `go`, `goaccount`, `type`" +
+            "`record`, `source`, `sourceAccount`, `go`, `goaccount`, `type`,`testuser`" +
             ") VALUES (#{projectfunding.number}, #{projectfunding.projectID}," +
             "#{projectfunding.mount},#{projectfunding.rest},#{projectfunding.in}," +
             "#{projectfunding.out}, #{projectfunding.applyID}, #{projectfunding.applyTime}," +
             "#{projectfunding.record},#{projectfunding.source}," +
-            "#{projectfunding.sourceAccount},#{projectfunding.go},#{projectfunding.goaccount},#{projectfunding.type}" +
+            "#{projectfunding.sourceAccount},#{projectfunding.go},#{projectfunding.goaccount},#{projectfunding.type},#{projectfunding.testuser}" +
             ")"})
     int insertProjectfunding(@Param("projectfunding") Projectfunding projectfunding);
     @Update("UPDATE `projectfunding` SET test = ${projectfunding.test}, testRecord = #{projectfunding.testRecord} ," +

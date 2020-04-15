@@ -44,12 +44,14 @@ public class UserFeaController {
     public RetResult<String> add(@RequestBody Userfunding userfunding) {
         //RetResult retResult = new RetResult();
         //这里扣钱变成云账户提现
+
         User user = new User();
         List<User> list = userMapper.getUserByUsername(userfunding.getApplyID());
         if (list.size() == 0){
             return RetResponse.makeErrRsp("扣款账户不存在");
         }
         user = list.get(0);
+        String testUser = userMapper.getUserByCompany(user.getCompany(),"3").get(0).getUsername();
         if (userfunding.getOut() == 1){
 
             FourFactorVerify fourFactorVerify = new FourFactorVerify();
@@ -75,6 +77,7 @@ public class UserFeaController {
         }
         String number = numberUtils.getOrderNo();
         userfunding.setNumber(number);
+        userfunding.setTestuser(testUser);
         try{
             userfundingMapper.insertUserfunding(userfunding);
         }catch (Exception e){
@@ -89,7 +92,6 @@ public class UserFeaController {
             System.out.println("扣款出错:" + e);
             userfunding.setTest(2);
             userfunding.setTestRecord("扣款失败");
-            userfunding.setTestuser("admin");
             SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             userfunding.setTesttime(df.format(new Date()));
             userfundingMapper.updateUserfundingTest(userfunding);
@@ -361,5 +363,20 @@ public class UserFeaController {
             e.printStackTrace();
         }
         return response;
+    }
+
+    @RequestMapping(value = "/searchArticle", method = RequestMethod.POST)
+    public RetResult<List<Userfunding>> searchArticle(@RequestBody Map<String,String> map)  {
+        String go = map.get("username");
+//        int type = Integer.valueOf(map.get("type"));
+        List<Userfunding> result = new ArrayList<>();
+        try {
+            result = userfundingMapper.getUserfundingByGo(go,"1");
+        }catch (Exception e){
+            System.out.println(e);
+            return RetResponse.makeErrRsp("查询错误");
+        }
+
+        return RetResponse.makeOKRsp(result);
     }
 }

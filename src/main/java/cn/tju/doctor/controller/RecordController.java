@@ -1,10 +1,13 @@
 package cn.tju.doctor.controller;
 
 import cn.tju.doctor.dao.RecordMapper;
+import cn.tju.doctor.dao.UserMapper;
+import cn.tju.doctor.dao.UserfundingMapper;
 import cn.tju.doctor.dao.WorkMapper;
 import cn.tju.doctor.daomain.*;
 import cn.tju.doctor.service.UserFeaServer;
 import cn.tju.doctor.utils.JsonToMapUtils;
+import cn.tju.doctor.utils.numberUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,24 +27,54 @@ import java.util.Map;
 public class RecordController {
     @Autowired
     RecordMapper recordMapper;
+    @Autowired
+    UserMapper userMapper;
+    @Autowired
+    UserfundingMapper userfundingMapper;
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Map json){
         String moneyS = json.get("money").toString();
         String username = json.get("username").toString();
         String sourcename = json.get("sourcename").toString();
-        UserFeaServer userFeaServer = new UserFeaServer();
-        String IdNumber;
-        try {
-            IdNumber = userFeaServer.getID(sourcename,username,Double.valueOf(moneyS));
-        } catch (Exception e) {
-            return RetResponse.makeErrRsp(e.getMessage());
+        User from = userMapper.getUserByUsername(sourcename).get(0);
+        User to = userMapper.getUserByUsername(username).get(0);
+        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
+        userMapper.updateUser(to);
+        Userfunding userfunding = new Userfunding();
+        String IdNumber = numberUtils.getOrderNo();
+        Date date = new Date();
+        SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = sf.format(date);
+        userfunding.setNumber(IdNumber);
+        userfunding.setAuthorID(sourcename);
+        userfunding.setSource(sourcename);
+        userfunding.setGo(username);
+        userfunding.setMount(Double.valueOf(moneyS));
+        userfunding.setTest(0);
+        userfunding.setIfWork(0);
+        userfunding.setApplyTime(time);
+        if (Double.valueOf(moneyS) > from.getMoney()){
+            return RetResponse.makeErrRsp("余额不足");
         }
+        from.setMoney(from.getMoney()-Double.valueOf(moneyS));
+        to.setMoney(to.getMoney()+Double.valueOf(moneyS));
+        try {
+            userMapper.updateUser(from);
+            userMapper.updateUser(to);
+            userfundingMapper.insertUserfunding(userfunding);
+        }catch (Exception e){
+            return RetResponse.makeErrRsp("转账出错");
+        }
+//        try {
+//            IdNumber = userFeaServer.getID(sourcename,username,Double.valueOf(moneyS));
+//        } catch (Exception e) {
+//            return RetResponse.makeErrRsp(e.getMessage());
+//        }
         int money = Integer.parseInt(moneyS);
         int number = ((money%1000)==0)?(money/1000):(money/1000+1);
         List<String> paper = recordMapper.getPaper(number);
         Record r = new Record();
         r.setNumber(IdNumber);//流水号
-        Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         r.setPublishTime(sdf.format(date));
         for (String each:paper){

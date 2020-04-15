@@ -241,14 +241,15 @@ public class ProjectFeaController {
         from = list1.get(0);
         to =list2.get(0);
         if (from.getMoney() < mount) return RetResponse.makeErrRsp("公司账户余额不足");
+        from.setMoney(from.getMoney()-mount);
         Userfunding userfunding = new Userfunding();
-        String testUser = userMapper.getUserByCompany(from.getCompany(),"7").get(0).getUsername();
+        String testUser = userMapper.getUserByCompany(from.getCompany(),"3").get(0).getUsername();
         String number = numberUtils.getOrderNo();
         Date date = new Date();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = sf.format(date);
         userfunding.setNumber(number);
-        userfunding.setApplyID(source);
+        userfunding.setAuthorID(source);
         userfunding.setSource(source);
         userfunding.setGo(go);
         userfunding.setMount(mount);
