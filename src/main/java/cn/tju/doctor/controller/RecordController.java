@@ -36,6 +36,7 @@ public class RecordController {
         String moneyS = json.get("money").toString();
         String username = json.get("username").toString();
         String sourcename = json.get("sourcename").toString();
+
         User from = userMapper.getUserByUsername(sourcename).get(0);
         User to = userMapper.getUserByUsername(username).get(0);
         to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
@@ -71,22 +72,53 @@ public class RecordController {
 //            return RetResponse.makeErrRsp(e.getMessage());
 //        }
         int money = Integer.parseInt(moneyS);
-        int number = ((money%1000)==0)?(money/1000):(money/1000+1);
+        int l = 1;
+        while (money/l>0){
+            l*=10;
+        }
+        int shuLiangJi = l/100;
+        System.out.println(shuLiangJi);
+        if(shuLiangJi<=1){
+            return RetResponse.makeErrRsp("资金太少无法用于提现");
+        }
+        int number = ((money%shuLiangJi)==0)?(money/shuLiangJi):(money/shuLiangJi+1);
         List<String> paper = recordMapper.getPaper(number);
         Record r = new Record();
-        r.setNumber(IdNumber);//流水号
+        r.setNumber("123");//流水号
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         r.setPublishTime(sdf.format(date));
+
+        int views = 0;
+        int download = 0;
+        int likes = 0;
+        int hides = 0;
+        if(money%shuLiangJi!=0){
+            r.setArticleID(paper.remove(0));
+            hides = (int)(Math.random()*(money%shuLiangJi/4));
+            download = (int)(Math.random()*(money%shuLiangJi/8));
+            likes = (int)(Math.random()*(money%shuLiangJi/4));
+            views = ((money%shuLiangJi)-hides-download*2-likes)*2;
+            r.setViews(views);
+            r.setViewsMoney(views*0.5);
+            r.setHides(hides);
+            r.setHidesMoney(hides*1.0);
+            r.setDownload(download);
+            r.setDownloadsMoney(download*2.0);
+            r.setLikes(likes);
+            r.setLikesMoney(likes*1.0);
+            recordMapper.insertRecord(r);
+        }
+
         for (String each:paper){
             r.setArticleID(each);
-            int views = (int)(Math.random()*250);
-            int download = (int)(Math.random()*125);
-            int likes = (int)(Math.random()*250);
-            int hides = (int)((1000-views-download*2-likes)/1.5);
+            hides = (int)(Math.random()*shuLiangJi/4);
+            download = (int)(Math.random()*shuLiangJi/8);
+            likes = (int)(Math.random()*shuLiangJi/4);
+            views = (shuLiangJi-hides-download*2-likes)*2;
             r.setViews(views);
-            r.setViewsMoney(views*1.0);
+            r.setViewsMoney(views*0.5);
             r.setHides(hides);
-            r.setHidesMoney(hides*1.5);
+            r.setHidesMoney(hides*1.0);
             r.setDownload(download);
             r.setDownloadsMoney(download*2.0);
             r.setLikes(likes);
