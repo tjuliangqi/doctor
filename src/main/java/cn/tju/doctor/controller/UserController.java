@@ -1,6 +1,7 @@
 package cn.tju.doctor.controller;
 
 
+import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.UserMapper;
 import cn.tju.doctor.daomain.RetResponse;
 import cn.tju.doctor.daomain.RetResult;
@@ -10,13 +11,13 @@ import cn.tju.doctor.utils.VerifyUtil;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -241,6 +242,33 @@ public class UserController {
         System.out.println("ok");
         //调用审核未写
         int flag = userMapper.insertUser(user);
+        if (flag==1){
+            return RetResponse.makeOKRsp("ok");
+        }else {
+            return RetResponse.makeErrRsp("注册失败");
+        }
+    }
+
+    @RequestMapping(value = "/regis1", method = RequestMethod.POST)
+    public RetResult<String> login1(@RequestParam("file") MultipartFile file, User user){
+        user.setTest("10000");
+        user.setAuthorID(UUID.randomUUID().toString());
+        System.out.println("ok");
+        //调用审核未写
+        String fileName = file.getOriginalFilename();
+        String destFileName = Config.UPLOAD_DIR + File.separator + user.getUsername() + File.separator + fileName;
+
+        File destFile = new File(destFileName);
+        if (!destFile.getParentFile().exists()){
+            destFile.getParentFile().mkdir();
+        }
+        try {
+            file.transferTo(destFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        user.setFileURL("http://39.96.65.14/doctorfile/upload/" + user.getUsername() + "/" + fileName);
+        int flag = userMapper.insertUser1(user);
         if (flag==1){
             return RetResponse.makeOKRsp("ok");
         }else {

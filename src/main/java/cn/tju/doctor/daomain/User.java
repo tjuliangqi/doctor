@@ -45,10 +45,46 @@ public class User implements Serializable {
     private double trainingIncome;
     private double healthIncome;
     private String testUser;
+    private String productName;
+    private String productSize;
+    private String productIndus;
+    private String fileURL;
 
 
     public User(){
 
+    }
+
+    public String getFileURL() {
+        return fileURL;
+    }
+
+    public void setFileURL(String fileURL) {
+        this.fileURL = fileURL;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductSize() {
+        return productSize;
+    }
+
+    public void setProductSize(String productSize) {
+        this.productSize = productSize;
+    }
+
+    public String getProductIndus() {
+        return productIndus;
+    }
+
+    public void setProductIndus(String productIndus) {
+        this.productIndus = productIndus;
     }
 
     public String getUsername() {
