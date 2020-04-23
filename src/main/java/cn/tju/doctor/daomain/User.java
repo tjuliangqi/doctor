@@ -49,10 +49,19 @@ public class User implements Serializable {
     private String productSize;
     private String productIndus;
     private String fileURL;
+    private String bank;
 
 
     public User(){
 
+    }
+
+    public String getBank() {
+        return bank;
+    }
+
+    public void setBank(String bank) {
+        this.bank = bank;
     }
 
     public String getFileURL() {
