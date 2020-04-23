@@ -50,10 +50,19 @@ public class User implements Serializable {
     private String productIndus;
     private String fileURL;
     private String bank;
+    private int manageLevel;
+
 
 
     public User(){
 
+    }
+    public int getManageLevel() {
+        return manageLevel;
+    }
+
+    public void setManageLevel(int manageLevel) {
+        this.manageLevel = manageLevel;
     }
 
     public String getBank() {
