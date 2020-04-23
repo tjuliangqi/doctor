@@ -265,7 +265,7 @@ public class UserController {
 
         user.setCompany(company);
         user.setFileURL(dataURL);
-        user.setManageLevel(user.getManageLevel());
+        //user.setManageLevel(user.getManageLevel());
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
