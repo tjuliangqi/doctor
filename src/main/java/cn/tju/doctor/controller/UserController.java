@@ -239,6 +239,7 @@ public class UserController {
     public RetResult<String> login(@RequestBody User user){
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
+        user.setType("0");
         System.out.println("ok");
         //调用审核未写
         int flag = userMapper.insertUser(user);
