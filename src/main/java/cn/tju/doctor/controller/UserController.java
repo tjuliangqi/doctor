@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static cn.tju.doctor.utils.fileUtil.upload;
+
 
 @RestController
 
@@ -240,6 +242,33 @@ public class UserController {
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         user.setType("0");
+        System.out.println("ok");
+        //调用审核未写
+        int flag = userMapper.insertUser(user);
+        if (flag==1){
+            return RetResponse.makeOKRsp("ok");
+        }else {
+            return RetResponse.makeErrRsp("注册失败");
+        }
+    }
+
+    // 管理员注册接口
+    @RequestMapping(value = "/regis2", method = RequestMethod.POST)
+    public RetResult<String> login2(@RequestParam("file") MultipartFile file,
+                                 @RequestParam("fatherId") String fatherId,
+                                    User user) {
+
+        String dataURL = upload(file,"管理员文件");
+        List<User> lists = userMapper.getUserByAuthorID(fatherId);
+        if(lists.size()<1)
+            return RetResponse.makeErrRsp("找不到上一级");
+        String company = lists.get(0).getCompany();
+
+        user.setCompany(company);
+        user.setFileURL(dataURL);
+        //user.setManageLevel(user.getManageLevel());
+        user.setTest("10000");
+        user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
         //调用审核未写
         int flag = userMapper.insertUser(user);
