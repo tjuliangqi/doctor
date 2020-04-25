@@ -13,6 +13,8 @@ import java.util.List;
 public interface UserMapper {
     List<User> getUserByEmail(@Param("email") String email);
     List<User> getUserByUsername(@Param("username") String username);
+    List<User> getUserByUnit(@Param("unit") String unit,@Param("type") String type);
+    List<User> getUserByUnitForGuan(@Param("type") String type);
     List<User> getUserByToken(@Param("token") String token);
     List<User> getUserByArea(@Param("area") String area);
     List<User> getUserByAuthorID(@Param("authorID") String authorID);
