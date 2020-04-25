@@ -78,6 +78,7 @@
             <if test="user.projectIncome != null">projectIncome=#{user.projectIncome},</if>
             <if test="user.trainingIncome != null">trainingIncome=#{user.trainingIncome},</if>
             <if test="user.healthIncome != null">healthIncome=#{user.healthIncome},</if>
+            <if test="user.percent != null">percent=#{user.percent}</if>
         </set>
         WHERE authorID=#{user.authorID}
     </update>

@@ -111,6 +111,33 @@ public class UserController {
         return RetResponse.makeOKRsp(objs);
     }
 
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+    public RetResult<String> verify(@RequestBody Map<String,String> json){
+        String testResult = json.get("testResult");
+        String percent = json.get("percent");
+        String authorID = json.get("authorID");
+
+        double percentDou = Double.parseDouble(percent);
+        User user = new User();
+        user.setTest(testResult);
+        user.setPercent(percentDou);
+        user.setAuthorID(authorID);
+        userMapper.updateUser(user);
+        return RetResponse.makeOKRsp("OK");
+    }
+
+    @RequestMapping(value = "/verify1", method = RequestMethod.POST)
+    public RetResult<String> verify1(@RequestBody Map<String,String> json){
+        String testResult = json.get("testResult");
+        String authorID = json.get("authorID");
+
+        User user = new User();
+        user.setTest(testResult);
+        user.setAuthorID(authorID);
+        userMapper.updateUser(user);
+        return RetResponse.makeOKRsp("OK");
+    }
+
     @RequestMapping(value = "/checkUser", method = RequestMethod.POST)
     public RetResult<Object> checkUser(@RequestBody Map<String,String> map){
         List<User> list = userMapper.getUserByEmail(map.get("email"));
