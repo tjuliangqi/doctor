@@ -255,9 +255,9 @@ public class UserController {
     // 管理员注册接口
     @RequestMapping(value = "/regis2", method = RequestMethod.POST)
     public RetResult<String> login2(@RequestParam("file") MultipartFile file,
-                                 @RequestParam("fatherId") String fatherId,
-                                    User user) {
 
+                                    User user) {
+        String fatherId = user.getUnit();
         String dataURL = upload(file,"管理员文件");
         List<User> lists = userMapper.getUserByAuthorID(fatherId);
         if(lists.size()<1)
