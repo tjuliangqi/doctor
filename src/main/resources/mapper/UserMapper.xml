@@ -40,8 +40,8 @@
     </select>
 
     <insert id="insertUser" parameterType="cn.tju.doctor.daomain.User">
-        INSERT INTO users (username, password, email, area, region, unit, part, name, actureID, phone, address, bankID, ifDoc, docID, docIDurl, type, authorID, test,company,bank,manageLevel)
-        VALUES  (#{user.username}, #{user.password}, #{user.email}, #{user.area}, #{user.region}, #{user.unit}, #{user.part}, #{user.name}, #{user.actureID}, #{user.phone}, #{user.address}, #{user.bankID}, #{user.ifDoc}, #{user.docID}, #{user.docIDurl}, #{user.type}, #{user.authorID}, #{user.test}, #{user.company},#{user.bank},#{user.manageLevel})
+        INSERT INTO users (username, password, email, area, region, unit, part, name, actureID, phone, address, bankID, ifDoc, docID, docIDurl, type, authorID, test,company,bank,manageLevel,fileURL)
+        VALUES  (#{user.username}, #{user.password}, #{user.email}, #{user.area}, #{user.region}, #{user.unit}, #{user.part}, #{user.name}, #{user.actureID}, #{user.phone}, #{user.address}, #{user.bankID}, #{user.ifDoc}, #{user.docID}, #{user.docIDurl}, #{user.type}, #{user.authorID}, #{user.test}, #{user.company},#{user.bank},#{user.manageLevel},#{user.fileURL})
     </insert>
     <insert id="insertUser1" parameterType="cn.tju.doctor.daomain.User">
         INSERT INTO users (username, password, email, area, region, unit, part, name, actureID, phone, address, bankID, ifDoc, docID, docIDurl, type, authorID, test,company,productName,productSize,productIndus,fileURL)

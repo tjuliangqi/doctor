@@ -255,16 +255,11 @@ public class UserController {
     // 管理员注册接口
     @RequestMapping(value = "/regis2", method = RequestMethod.POST)
     public RetResult<String> login2(@RequestParam("data") MultipartFile file,
-
                                     User user) {
-        //String fatherId = user.getUnit();
-        String dataURL = upload(file,"管理员文件");
-        //List<User> lists = userMapper.getUserByAuthorID(fatherId);
-        //if(lists.size()<1)
-        //    return RetResponse.makeErrRsp("找不到上一级");
-        //String unit = lists.get(0).getUsername();
+
+        String dataURL = upload(file,user.getUsername());
         user.setType("3");
-        //user.setUnit(unit);
+        user.setUnit(""); //他没有上级
         user.setFileURL(dataURL);
         //user.setManageLevel(user.getManageLevel());
         user.setTest("10000");
