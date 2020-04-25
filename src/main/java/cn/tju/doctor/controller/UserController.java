@@ -262,9 +262,9 @@ public class UserController {
         List<User> lists = userMapper.getUserByAuthorID(fatherId);
         if(lists.size()<1)
             return RetResponse.makeErrRsp("找不到上一级");
-        String company = lists.get(0).getCompany();
-
-        user.setCompany(company);
+        String unit = lists.get(0).getUsername();
+        user.setType("7");
+        user.setUnit(unit);
         user.setFileURL(dataURL);
         //user.setManageLevel(user.getManageLevel());
         user.setTest("10000");
