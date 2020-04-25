@@ -423,5 +423,21 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
+    public RetResult<List<User>> searchUnverify(@RequestBody Map<String,String> map){
+        List<User> list = new ArrayList<>();
+        String username = map.get("username");
+        list = userMapper.getUserByUnit(username,"0");
+        return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
+    public RetResult<List<User>> searchUnverify1(@RequestBody Map<String,String> map){
+        List<User> list = new ArrayList<>();
+        String username = map.get("username");
+        list = userMapper.getUserByUnit(username,"7");
+        return RetResponse.makeOKRsp(list);
+    }
+
 
 }
