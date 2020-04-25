@@ -19,6 +19,7 @@ public interface UserMapper {
     List<User> getUserByTest(@Param("test") String test);
     List<User> getUserByType(@Param("type") String type);
     List<User> getUserByCompany(@Param("company") String company,@Param("type") String type);
+    List<User> getUserByUnit(@Param("unit") String unit,@Param("type") String type);
     List<String> selectByName(@Param("company") String company);
     int insertUser(@Param("user") User user);
     int insertUser1(@Param("user") User user);

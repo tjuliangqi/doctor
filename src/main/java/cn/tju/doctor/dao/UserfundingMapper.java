@@ -18,8 +18,12 @@ public interface UserfundingMapper {
     List<Userfunding> getUserfundingByAuthorID(String authorID);
     @Select("SELECT * FROM `userfunding` WHERE `go` = #{go} AND type = #{type}")
     List<Userfunding> getUserfundingByGo(String go, String type);
+    @Select("SELECT * FROM `userfunding` WHERE `go` = #{go}")
+    List<Userfunding> getUserfundingByGoWithoutType(String go);
     @Select("SELECT * FROM `userfunding` WHERE `source` = #{source}")
     List<Userfunding> getUserfundingBySource(String source);
+    @Select("SELECT * FROM `userfunding` WHERE `source` = #{source} AND type = #{type}")
+    List<Userfunding> getUserfundingBySourceWithType(String source, String type);
     @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `type` = ${type} AND `test` = ${test}")
     List<Userfunding> getUserfundingListByTest(@Param("type") int type,@Param("test") int test,@Param("testUser") String testUser);
     @Select("SELECT * FROM `userfunding` WHERE `applyTime` >= #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")

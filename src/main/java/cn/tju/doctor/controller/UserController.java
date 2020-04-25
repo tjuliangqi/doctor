@@ -140,6 +140,7 @@ public class UserController {
                 e.printStackTrace();
                 return RetResponse.makeErrRsp("获取用户信息出错");
             }
+            data.put("authorID",user.getAuthorID());
             data.put("username",user.getUsername());
             data.put("modify",user.getModify());
             data.put("email",user.getEmail());
@@ -239,9 +240,36 @@ public class UserController {
 
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
-        user.setTest("10000");
+        user.setTest("1");
         user.setAuthorID(UUID.randomUUID().toString());
-        user.setType("0");
+
+        if (user.getUnit().equals("")) user.setUnit(null);
+        if (user.getCompany().equals("")) user.setCompany(null);
+        String unitId = user.getUnit();
+        String companyID = user.getCompany();
+        if (unitId != null && !user.getType().equals("3")){
+            List<User> unit = userMapper.getUserByAuthorID(unitId);
+            if (unit.size()==0){
+                return RetResponse.makeErrRsp("团队码填写错误");
+            }
+            user.setUnit(unit.get(0).getUsername());
+        }
+        //公司输入id
+        if (companyID != null){
+            if (user.getType().equals("3")){
+                user.setCompany(companyID);
+
+            }else {
+                List<User> unit = userMapper.getUserByAuthorID(companyID);
+                if (unit.size()==0){
+                    return RetResponse.makeErrRsp("公司填写错误");
+                }
+                user.setCompany(unit.get(0).getUsername());
+            }
+
+        }else {
+            return RetResponse.makeErrRsp("公司填写错误");
+        }
         System.out.println("ok");
         //调用审核未写
         int flag = userMapper.insertUser(user);
@@ -262,9 +290,9 @@ public class UserController {
         List<User> lists = userMapper.getUserByAuthorID(fatherId);
         if(lists.size()<1)
             return RetResponse.makeErrRsp("找不到上一级");
-        String unit = lists.get(0).getUsername();
-        user.setType("7");
-        user.setUnit(unit);
+        String company = lists.get(0).getCompany();
+
+        user.setCompany(company);
         user.setFileURL(dataURL);
         //user.setManageLevel(user.getManageLevel());
         user.setTest("10000");
@@ -341,9 +369,10 @@ public class UserController {
         String guan_username = map.get("username");
         List<String> res = new ArrayList();
         try {
-            List<User> guan_list = userMapper.getUserByUsername(guan_username);
-            String company = guan_list.get(0).getCompany();
-            List<User> pu_list = userMapper.getUserByCompany(company,"0");
+            //这里改吗
+//            List<User> guan_list = userMapper.getUserByUsername(guan_username);
+//            String company = guan_list.get(0).getCompany();
+            List<User> pu_list = userMapper.getUserByCompany(guan_username,"0");
             for(User user:pu_list){
                 res.add(user.getUsername());
             }
@@ -359,9 +388,10 @@ public class UserController {
         String gong_username = map.get("username");
         List<String> res = new ArrayList();
         try {
-            List<User> gong_list = userMapper.getUserByUsername(gong_username);
-            String company = gong_list.get(0).getCompany();
-            List<User> guan_list = userMapper.getUserByCompany(company,"7");
+            //这里应该改吗
+//            List<User> gong_list = userMapper.getUserByUsername(gong_username);
+//            String company = gong_list.get(0).getCompany();
+            List<User> guan_list = userMapper.getUserByCompany(gong_username,"7");
             for(User user:guan_list){
                 res.add(user.getUsername());
             }
@@ -428,5 +458,35 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "/searchList5", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList5(@RequestBody Map<String,String> map){
+        String unit = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> guan_list = userMapper.getUserByUnit(unit,"7");
+            for(User user:guan_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的团队人员");
+        }
 
+        return RetResponse.makeOKRsp(res);
+    }
+
+    @RequestMapping(value = "/searchList6", method = RequestMethod.POST)
+    public RetResult<List<String>> searchList6(@RequestBody Map<String,String> map){
+        String username = map.get("username");
+        List<String> res = new ArrayList();
+        try {
+            List<User> guan_list = userMapper.getUserByUnit(username,"0");
+            for(User user:guan_list){
+                res.add(user.getUsername());
+            }
+        } catch (Exception E){
+            return RetResponse.makeErrRsp("无可选择的普通用户");
+        }
+
+        return RetResponse.makeOKRsp(res);
+    }
 }
