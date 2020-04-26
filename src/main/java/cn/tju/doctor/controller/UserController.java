@@ -456,7 +456,7 @@ public class UserController {
     public RetResult<List<User>> searchList6(@RequestBody Map<String,String> map){
         List<User> list = new ArrayList<>();
         String username = map.get("username");
-        list = userMapper.getUserByUnit(username,"7");
+        list = userMapper.getUserByUsernameWithType(username,"7");
         return RetResponse.makeOKRsp(list);
     }
 
@@ -464,7 +464,7 @@ public class UserController {
     public RetResult<List<User>> searchList5(@RequestBody Map<String,String> map){
         List<User> list = new ArrayList<>();
         String username = map.get("username");
-        list = userMapper.getUserByUnit(username,"0");
+        list = userMapper.getUserByUsernameWithType(username,"0");
         return RetResponse.makeOKRsp(list);
     }
 
