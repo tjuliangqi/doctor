@@ -439,5 +439,22 @@ public class UserController {
         return RetResponse.makeOKRsp(list);
     }
 
+    @RequestMapping(value = "/searchList6", method = RequestMethod.POST)
+    public RetResult<List<User>> searchList6(@RequestBody Map<String,String> map){
+        List<User> list = new ArrayList<>();
+        String username = map.get("username");
+        list = userMapper.getUserByUnit(username,"7");
+        return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/searchList5", method = RequestMethod.POST)
+    public RetResult<List<User>> searchList5(@RequestBody Map<String,String> map){
+        List<User> list = new ArrayList<>();
+        String username = map.get("username");
+        list = userMapper.getUserByUnit(username,"0");
+        return RetResponse.makeOKRsp(list);
+    }
+
+
 
 }
