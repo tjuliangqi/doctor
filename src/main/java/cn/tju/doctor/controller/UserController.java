@@ -259,7 +259,7 @@ public class UserController {
 
         String dataURL = upload(file,user.getUsername());
         user.setType("3");
-        user.setUnit(""); //他没有上级
+        user.setUnit(""); //管理用户没有上级，设为空
         user.setFileURL(dataURL);
         //user.setManageLevel(user.getManageLevel());
         user.setTest("10000");
@@ -272,6 +272,19 @@ public class UserController {
         }else {
             return RetResponse.makeErrRsp("注册失败");
         }
+    }
+    //超级管理员查询待审核公司管理用户接口
+    @RequestMapping(value = "/searchUnverify2", method = RequestMethod.POST)
+    public RetResult<List<User>> searchUnverify2(){
+        List<User> lists = userMapper.getUserByUnitForGuan("3");
+        return RetResponse.makeOKRsp(lists);
+    }
+
+    //超级管理员查询待审核公司业务账户接口
+    @RequestMapping(value = "/searchUnverify3", method = RequestMethod.POST)
+    public RetResult<List<User>> searchUnverify3(){
+        List<User> lists = userMapper.getUserByUnitForGuan("7");
+        return RetResponse.makeOKRsp(lists);
     }
 
     @RequestMapping(value = "/regis1", method = RequestMethod.POST)

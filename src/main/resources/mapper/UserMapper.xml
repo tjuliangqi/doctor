@@ -39,6 +39,10 @@
         SELECT * FROM users WHERE unit = #{unit} AND type = #{type} AND test = "10000";
     </select>
 
+    <select id="getUserByUnitForGuan" resultType="cn.tju.doctor.daomain.User" parameterType="String">
+        SELECT * FROM users WHERE type = #{type} AND test = "10000" AND unit="";
+    </select>
+
     <select id="selectByName" resultType="java.lang.String" parameterType="String">
         SELECT company FROM users WHERE company like "%"#{company}"%";
     </select>
