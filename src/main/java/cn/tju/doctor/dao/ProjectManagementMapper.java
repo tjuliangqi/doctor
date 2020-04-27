@@ -12,5 +12,5 @@ import java.util.List;
 public interface ProjectManagementMapper {
     List<ProjectManagement> getByTest(@Param("testResult") Integer testResult);
     int updateTest(ProjectManagement projectManagement);
-    int insertProjectManagement(ProjectManagement projectManagement);
+    int insertProjectManagement(@Param("projectManagement") ProjectManagement projectManagement);
 }
