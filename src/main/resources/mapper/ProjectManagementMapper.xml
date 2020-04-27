@@ -5,7 +5,7 @@
 
     <insert id="insertProjectManagement" parameterType="cn.tju.doctor.daomain.ProjectManagement">
         INSERT INTO projects (uuid, mount, money, name, creatuser, company, dataURL, ifWork, test, creattime, testtime, worktime)
-        VALUES  (#{uuid}, #{mount}, #{money}, #{name}, #{creatuser}, #{company}, #{dataURL}, #{ifWork}, #{test}, #{creattime}, #{testtime}, #{worktime})
+        VALUES  (#{projectManagement.uuid}, #{projectManagement.mount}, #{projectManagement.money}, #{projectManagement.name}, #{projectManagement.creatuser}, #{projectManagement.company}, #{projectManagement.dataURL}, #{projectManagement.ifWork}, #{projectManagement.test}, #{projectManagement.creattime}, #{projectManagement.testtime}, #{projectManagement.worktime})
     </insert>
 
     <select id="getByTest" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="Integer">
