@@ -68,9 +68,9 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public RetResult<Map> login(@RequestBody Map<String,String> json){
-        List<User> list = userMapper.getUserByEmail(json.get("email"));
+        List<User> list = userMapper.getUserByUsername(json.get("username"));
         if (list.size()==0){
-            return RetResponse.makeErrRsp("邮箱不正确");
+            return RetResponse.makeErrRsp("用户名不正确");
         }else {
             User user = list.get(0);
             if (user.getPassword().equals(json.get("password"))){
@@ -111,6 +111,33 @@ public class UserController {
         return RetResponse.makeOKRsp(objs);
     }
 
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+    public RetResult<String> verify(@RequestBody Map<String,String> json){
+        String testResult = json.get("testResult");
+        String percent = json.get("percent");
+        String authorID = json.get("authorID");
+
+        double percentDou = Double.parseDouble(percent);
+        User user = new User();
+        user.setTest(testResult);
+        user.setPercent(percentDou);
+        user.setAuthorID(authorID);
+        userMapper.updateUser(user);
+        return RetResponse.makeOKRsp("OK");
+    }
+
+    @RequestMapping(value = "/verify2", method = RequestMethod.POST)
+    public RetResult<String> verify1(@RequestBody Map<String,String> json){
+        String testResult = json.get("testResult");
+        String authorID = json.get("authorID");
+
+        User user = new User();
+        user.setTest(testResult);
+        user.setAuthorID(authorID);
+        userMapper.updateUser(user);
+        return RetResponse.makeOKRsp("OK");
+    }
+
     @RequestMapping(value = "/checkUser", method = RequestMethod.POST)
     public RetResult<Object> checkUser(@RequestBody Map<String,String> map){
         List<User> list = userMapper.getUserByEmail(map.get("email"));
@@ -128,7 +155,7 @@ public class UserController {
 
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
     public RetResult<Map> getUser(@RequestBody Map<String,String> map){
-        List<User> list = userMapper.getUserByToken(map.get("token"));
+        List<User> list = userMapper.getUserByUsername(map.get("username"));
         Map<String,Object> data = new HashMap<>();
         if (list.size()==0){
             return RetResponse.makeErrRsp("用户不存在");
@@ -155,6 +182,7 @@ public class UserController {
             data.put("getmoneyrecord",user.getGetmoneyrecord());
             data.put("state",user.getState());
             data.put("money",user.getMoney());
+            data.put("authorID",user.getAuthorID());
             return RetResponse.makeOKRsp(data);
         }
     }
@@ -239,6 +267,8 @@ public class UserController {
 
     @RequestMapping(value = "/regis", method = RequestMethod.POST)
     public RetResult<String> login(@RequestBody User user){
+        String username = userMapper.getUserByAuthorID(user.getUnit()).get(0).getUsername();
+        user.setUnit(username);
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         user.setType("0");
@@ -289,6 +319,8 @@ public class UserController {
 
     @RequestMapping(value = "/regis1", method = RequestMethod.POST)
     public RetResult<String> login1(@RequestParam("file") MultipartFile file, User user){
+        String username = userMapper.getUserByAuthorID(user.getUnit()).get(0).getUsername();
+        user.setUnit(username);
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
@@ -394,18 +426,20 @@ public class UserController {
 
     @RequestMapping(value = "/searchAllCompany", method = RequestMethod.POST)
     public RetResult<List<Map>> searchAllCompany(){
-        List<User> users = userMapper.getUserByType("3");
+        List<User> users = userMapper.getUserByUsernameWithType("","7");
         if(users.size()<1) return RetResponse.makeErrRsp("查询数量为0");
         List<Map> list = new ArrayList<>();
         for(User each:users){
-            Map<String,Object> map = new HashMap<>();
-            map.put("company",each.getCompany());
-            map.put("address",each.getAddress());
-            map.put("phone",each.getPhone());
-            map.put("money",each.getMoney());
-            map.put("testUser",each.getTestUser());
-
-            list.add(map);
+            if (each.getTest().equals("1")){
+                Map<String,Object> map = new HashMap<>();
+                map.put("username",each.getUsername());
+                map.put("company",each.getCompany());
+                map.put("address",each.getAddress());
+                map.put("phone",each.getPhone());
+                map.put("money",each.getMoney());
+                map.put("testUser",each.getTestUser());
+                list.add(map);
+            }
         }
         return RetResponse.makeOKRsp(list);
     }
@@ -423,13 +457,13 @@ public class UserController {
 
     @RequestMapping(value = "/updateCompanyMount", method = RequestMethod.POST)
     public RetResult<String> updateCompanyMount(@RequestBody Map<String,String> map){
-        String company = map.get("username");
+        String username = map.get("username");
         String money = (map.get("money"));
-        List<User> list = userMapper.getUserByCompany(company,"3");
+        List<User> list = userMapper.getUserByUsername(username);
         Double m = list.get(0).getMoney();
         m = m + Double.valueOf(money);
         try {
-            userMapper.updateMoney(company, String.valueOf(m));
+            userMapper.updateMoney(username, String.valueOf(m));
             return RetResponse.makeOKRsp("ok");
         } catch (Exception e){
             return RetResponse.makeErrRsp("更新失败");
@@ -453,18 +487,24 @@ public class UserController {
     }
 
     @RequestMapping(value = "/searchList6", method = RequestMethod.POST)
-    public RetResult<List<User>> searchList6(@RequestBody Map<String,String> map){
-        List<User> list = new ArrayList<>();
+    public RetResult<List<String>> searchList6(@RequestBody Map<String,String> map){
+        List<String> list = new ArrayList<>();
         String username = map.get("username");
-        list = userMapper.getUserByUsernameWithType(username,"7");
+        List<User> users = userMapper.getUserByUsernameWithType(username,"0");
+        for(User each:users){
+            list.add(each.getUsername());
+        }
         return RetResponse.makeOKRsp(list);
     }
 
     @RequestMapping(value = "/searchList5", method = RequestMethod.POST)
-    public RetResult<List<User>> searchList5(@RequestBody Map<String,String> map){
-        List<User> list = new ArrayList<>();
+    public RetResult<List<String>> searchList5(@RequestBody Map<String,String> map){
+        List<String> list = new ArrayList<>();
         String username = map.get("username");
-        list = userMapper.getUserByUsernameWithType(username,"0");
+        List<User> users = userMapper.getUserByUsernameWithType(username,"7");
+        for(User each:users){
+            list.add(each.getUsername());
+        }
         return RetResponse.makeOKRsp(list);
     }
 

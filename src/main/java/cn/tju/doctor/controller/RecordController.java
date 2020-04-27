@@ -41,8 +41,6 @@ public class RecordController {
 
         User from = userMapper.getUserByUsername(sourcename).get(0);
         User to = userMapper.getUserByUsername(username).get(0);
-        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
-        userMapper.updateUser(to);
         Userfunding userfunding = new Userfunding();
         String IdNumber = numberUtils.getOrderNo();
         Date date = new Date();
@@ -62,6 +60,7 @@ public class RecordController {
         }
         from.setMoney(from.getMoney()-Double.valueOf(moneyS));
         to.setMoney(to.getMoney()+Double.valueOf(moneyS));
+        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
         try {
             userMapper.updateUser(from);
             userMapper.updateUser(to);

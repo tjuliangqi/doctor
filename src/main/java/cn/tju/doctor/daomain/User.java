@@ -51,12 +51,21 @@ public class User implements Serializable {
     private String fileURL;
     private String bank;
     private int manageLevel;
-
+    private double percent;
 
 
     public User(){
 
     }
+
+    public double getPercent() {
+        return percent;
+    }
+
+    public void setPercent(double percent) {
+        this.percent = percent;
+    }
+
     public int getManageLevel() {
         return manageLevel;
     }
