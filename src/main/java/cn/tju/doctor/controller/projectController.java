@@ -3,6 +3,7 @@ package cn.tju.doctor.controller;
 import cn.tju.doctor.dao.ProjectDockMapper;
 import cn.tju.doctor.dao.ProjectManagementMapper;
 import cn.tju.doctor.dao.ProjectMapper;
+import cn.tju.doctor.dao.UserMapper;
 import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +20,8 @@ import static cn.tju.doctor.utils.fileUtil.upload;
 
 @RequestMapping("/project")
 public class projectController {
+    @Autowired
+    UserMapper userMapper;
     @Autowired
     ProjectMapper projectMapper;
     @Autowired
@@ -394,6 +397,31 @@ public class projectController {
         }
     }
 
+    // 业务申请接口
+    @RequestMapping(value = "/apply", method = RequestMethod.POST)
+    public RetResult<String> apply(@RequestParam("data") MultipartFile file,
+                                    ProjectManagement projectManagement) {
+
+        String dataURL = upload(file,projectManagement.getCreatuser());
+        String uuid = UUID.randomUUID().toString().replace("-","");
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
+        String creattime = dateFormat.format(now);
+        List<User> lists = userMapper.getUserByUsername(projectManagement.getCreatuser());
+        if(lists.size()<1)
+            return RetResponse.makeErrRsp("查询不到该creatuser");
+        String company = lists.get(0).getCompany();
+        projectManagement.setUuid(uuid);
+        projectManagement.setDataURL(dataURL);
+        projectManagement.setCreattime(creattime);
+        projectManagement.setCompany(company);
+        int flag = projectManagementMapper.insertProjectManagement(projectManagement);
+        if (flag==1){
+            return RetResponse.makeOKRsp("ok");
+        }else {
+            return RetResponse.makeErrRsp("业务申请失败");
+        }
+    }
 
     @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
     public RetResult<List> searchUnverify(@RequestBody Map json) {

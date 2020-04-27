@@ -1,7 +1,5 @@
 package cn.tju.doctor.daomain;
 
-import java.util.Date;
-
 public class ProjectManagement {
     private String uuid;
     private double mount;
@@ -12,9 +10,9 @@ public class ProjectManagement {
     private String dataURL;
     private int ifWork;
     private int test;
-    private Date creattime;
-    private Date testtime;
-    private Date worktime;
+    private String creattime;
+    private String testtime;
+    private String worktime;
 
     public String getUuid() {
         return uuid;
@@ -88,27 +86,27 @@ public class ProjectManagement {
         this.test = test;
     }
 
-    public Date getCreattime() {
+    public String getCreattime() {
         return creattime;
     }
 
-    public void setCreattime(Date creattime) {
+    public void setCreattime(String creattime) {
         this.creattime = creattime;
     }
 
-    public Date getTesttime() {
+    public String getTesttime() {
         return testtime;
     }
 
-    public void setTesttime(Date testtime) {
+    public void setTesttime(String testtime) {
         this.testtime = testtime;
     }
 
-    public Date getWorktime() {
+    public String getWorktime() {
         return worktime;
     }
 
-    public void setWorktime(Date worktime) {
+    public void setWorktime(String worktime) {
         this.worktime = worktime;
     }
 
@@ -124,9 +122,10 @@ public class ProjectManagement {
                 ", dataURL='" + dataURL + '\'' +
                 ", ifWork=" + ifWork +
                 ", test=" + test +
-                ", creattime=" + creattime +
-                ", testtime=" + testtime +
-                ", worktime=" + worktime +
+                ", creattime='" + creattime + '\'' +
+                ", testtime='" + testtime + '\'' +
+                ", worktime='" + worktime + '\'' +
                 '}';
     }
+
 }
