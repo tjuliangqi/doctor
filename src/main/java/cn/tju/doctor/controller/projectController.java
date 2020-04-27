@@ -1,6 +1,7 @@
 package cn.tju.doctor.controller;
 
 import cn.tju.doctor.dao.ProjectDockMapper;
+import cn.tju.doctor.dao.ProjectManagementMapper;
 import cn.tju.doctor.dao.ProjectMapper;
 import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class projectController {
     ProjectMapper projectMapper;
     @Autowired
     ProjectDockMapper projectDockMapper;
+    @Autowired
+    ProjectManagementMapper projectManagementMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
         // 2b+公司用户id，查公司有哪些项目，管理员5b， 普通用户3b
@@ -391,4 +394,28 @@ public class projectController {
         }
     }
 
+
+    @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
+    public RetResult<List> searchUnverify(@RequestBody Map json) {
+        String testResult = json.get("testResult").toString();
+
+        List<ProjectManagement> byTest = projectManagementMapper.getByTest(Integer.parseInt(testResult));
+
+        return RetResponse.makeOKRsp(byTest);
+    }
+    @RequestMapping(value = "/verify", method = RequestMethod.POST)
+    public RetResult<String> verify(@RequestBody Map json) {
+        String uuid = json.get("uuid").toString();
+        String testResult = json.get("testResult").toString();
+        ProjectManagement projectManagement = new ProjectManagement();
+
+        projectManagement.setTest(Integer.parseInt(testResult));
+        projectManagement.setUuid(uuid);
+        int i = projectManagementMapper.updateTest(projectManagement);
+        if(i==1){
+            return RetResponse.makeOKRsp("ok");
+        }else {
+            return RetResponse.makeErrRsp("更新失败");
+        }
+    }
 }

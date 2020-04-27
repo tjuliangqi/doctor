@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.ProjectManagementMapper">
+
+    <select id="getByTest" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="Integer">
+        SELECT * FROM projectmanagement WHERE test = #{testResult};
+    </select>
+
+    <update id="updateTest" parameterType="cn.tju.doctor.daomain.ProjectManagement">
+        UPDATE projectmanagement SET test = #{test} WHERE uuid = #{uuid};
+    </update>
+
+
+</mapper>
