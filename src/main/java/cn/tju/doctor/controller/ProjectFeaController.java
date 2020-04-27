@@ -25,6 +25,8 @@ public class ProjectFeaController {
     ProjectFeaServer projectFeaServer;
     @Autowired
     UserfundingMapper userfundingMapper;
+    @Autowired
+    RecordMapper recordMapper;
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Projectfunding>> search(@RequestBody Map<String,String> map)  {
         List<Projectfunding> result = new ArrayList<>();
@@ -257,8 +259,15 @@ public class ProjectFeaController {
         userfunding.setIfWork(0);
         userfunding.setApplyTime(time);
         userfunding.setTestuser(testUser);
-        //公司给管理员打钱
-        userfunding.setType(1);
+
+        if (to.getType().equals("3")){
+            //公司给管理员打钱
+            userfunding.setType(1);
+        }else {
+            //公司给个人打钱
+            userfunding.setType(3);
+        }
+
         try{
             projectFeaServer.cTOm(from,userfunding);
         } catch (Exception e) {
@@ -365,9 +374,70 @@ public class ProjectFeaController {
         userfunding.setTesttime(testtime);
         User from = userMapper.getUserByUsername(userfunding.getAuthorID()).get(0);
         User to = userMapper.getUserByUsername(userfunding.getGo()).get(0);
+
         try {
             //转账
             projectFeaServer.money(from,to,userfunding);
+            if (to.getType().equals("0")){
+                Double moneys = userfunding.getMount();
+                userfunding.setType(3);
+                to.setArticleIncome(to.getArticleIncome()+userfunding.getMount());
+                userMapper.updateUser(to);
+                int money = moneys.intValue();
+                int l = 1;
+                while (money/l>0){
+                    l*=10;
+                }
+                int shuLiangJi = l/100;
+                System.out.println(shuLiangJi);
+                if(shuLiangJi<=1){
+                    return RetResponse.makeErrRsp("资金太少无法用于提现");
+                }
+                int number1 = ((money%shuLiangJi)==0)?(money/shuLiangJi):(money/shuLiangJi+1);
+                List<String> paper = recordMapper.getPaper(number1);
+                Record r = new Record();
+                r.setNumber(userfunding.getNumber());//流水号
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = new Date();
+                r.setPublishTime(sdf.format(date));
+                int views = 0;
+                int download = 0;
+                int likes = 0;
+                int hides = 0;
+                if(money%shuLiangJi!=0){
+                    r.setArticleID(paper.remove(0));
+                    hides = (int)(Math.random()*(money%shuLiangJi/4));
+                    download = (int)(Math.random()*(money%shuLiangJi/8));
+                    likes = (int)(Math.random()*(money%shuLiangJi/4));
+                    views = (int)((money%shuLiangJi)-hides-download*2-likes)*2;
+                    r.setViews(views);
+                    r.setViewsMoney(views*0.5);
+                    r.setHides(hides);
+                    r.setHidesMoney(hides*1.0);
+                    r.setDownload(download);
+                    r.setDownloadsMoney(download*2.0);
+                    r.setLikes(likes);
+                    r.setLikesMoney(likes*1.0);
+                    recordMapper.insertRecord(r);
+                }
+
+                for (String each:paper){
+                    r.setArticleID(each);
+                    hides = (int)(Math.random()*shuLiangJi/4);
+                    download = (int)(Math.random()*shuLiangJi/8);
+                    likes = (int)(Math.random()*shuLiangJi/4);
+                    views = (shuLiangJi-hides-download*2-likes)*2;
+                    r.setViews(views);
+                    r.setViewsMoney(views*0.5);
+                    r.setHides(hides);
+                    r.setHidesMoney(hides*1.0);
+                    r.setDownload(download);
+                    r.setDownloadsMoney(download*2.0);
+                    r.setLikes(likes);
+                    r.setLikesMoney(likes*1.0);
+                    recordMapper.insertRecord(r);
+                }
+            }
         }catch (Exception e){
             System.out.println(e);
             return RetResponse.makeErrRsp(e.getMessage());

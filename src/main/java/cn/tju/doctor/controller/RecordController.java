@@ -10,6 +10,7 @@ import cn.tju.doctor.utils.JsonToMapUtils;
 import cn.tju.doctor.utils.numberUtils;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +33,7 @@ public class RecordController {
     @Autowired
     UserfundingMapper userfundingMapper;
     @RequestMapping(value = "/add", method = RequestMethod.POST)
+    @Transactional(rollbackFor = Exception.class)
     public RetResult<String> add(@RequestBody Map json){
         String moneyS = json.get("money").toString();
         String username = json.get("username").toString();
@@ -39,8 +41,6 @@ public class RecordController {
 
         User from = userMapper.getUserByUsername(sourcename).get(0);
         User to = userMapper.getUserByUsername(username).get(0);
-        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
-        userMapper.updateUser(to);
         Userfunding userfunding = new Userfunding();
         String IdNumber = numberUtils.getOrderNo();
         Date date = new Date();
@@ -51,14 +51,16 @@ public class RecordController {
         userfunding.setSource(sourcename);
         userfunding.setGo(username);
         userfunding.setMount(Double.valueOf(moneyS));
-        userfunding.setTest(0);
-        userfunding.setIfWork(0);
+        userfunding.setTest(1);
+        userfunding.setIfWork(1);
         userfunding.setApplyTime(time);
+        userfunding.setType(2);
         if (Double.valueOf(moneyS) > from.getMoney()){
             return RetResponse.makeErrRsp("余额不足");
         }
         from.setMoney(from.getMoney()-Double.valueOf(moneyS));
         to.setMoney(to.getMoney()+Double.valueOf(moneyS));
+        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
         try {
             userMapper.updateUser(from);
             userMapper.updateUser(to);
@@ -84,7 +86,7 @@ public class RecordController {
         int number = ((money%shuLiangJi)==0)?(money/shuLiangJi):(money/shuLiangJi+1);
         List<String> paper = recordMapper.getPaper(number);
         Record r = new Record();
-        r.setNumber("123");//流水号
+        r.setNumber(IdNumber);//流水号
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         r.setPublishTime(sdf.format(date));
 
