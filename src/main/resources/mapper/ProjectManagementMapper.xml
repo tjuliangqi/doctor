@@ -12,6 +12,13 @@
         SELECT * FROM projectmanagement WHERE test = #{testResult};
     </select>
 
+    <select id="getByWork" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="Integer">
+        SELECT * FROM projectmanagement WHERE ifWork = #{testResult};
+    </select>
+
+    <update id="updateWork" parameterType="cn.tju.doctor.daomain.ProjectManagement">
+        UPDATE projectmanagement SET ifWork = #{ifWork} WHERE uuid = #{uuid};
+    </update>
     <update id="updateTest" parameterType="cn.tju.doctor.daomain.ProjectManagement">
         UPDATE projectmanagement SET test = #{test} WHERE uuid = #{uuid};
     </update>

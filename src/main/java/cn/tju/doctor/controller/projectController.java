@@ -446,4 +446,30 @@ public class projectController {
             return RetResponse.makeErrRsp("更新失败");
         }
     }
+
+    @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
+    public RetResult<List> searchUnverify1(@RequestBody Map json) {
+        String testResult = json.get("testResult").toString();
+
+        List<ProjectManagement> byTest = projectManagementMapper.getByWork(Integer.parseInt(testResult));
+
+        return RetResponse.makeOKRsp(byTest);
+    }
+
+    @RequestMapping(value = "/verify1", method = RequestMethod.POST)
+    public RetResult<String> verify1(@RequestBody Map json) {
+        String uuid = json.get("uuid").toString();
+        String testResult = json.get("testResult").toString();
+        ProjectManagement projectManagement = new ProjectManagement();
+
+        projectManagement.setIfWork(Integer.parseInt(testResult));
+        projectManagement.setUuid(uuid);
+        int i = projectManagementMapper.updateWork(projectManagement);
+        if(i==1){
+            return RetResponse.makeOKRsp("ok");
+        }else {
+            return RetResponse.makeErrRsp("更新失败");
+        }
+    }
+
 }
