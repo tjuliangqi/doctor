@@ -313,14 +313,20 @@ public class UserController {
     //超级管理员查询待审核公司业务账户接口
     @RequestMapping(value = "/searchUnverify3", method = RequestMethod.POST)
     public RetResult<List<User>> searchUnverify3(){
-        List<User> lists = userMapper.getUserByUnitForGuan("7");
+        List<User> lists = userMapper.getUserByUnitForGuan("6");
         return RetResponse.makeOKRsp(lists);
     }
 
     @RequestMapping(value = "/regis1", method = RequestMethod.POST)
     public RetResult<String> login1(@RequestParam("file") MultipartFile file, User user){
-        String username = userMapper.getUserByAuthorID(user.getUnit()).get(0).getUsername();
-        user.setUnit(username);
+        if (user.getUnit().equals("")){
+            user.setType("6");
+        }else {
+            String username = userMapper.getUserByAuthorID(user.getUnit()).get(0).getUsername();
+            user.setUnit(username);
+            user.setType("7");
+        }
+
         user.setTest("10000");
         user.setAuthorID(UUID.randomUUID().toString());
         System.out.println("ok");
@@ -426,7 +432,7 @@ public class UserController {
 
     @RequestMapping(value = "/searchAllCompany", method = RequestMethod.POST)
     public RetResult<List<Map>> searchAllCompany(){
-        List<User> users = userMapper.getUserByUsernameWithType("","7");
+        List<User> users = userMapper.getUserByUsernameWithType("","6");
         if(users.size()<1) return RetResponse.makeErrRsp("查询数量为0");
         List<Map> list = new ArrayList<>();
         for(User each:users){
