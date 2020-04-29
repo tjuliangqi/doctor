@@ -278,10 +278,10 @@ public class UserFeaController {
     @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> searchUnverify(@RequestBody Map<String, String> map) {
         String testUser = map.get("testUser");
-        int type = Integer.valueOf(map.get("type"));
+//        int type = Integer.valueOf(map.get("type"));
         List<Userfunding> result = new ArrayList<>();
         try {
-            result = userfundingMapper.getUserfundingListByTest(type, 0, testUser);
+            result = userfundingMapper.getUserfundingListByTest(0, testUser);
         } catch (Exception e) {
             System.out.println(e);
             return RetResponse.makeErrRsp("查询错误");

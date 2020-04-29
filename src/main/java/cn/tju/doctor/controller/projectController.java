@@ -415,8 +415,9 @@ public class projectController {
         projectManagement.setDataURL(dataURL);
         projectManagement.setCreattime(creattime);
         projectManagement.setCompany(company);
+        System.out.println(lists.get(0).getPercent());
         projectManagement.setPercent(lists.get(0).getPercent());
-        projectManagement.setMoney(projectManagement.getMount()*projectManagement.getPercent());
+        projectManagement.setMoney(projectManagement.getMount()*(1-projectManagement.getPercent()));
         int flag = projectManagementMapper.insertProjectManagement(projectManagement);
         if (flag==1){
             return RetResponse.makeOKRsp("ok");

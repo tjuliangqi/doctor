@@ -24,8 +24,8 @@ public interface UserfundingMapper {
     List<Userfunding> getUserfundingBySource(String source);
     @Select("SELECT * FROM `userfunding` WHERE `source` = #{source} AND type = #{type}")
     List<Userfunding> getUserfundingBySourceWithType(String source, String type);
-    @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `type` = ${type} AND `test` = ${test}")
-    List<Userfunding> getUserfundingListByTest(@Param("type") int type,@Param("test") int test,@Param("testUser") String testUser);
+    @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `test` = ${test}")
+    List<Userfunding> getUserfundingListByTest(@Param("test") int test,@Param("testUser") String testUser);
     @Select("SELECT * FROM `userfunding` WHERE `applyTime` >= #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
     List<Userfunding> getUserfundingListByApplytime(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Select("SELECT * FROM `userfunding` WHERE `authorID` = #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")

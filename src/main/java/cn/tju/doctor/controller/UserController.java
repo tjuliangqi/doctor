@@ -68,6 +68,7 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public RetResult<Map> login(@RequestBody Map<String,String> json){
+        System.out.println(json.get("username"));
         List<User> list = userMapper.getUserByUsername(json.get("username"));
         if (list.size()==0){
             return RetResponse.makeErrRsp("用户名不正确");

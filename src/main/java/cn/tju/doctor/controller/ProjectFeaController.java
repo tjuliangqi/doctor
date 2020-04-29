@@ -245,7 +245,7 @@ public class ProjectFeaController {
         if (from.getMoney() < mount) return RetResponse.makeErrRsp("公司账户余额不足");
         from.setMoney(from.getMoney()-mount);
         Userfunding userfunding = new Userfunding();
-        String testUser = userMapper.getUserByCompany(from.getCompany(),"3").get(0).getUsername();
+        String testUser = from.getManagementUser();
         String number = numberUtils.getOrderNo();
         Date date = new Date();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -260,7 +260,7 @@ public class ProjectFeaController {
         userfunding.setApplyTime(time);
         userfunding.setTestuser(testUser);
 
-        if (to.getType().equals("3")){
+        if (to.getType().equals("7")){
             //公司给管理员打钱
             userfunding.setType(1);
         }else {

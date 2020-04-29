@@ -12,12 +12,12 @@
         SELECT * FROM projectmanagement WHERE test = #{testResult};
     </select>
 
-    <select id="getByUuid" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="Integer">
+    <select id="getByUuid" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="String">
         SELECT * FROM projectmanagement WHERE uuid = #{uuid};
     </select>
 
     <select id="getByWork" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="Integer">
-        SELECT * FROM projectmanagement WHERE ifWork = #{testResult};
+        SELECT * FROM projectmanagement WHERE ifWork = #{testResult} AND test = 1;
     </select>
 
     <update id="updateWork" parameterType="cn.tju.doctor.daomain.ProjectManagement">
