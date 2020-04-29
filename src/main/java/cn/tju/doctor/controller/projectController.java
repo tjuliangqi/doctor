@@ -415,6 +415,8 @@ public class projectController {
         projectManagement.setDataURL(dataURL);
         projectManagement.setCreattime(creattime);
         projectManagement.setCompany(company);
+        projectManagement.setPercent(lists.get(0).getPercent());
+        projectManagement.setMoney(projectManagement.getMount()*projectManagement.getPercent());
         int flag = projectManagementMapper.insertProjectManagement(projectManagement);
         if (flag==1){
             return RetResponse.makeOKRsp("ok");
@@ -460,12 +462,16 @@ public class projectController {
     public RetResult<String> verify1(@RequestBody Map json) {
         String uuid = json.get("uuid").toString();
         String testResult = json.get("testResult").toString();
-        ProjectManagement projectManagement = new ProjectManagement();
-
+        ProjectManagement projectManagement = projectManagementMapper.getByUuid(uuid);
         projectManagement.setIfWork(Integer.parseInt(testResult));
         projectManagement.setUuid(uuid);
         int i = projectManagementMapper.updateWork(projectManagement);
         if(i==1){
+            if (testResult.equals("1")){
+                User user = userMapper.getUserByUsername(projectManagement.getCreatuser()).get(0);
+                user.setMoney(user.getMoney()+projectManagement.getMoney());
+                userMapper.updateUser(user);
+            }
             return RetResponse.makeOKRsp("ok");
         }else {
             return RetResponse.makeErrRsp("更新失败");

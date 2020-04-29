@@ -4,15 +4,19 @@
 <mapper namespace="cn.tju.doctor.dao.ProjectManagementMapper">
 
     <insert id="insertProjectManagement" parameterType="cn.tju.doctor.daomain.ProjectManagement">
-        INSERT INTO projectmanagement (uuid, mount, money, name, creatuser, company, dataURL, ifWork, test, creattime, testtime, worktime)
-        VALUES  (#{projectManagement.uuid}, #{projectManagement.mount}, #{projectManagement.money}, #{projectManagement.name}, #{projectManagement.creatuser}, #{projectManagement.company}, #{projectManagement.dataURL}, #{projectManagement.ifWork}, #{projectManagement.test}, #{projectManagement.creattime}, #{projectManagement.testtime}, #{projectManagement.worktime})
+        INSERT INTO projectmanagement (uuid, mount, money, name, creatuser, company, dataURL, ifWork, test, creattime, testtime, worktime, percent)
+        VALUES  (#{projectManagement.uuid}, #{projectManagement.mount}, #{projectManagement.money}, #{projectManagement.name}, #{projectManagement.creatuser}, #{projectManagement.company}, #{projectManagement.dataURL}, #{projectManagement.ifWork}, #{projectManagement.test}, #{projectManagement.creattime}, #{projectManagement.testtime}, #{projectManagement.worktime}, #{projectManagement.percent})
     </insert>
 
-    <select id="getByTest" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="Integer">
+    <select id="getByTest" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="Integer">
         SELECT * FROM projectmanagement WHERE test = #{testResult};
     </select>
 
-    <select id="getByWork" resultType="cn.tju.doctor.daomain.ProjectBean" parameterType="Integer">
+    <select id="getByUuid" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="Integer">
+        SELECT * FROM projectmanagement WHERE uuid = #{uuid};
+    </select>
+
+    <select id="getByWork" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="Integer">
         SELECT * FROM projectmanagement WHERE ifWork = #{testResult};
     </select>
 

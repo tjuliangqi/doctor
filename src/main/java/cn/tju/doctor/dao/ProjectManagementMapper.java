@@ -12,6 +12,7 @@ import java.util.List;
 public interface ProjectManagementMapper {
     List<ProjectManagement> getByTest(@Param("testResult") Integer testResult);
     List<ProjectManagement> getByWork(@Param("testResult") Integer testResult);
+    ProjectManagement getByUuid(@Param("uuid") String uuid);
     int updateWork(ProjectManagement projectManagement);
     int updateTest(ProjectManagement projectManagement);
     int insertProjectManagement(@Param("projectManagement") ProjectManagement projectManagement);

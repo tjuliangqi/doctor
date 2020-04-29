@@ -4,6 +4,7 @@ public class ProjectManagement {
     private String uuid;
     private double mount;
     private double money;
+    private double percent;
     private String name;
     private String creatuser;
     private String company;
@@ -108,6 +109,14 @@ public class ProjectManagement {
 
     public void setWorktime(String worktime) {
         this.worktime = worktime;
+    }
+
+    public double getPercent() {
+        return percent;
+    }
+
+    public void setPercent(double percent) {
+        this.percent = percent;
     }
 
     @Override

@@ -52,10 +52,18 @@ public class User implements Serializable {
     private String bank;
     private int manageLevel;
     private double percent;
-
+    private String managementUser;
 
     public User(){
 
+    }
+
+    public String getManagementUser() {
+        return managementUser;
+    }
+
+    public void setManagementUser(String managementUser) {
+        this.managementUser = managementUser;
     }
 
     public double getPercent() {

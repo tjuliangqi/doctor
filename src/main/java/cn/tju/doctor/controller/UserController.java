@@ -321,6 +321,8 @@ public class UserController {
     public RetResult<String> login1(@RequestParam("file") MultipartFile file, User user){
         if (user.getUnit().equals("")){
             user.setType("6");
+            String managementUser = userMapper.getUserByAuthorID(user.getManagementUser()).get(0).getUsername();
+            user.setManagementUser(managementUser);
         }else {
             String username = userMapper.getUserByAuthorID(user.getUnit()).get(0).getUsername();
             user.setUnit(username);
