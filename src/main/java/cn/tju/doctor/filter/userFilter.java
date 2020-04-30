@@ -37,7 +37,6 @@ package cn.tju.doctor.filter;//package cn.tju.tdwy.filter;
 //            }else {
 //                Map<String,Object> map = new HashMap<>();
 //                map.put("code",40004);
-//                map.put("message","验证失败");
 //                JSONObject JSONObj = new JSONObject(map);
 //                response.setCharacterEncoding("UTF-8");
 //                response.setContentType("text/html; charset=utf-8");
