@@ -24,6 +24,16 @@ public class Userfunding {
     private String workRecord;
     private int type;
 
+    public int getMoneyType() {
+        return moneyType;
+    }
+
+    public void setMoneyType(int moneyType) {
+        this.moneyType = moneyType;
+    }
+
+    private int moneyType;
+
     public int getType() {
         return type;
     }

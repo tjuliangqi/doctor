@@ -20,6 +20,8 @@ public interface UserfundingMapper {
     List<Userfunding> getUserfundingByGo(String go, String type);
     @Select("SELECT * FROM `userfunding` WHERE `go` = #{go}")
     List<Userfunding> getUserfundingByGoWithoutType(String go);
+    @Select("SELECT * FROM `userfunding` WHERE `go` = #{go} AND moneyType = #{moneyType}")
+    List<Userfunding> getUserfundingByGoWithmoneyType(String go, int moneyType);
     @Select("SELECT * FROM `userfunding` WHERE `source` = #{source}")
     List<Userfunding> getUserfundingBySource(String source);
     @Select("SELECT * FROM `userfunding` WHERE `source` = #{source} AND type = #{type}")
@@ -31,12 +33,12 @@ public interface UserfundingMapper {
     @Select("SELECT * FROM `userfunding` WHERE `authorID` = #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
     List<Userfunding> getUserfundingListByAuthorId(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Insert("INSERT INTO `userfunding` (`number`, `authorID` ,`mount`,`rest`,`in`, `out`, `applyID`, `applyTime`, " +
-            "`record` ,`source` ,`sourceAccount` ,`go` ,`goaccount`,`type`,`testuser`" +
+            "`record` ,`source` ,`sourceAccount` ,`go` ,`goaccount`,`type`,`testuser`,`moneyType`" +
             ") VALUES (#{userfunding.number}, #{userfunding.authorID}," +
             "#{userfunding.mount},#{userfunding.rest},#{userfunding.in}," +
             "#{userfunding.out}, #{userfunding.applyID}, #{userfunding.applyTime}," +
             "#{userfunding.record},#{userfunding.source}," +
-            "#{userfunding.sourceAccount},#{userfunding.go},#{userfunding.goaccount},#{userfunding.type},#{userfunding.testuser})")
+            "#{userfunding.sourceAccount},#{userfunding.go},#{userfunding.goaccount},#{userfunding.type},#{userfunding.testuser},#{userfunding.moneyType})")
     int insertUserfunding(@Param("userfunding") Userfunding userfunding);
     @Update("UPDATE `userfunding` SET test = ${userfunding.test}, testRecord = #{userfunding.testRecord} ," +
             "testtime = #{userfunding.testtime}, testuser = #{userfunding.testuser} " +

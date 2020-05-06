@@ -42,7 +42,9 @@ public class RecordController {
         User from = userMapper.getUserByUsername(sourcename).get(0);
         User to = userMapper.getUserByUsername(username).get(0);
         Userfunding userfunding = new Userfunding();
+        Userfunding userfunding1 = new Userfunding();
         String IdNumber = numberUtils.getOrderNo();
+        String IdNumber1 = numberUtils.getOrderNo();
         Date date = new Date();
         SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         String time = sf.format(date);
@@ -50,21 +52,35 @@ public class RecordController {
         userfunding.setAuthorID(sourcename);
         userfunding.setSource(sourcename);
         userfunding.setGo(username);
-        userfunding.setMount(Double.valueOf(moneyS));
+        userfunding.setMount(Double.valueOf(moneyS)*0.8);
         userfunding.setTest(1);
         userfunding.setIfWork(1);
         userfunding.setApplyTime(time);
         userfunding.setType(2);
+        userfunding.setMoneyType(1);
+
+        userfunding1.setNumber(IdNumber1);
+        userfunding1.setAuthorID(sourcename);
+        userfunding1.setSource(sourcename);
+        userfunding1.setGo(username);
+        userfunding1.setMount(Double.valueOf(moneyS)*0.2);
+        userfunding1.setTest(1);
+        userfunding1.setIfWork(1);
+        userfunding1.setApplyTime(time);
+        userfunding1.setType(2);
+        userfunding1.setMoneyType(4);
         if (Double.valueOf(moneyS) > from.getMoney()){
             return RetResponse.makeErrRsp("余额不足");
         }
         from.setMoney(from.getMoney()-Double.valueOf(moneyS));
         to.setMoney(to.getMoney()+Double.valueOf(moneyS));
-        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS));
+        to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS) * 0.8);
+        to.setHealthIncome(to.getHealthIncome() + Double.valueOf(moneyS) * 0.2);
         try {
             userMapper.updateUser(from);
             userMapper.updateUser(to);
             userfundingMapper.insertUserfunding(userfunding);
+            userfundingMapper.insertUserfunding(userfunding1);
         }catch (Exception e){
             return RetResponse.makeErrRsp("转账出错");
         }

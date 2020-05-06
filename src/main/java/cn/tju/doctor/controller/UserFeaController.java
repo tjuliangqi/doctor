@@ -402,7 +402,36 @@ public class UserFeaController {
         // int type = Integer.valueOf(map.get("type"));
         List<Userfunding> result = new ArrayList<>();
         try {
-            result = userfundingMapper.getUserfundingByGoWithoutType(go);
+            result = userfundingMapper.getUserfundingByGoWithmoneyType(go,1);
+        } catch (Exception e) {
+            System.out.println(e);
+            return RetResponse.makeErrRsp("查询错误");
+        }
+
+        List<Map<String, Object>> list = new ArrayList<>();
+        try {
+            for (Userfunding userfunding : result) {
+                Map map1 = PropertyUtils.describe(userfunding);
+                List<Record> records = recordMapper.getRecord(userfunding.getNumber());
+                map1.put("details", records);
+                list.add(map1);
+            }
+        } catch (Exception e) {
+            System.out.println(e);
+            return RetResponse.makeErrRsp("查询record错误");
+        }
+
+
+        return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/searchHealth", method = RequestMethod.POST)
+    public RetResult<List<Map<String, Object>>> searchHealth(@RequestBody Map<String, String> map) {
+        String go = map.get("username");  // 用户名
+        // int type = Integer.valueOf(map.get("type"));
+        List<Userfunding> result = new ArrayList<>();
+        try {
+            result = userfundingMapper.getUserfundingByGoWithmoneyType(go,4);
         } catch (Exception e) {
             System.out.println(e);
             return RetResponse.makeErrRsp("查询错误");
