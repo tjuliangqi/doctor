@@ -7,10 +7,19 @@
         SELECT * FROM recording WHERE number = #{number};
     </select>
 
+    <select id="getRecord2" resultType="cn.tju.doctor.daomain.Record2" parameterType="String">
+        SELECT * FROM recording2 WHERE number = #{number};
+    </select>
+
 
     <insert id="insertRecord" parameterType="cn.tju.doctor.daomain.Record">
         INSERT INTO recording (number, articleID, views, download, likes, hides, publishTime, viewsMoney, downloadsMoney, likesMoney, hidesMoney)
         VALUES  (#{number}, #{articleID}, #{views}, #{download}, #{likes}, #{hides}, #{publishTime}, #{viewsMoney}, #{downloadsMoney}, #{likesMoney}, #{hidesMoney})
+    </insert>
+
+    <insert id="insertRecord2" parameterType="cn.tju.doctor.daomain.Record2">
+        INSERT INTO recording2 (number, registNum, onlineNum, forwardNum,  publishTime, registMoney, onlineMoney, forwardMoney)
+        VALUES  (#{number}, #{registNum}, #{onlineNum}, #{forwardNum}, #{publishTime}, #{registMoney}, #{onlineMoney}, #{forwardMoney})
     </insert>
 
     <select id="getPaper" resultType="String" parameterType="int">
