@@ -388,11 +388,10 @@ public class UserController {
     @RequestMapping(value = "/serachList2", method = RequestMethod.POST)
     public RetResult<List<String>> searchList2(@RequestBody Map<String,String> map){
         String guan_username = map.get("username");
+        System.out.println(guan_username);
         List<String> res = new ArrayList();
         try {
-            List<User> guan_list = userMapper.getUserByUsername(guan_username);
-            String company = guan_list.get(0).getCompany();
-            List<User> pu_list = userMapper.getUserByCompany(company,"0");
+            List<User> pu_list = userMapper.getUserByUsernameWithType(guan_username,"0");
             for(User user:pu_list){
                 res.add(user.getUsername());
             }
@@ -406,11 +405,10 @@ public class UserController {
     @RequestMapping(value = "/serachList3", method = RequestMethod.POST)
     public RetResult<List<String>> searchList3(@RequestBody Map<String,String> map){
         String gong_username = map.get("username");
+        System.out.println(gong_username);
         List<String> res = new ArrayList();
         try {
-            List<User> gong_list = userMapper.getUserByUsername(gong_username);
-            String company = gong_list.get(0).getCompany();
-            List<User> guan_list = userMapper.getUserByCompany(company,"7");
+            List<User> guan_list = userMapper.getUserByUsernameWithType(gong_username,"7");
             for(User user:guan_list){
                 res.add(user.getUsername());
             }

@@ -73,17 +73,18 @@ public class RecordController {
         if (Double.valueOf(moneyS) > from.getMoney()){
             return RetResponse.makeErrRsp("余额不足");
         }
+//        if (Double.valueOf(moneyS) > from.getMoney()) {
+//            return RetResponse.makeErrRsp("余额不足");
+//        }
         from.setMoney(from.getMoney()-Double.valueOf(moneyS));
         to.setMoney(to.getMoney()+Double.valueOf(moneyS));
         to.setArticleIncome(to.getArticleIncome()+Double.valueOf(moneyS) * 0.8);
         to.setHealthIncome(to.getHealthIncome() + Double.valueOf(moneyS) * 0.2);
 
-        if (Double.valueOf(moneyS) > from.getMoney()) {
-            return RetResponse.makeErrRsp("余额不足");
-        }
-        from.setMoney(from.getMoney() - Double.valueOf(moneyS));
-        to.setMoney(to.getMoney() + Double.valueOf(moneyS));
-        to.setArticleIncome(to.getArticleIncome() + Double.valueOf(moneyS));
+
+//        from.setMoney(from.getMoney() - Double.valueOf(moneyS));
+//        to.setMoney(to.getMoney() + Double.valueOf(moneyS));
+//        to.setArticleIncome(to.getArticleIncome() + Double.valueOf(moneyS));
 
         try {
             userMapper.updateUser(from);
@@ -163,7 +164,7 @@ public class RecordController {
         double forwardMoney = money2 - registNum*10 - onlineNum*20;
 
         Record2 record2 = new Record2();
-        record2.setNumber(IdNumber);
+        record2.setNumber(IdNumber1);
         record2.setRegistNum(registNum);
         record2.setRegistMoney(registNum*10);
         record2.setForwardNum((int)forwardMoney/4);
