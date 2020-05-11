@@ -50,4 +50,6 @@ public interface UserfundingMapper {
             "workTime = #{userfunding.workTime}, workUser = #{userfunding.workUser} " +
             "WHERE number = #{userfunding.number}")
     int updateUserfundingWork(@Param("userfunding") Userfunding userfunding);
+    @Delete("DELETE FROM `userfunding` WHERE number = #{userfunding.number}")
+    int deleteUserfunding(@Param("userfunding") Userfunding userfunding);
 }

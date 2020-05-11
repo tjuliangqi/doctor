@@ -384,10 +384,25 @@ public class ProjectFeaController {
         try {
             //转账
             projectFeaServer.money(from,to,userfunding);
-            if (to.getType().equals("0")){
-                Double moneys = userfunding.getMount();
+            if (to.getType().equals("0") && userfunding.getTest() == 1){
+                Double total = userfunding.getMount();
+                userfundingMapper.deleteUserfunding(userfunding);
+                String IdNumber1 = numberUtils.getOrderNo();
+                String IdNumber2 = numberUtils.getOrderNo();
+                userfunding.setNumber(IdNumber1);
+                userfunding.setMoneyType(1);
+                userfunding.setMount(total*0.8);
+                userfundingMapper.insertUserfunding(userfunding);
+                projectFeaServer.money(from,to,userfunding);
+                userfunding.setNumber(IdNumber2);
+                userfunding.setMoneyType(4);
+                userfunding.setMount(total*0.2);
+                userfundingMapper.insertUserfunding(userfunding);
+                projectFeaServer.money(from,to,userfunding);
+                Double moneys = total * 0.8;
                 userfunding.setType(3);
-                to.setArticleIncome(to.getArticleIncome()+userfunding.getMount());
+                to.setArticleIncome(to.getArticleIncome()+moneys);
+                to.setHealthIncome(to.getHealthIncome()+total*0.2);
                 userMapper.updateUser(to);
                 int money = moneys.intValue();
                 int l = 1;
@@ -402,7 +417,7 @@ public class ProjectFeaController {
                 int number1 = ((money%shuLiangJi)==0)?(money/shuLiangJi):(money/shuLiangJi+1);
                 List<String> paper = recordMapper.getPaper(number1);
                 Record r = new Record();
-                r.setNumber(userfunding.getNumber());//流水号
+                r.setNumber(IdNumber1);//流水号
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date date = new Date();
                 r.setPublishTime(sdf.format(date));
@@ -443,6 +458,27 @@ public class ProjectFeaController {
                     r.setLikesMoney(likes*1.0);
                     recordMapper.insertRecord(r);
                 }
+
+                double money2 = total * 0.2;
+                double registMoney = (double) (Math.random() * 0.25 + 0.125) * money2;
+                int registNum = (int) registMoney / 10;
+
+                double onlineMoney = (double) (Math.random() * 0.25 + 0.125) * money2;
+                int onlineNum = (int) onlineMoney / 20;
+
+                double forwardMoney = money2 - registNum*10 - onlineNum*20;
+
+                Record2 record2 = new Record2();
+                record2.setNumber(IdNumber2);
+                record2.setRegistNum(registNum);
+                record2.setRegistMoney(registNum*10);
+                record2.setForwardNum((int)forwardMoney/4);
+                record2.setForwardMoney(forwardMoney);
+                record2.setOnlineNum(onlineNum);
+                record2.setOnlineMoney(onlineNum*20);
+                SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                record2.setPublishTime(sdf2.format(date));
+                recordMapper.insertRecord2(record2);
             }
         }catch (Exception e){
             System.out.println(e);

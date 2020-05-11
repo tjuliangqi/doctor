@@ -40,7 +40,7 @@
     </select>
 
     <select id="getUserByUsernameWithType" resultType="cn.tju.doctor.daomain.User" parameterType="String">
-        SELECT * FROM users WHERE unit = #{unit} AND type = #{type};
+        SELECT * FROM users WHERE unit = #{unit} AND type = #{type} AND test = "1";
     </select>
 
     <select id="getUserByUnitForGuan" resultType="cn.tju.doctor.daomain.User" parameterType="String">

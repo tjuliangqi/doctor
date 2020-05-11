@@ -441,7 +441,7 @@ public class UserFeaController {
         try {
             for (Userfunding userfunding : result) {
                 Map map1 = PropertyUtils.describe(userfunding);
-                List<Record> records = recordMapper.getRecord(userfunding.getNumber());
+                List<Record2> records = recordMapper.getRecord2(userfunding.getNumber());
                 map1.put("details", records);
                 list.add(map1);
             }
