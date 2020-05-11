@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static cn.tju.doctor.Config.LIMIT_MONEY;
+
 @RestController
 @RequestMapping("/projectFea")
 public class ProjectFeaController {
@@ -265,6 +267,10 @@ public class ProjectFeaController {
             userfunding.setType(1);
         }else {
             //公司给个人打钱
+            double money = userfundingMapper.getUserfundingByGoWithMonth(go);
+            if(money + mount > LIMIT_MONEY){
+                return RetResponse.makeErrRsp("本月已经超出打款限额");
+            }
             userfunding.setType(3);
         }
 

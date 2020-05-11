@@ -18,6 +18,8 @@ public interface UserfundingMapper {
     List<Userfunding> getUserfundingByAuthorID(String authorID);
     @Select("SELECT * FROM `userfunding` WHERE `go` = #{go} AND type = #{type}")
     List<Userfunding> getUserfundingByGo(String go, String type);
+    @Select("SELECT SUM(mount) FROM `userfunding` WHERE `go` = #{go} AND DATE_FORMAT( applyTime, '%Y%m' ) = DATE_FORMAT( CURDATE( ) , '%Y%m' ) AND test != 2")
+    double getUserfundingByGoWithMonth(String go);
     @Select("SELECT * FROM `userfunding` WHERE `go` = #{go}")
     List<Userfunding> getUserfundingByGoWithoutType(String go);
     @Select("SELECT * FROM `userfunding` WHERE `go` = #{go} AND moneyType = #{moneyType}")

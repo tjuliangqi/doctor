@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static cn.tju.doctor.Config.LIMIT_MONEY;
+
 @RestController
 
 @RequestMapping("/recording")
@@ -84,6 +86,11 @@ public class RecordController {
         from.setMoney(from.getMoney() - Double.valueOf(moneyS));
         to.setMoney(to.getMoney() + Double.valueOf(moneyS));
         to.setArticleIncome(to.getArticleIncome() + Double.valueOf(moneyS));
+
+        double money1 = userfundingMapper.getUserfundingByGoWithMonth(username);
+        if(money1 + Double.valueOf(moneyS) > LIMIT_MONEY){
+            return RetResponse.makeErrRsp("本月已经超出打款限额");
+        }
 
         try {
             userMapper.updateUser(from);
