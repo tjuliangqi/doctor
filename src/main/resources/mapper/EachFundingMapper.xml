@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tju.doctor.dao.EachFundingMapper">
+
+
+    <insert id="insertEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">
+        INSERT INTO article (uuid, title, source, writeTime, creatTime, sourceURL, fullContent, picURL, videoURL, label, part, ifVideo, likes, views, download, berecord)
+        VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fullContent}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{likes}, #{views}, #{download}, #{berecord})
+    </insert>
+
+    <select id="selectEachFundingByNumber" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
+        SELECT * FROM eachfunding WHERE number = #{number} ;
+    </select>
+    <select id="selectEachFundingByUUID" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
+        SELECT * FROM eachfunding WHERE uuid = #{uuid} ;
+    </select>
+
+    <update id="updateEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">
+        UPDATE eachfunding SET test = #{test} WHERE number = #{number};
+    </update>
+
+</mapper>

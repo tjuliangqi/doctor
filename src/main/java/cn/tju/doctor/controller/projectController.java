@@ -1,9 +1,6 @@
 package cn.tju.doctor.controller;
 
-import cn.tju.doctor.dao.ProjectDockMapper;
-import cn.tju.doctor.dao.ProjectManagementMapper;
-import cn.tju.doctor.dao.ProjectMapper;
-import cn.tju.doctor.dao.UserMapper;
+import cn.tju.doctor.dao.*;
 import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +25,16 @@ public class projectController {
     ProjectDockMapper projectDockMapper;
     @Autowired
     ProjectManagementMapper projectManagementMapper;
+    @Autowired
+    EachFundingMapper eachFundingMapper;
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
         // 2b+公司用户id，查公司有哪些项目，管理员5b， 普通用户3b
         // 1b+项目id，查项目有哪些期数
         // 11+项目id，查这个项目的第一期
-        System.out.println("查询组合："+map.get("type").toString());
-        System.out.println("查询值："+map.get("value").toString());
+        System.out.println("查询组合：" + map.get("type").toString());
+        System.out.println("查询值：" + map.get("value").toString());
 
         String type = map.get("type").toString();
         String value = map.get("value").toString();
@@ -48,27 +48,26 @@ public class projectController {
         List<ProjectBean> projectBeans;
         List<ProjectBeanDock> projectBeanDocks;
 
-        if(firstState.equals("a")){
+        if (firstState.equals("a")) {
             String userID = value.split("\\+")[0];
             String projectID = value.split("\\+")[1];
             projectBeans = projectMapper.getProjectByUserProjectID(userID, projectID);
         }
         // 2b+公司用户id，查公司有哪些项目，管理员5b
-        else if(type.equals("2b") || type.equals("5b")){
+        else if (type.equals("2b") || type.equals("5b")) {
             projectBeanDocks = projectDockMapper.getALLPJList(type, value);
             return RetResponse.makeOKRsp(projectBeanDocks);
-        }
-        else{
+        } else {
             projectBeans = projectMapper.getProjectByAll(projectState);
             //删除0期
-            if(projectBeans.size()>1){
+            if (projectBeans.size() > 1) {
                 for (int i = 0; i < projectBeans.size(); i++) {
                     if ("0".equals(projectBeans.get(i).getProcess()))
                         projectBeans.remove(i);
                 }
             }
             // 根据 ProjectID 去重
-            if(type.equals("0b") || type.equals("3b")){
+            if (type.equals("0b") || type.equals("3b")) {
                 Collections.reverse(projectBeans); // 先反向排序
                 List<ProjectBean> unique = projectBeans.stream().collect(
                         Collectors.collectingAndThen(
@@ -78,7 +77,7 @@ public class projectController {
                 projectBeans = unique;
             }
             // 根据 Process 去重
-            if(type.equals("1b")){
+            if (type.equals("1b")) {
                 List<ProjectBean> unique = projectBeans.stream().collect(
                         Collectors.collectingAndThen(
                                 Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(ProjectBean::getProcess))), ArrayList::new)
@@ -93,27 +92,28 @@ public class projectController {
 
     @RequestMapping(value = "/add2", method = RequestMethod.POST)
     public RetResult<String> add2(@RequestParam("file") MultipartFile file,
-                                     @RequestParam("name") String name,
-                                     @RequestParam("data") String data,
-                                     @RequestParam("dataURL") String dataURL,
-                                     @RequestParam("introduce") String introduce,
-                                     @RequestParam("createuser") String createuser,
-                                     @RequestParam("projectaccount") String projectaccount,
-                                     @RequestParam("projectmoney") String projectmoney,
-                                     @RequestParam("company") String company,
-                                     @RequestParam("actor") String actor,
-                                     @RequestParam("userType") String userType,
-                                     @RequestParam("mount") double mount,
-                                     @RequestParam("projectManager") String projectManager,
-                                     @RequestParam("companyAccount") String companyAccount,
-                                     @RequestParam("moneyManager") String moneyManager,
-                                    @RequestParam("accounting") String accounting,
-                                    @RequestParam("userdataURL") String userdataURL) {
+                                  @RequestParam("name") String name,
+                                  @RequestParam("data") String data,
+                                  @RequestParam("dataURL") String dataURL,
+                                  @RequestParam("introduce") String introduce,
+                                  @RequestParam("createuser") String createuser,
+                                  @RequestParam("projectaccount") String projectaccount,
+                                  @RequestParam("projectmoney") String projectmoney,
+                                  @RequestParam("company") String company,
+                                  @RequestParam("actor") String actor,
+                                  @RequestParam("userType") String userType,
+                                  @RequestParam("mount") double mount,
+                                  @RequestParam("projectManager") String projectManager,
+                                  @RequestParam("companyAccount") String companyAccount,
+                                  @RequestParam("moneyManager") String moneyManager,
+                                  @RequestParam("accounting") String accounting,
+                                  @RequestParam("userdataURL") String userdataURL) {
 
-        dataURL = upload(file,createuser);
+        dataURL = upload(file, createuser);
 
         return RetResponse.makeOKRsp("ok");
     }
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Map json) {
 
@@ -147,8 +147,8 @@ public class projectController {
         projectBeanAdd.setUserType(userType);
         projectBeanAdd.setUserdataURL(userdataURL);
         projectBeanAdd.setProjectManager(projectManager);
-        String uuid = UUID.randomUUID().toString().replace("-","");
-        String projectID = UUID.randomUUID().toString().replace("-","");
+        String uuid = UUID.randomUUID().toString().replace("-", "");
+        String projectID = UUID.randomUUID().toString().replace("-", "");
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
         String beginTime = dateFormat.format(now);
@@ -202,7 +202,7 @@ public class projectController {
         projectBeanAdd.setActor(actor);
         projectBeanAdd.setProcess(process);
         projectBeanAdd.setIfWork(0);
-        String uuid = UUID.randomUUID().toString().replace("-","");
+        String uuid = UUID.randomUUID().toString().replace("-", "");
         projectBeanAdd.setUuid(uuid);
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
@@ -226,14 +226,14 @@ public class projectController {
             projectBeanAdd.setProjectManager(projectBeans.get(0).getProjectManager());
             //projectBeanAdd.setIfWork(projectBeans.get(0).getIfWork());
 
-        } catch (Exception e){
+        } catch (Exception e) {
             return RetResponse.makeErrRsp("项目还未创建，无法指派");
         }
-        List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
+        List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
         String process2 = projectBeanDocks.get(0).getProcess();
         System.out.println(projectBeanDocks.get(0).getProcess());
         System.out.println(projectBeanDocks.get(0).getIfWork());
-        if(!"0".equals(projectBeanDocks.get(0).getProcess())  && projectBeanDocks.get(0).getIfWork() == 0){
+        if (!"0".equals(projectBeanDocks.get(0).getProcess()) && projectBeanDocks.get(0).getIfWork() == 0) {
             return RetResponse.makeErrRsp("上一期还未完成，无法指派");
         }
         ProjectBeanDock projectBeanDock = new ProjectBeanDock();
@@ -261,7 +261,7 @@ public class projectController {
         ProjectState projectState = new ProjectState();
 
         Map result = new HashMap();
-        result.put("url","");
+        result.put("url", "");
         return RetResponse.makeOKRsp(result);
 //        return RetResponse.makeErrRsp("查无数据");
     }
@@ -276,10 +276,10 @@ public class projectController {
         System.out.println(projectBeans.size());
         HashSet<String> hashSet = new HashSet<>();
         List<Map> list = new ArrayList<>();
-        for(ProjectBean each:projectBeans){
+        for (ProjectBean each : projectBeans) {
             System.out.println(each);
             String acceptuser = each.getAcceptuser();
-            if(acceptuser!=null && !hashSet.contains(acceptuser)) {
+            if (acceptuser != null && !hashSet.contains(acceptuser)) {
                 hashSet.add(acceptuser);
                 Map<String, String> map = new HashMap<>();
                 map.put("projectID", projectID);
@@ -291,6 +291,7 @@ public class projectController {
         }
         return RetResponse.makeOKRsp(list);
     }
+
     @RequestMapping(value = "/lookUserGuan", method = RequestMethod.POST)
     public RetResult<List> lookUserGuan(@RequestBody Map json) {
 
@@ -301,10 +302,10 @@ public class projectController {
         System.out.println(projectBeanDocks.size());
         HashSet<String> hashSet = new HashSet<>();
         List<Map> list = new ArrayList<>();
-        for(ProjectBeanDock each:projectBeanDocks){
+        for (ProjectBeanDock each : projectBeanDocks) {
             System.out.println(each);
             String guan = each.getProjectManager();
-            if(guan!=null && !hashSet.contains(guan)) {
+            if (guan != null && !hashSet.contains(guan)) {
                 hashSet.add(guan);
                 Map<String, String> map = new HashMap<>();
                 map.put("projectID", projectID);
@@ -330,9 +331,9 @@ public class projectController {
         try {
             int res = projectMapper.updateProject(projectState);
             int res2 = projectDockMapper.updateProjectDock(projectState);
-            return RetResponse.makeOKRsp("完成"+projectID+"的"+process+"期成功");
-        } catch (Exception e){
-            return RetResponse.makeErrRsp("完成"+projectID+"的"+process+"期失败");
+            return RetResponse.makeOKRsp("完成" + projectID + "的" + process + "期成功");
+        } catch (Exception e) {
+            return RetResponse.makeErrRsp("完成" + projectID + "的" + process + "期失败");
         }
     }
 
@@ -349,11 +350,11 @@ public class projectController {
     @RequestMapping(value = "/workCheck", method = RequestMethod.POST)
     public RetResult<String> workCheck(@RequestBody Map json) {
         String uuid = json.get("uuid").toString();
-        int ifRead = (int)json.get("ifRead");
+        int ifRead = (int) json.get("ifRead");
         try {
             projectMapper.updateProjectRead(uuid);
             return RetResponse.makeOKRsp("ok");
-        }catch (Exception e){
+        } catch (Exception e) {
             return RetResponse.makeErrRsp("不成功");
         }
     }
@@ -365,8 +366,8 @@ public class projectController {
         ProjectState projectState = new ProjectState();
         projectState.setState1("projectID");
         projectState.setStateValue1(projectID);
-        List<ProjectBeanDock> projectBeanDocks =  projectDockMapper.getProjectDockByProjectID(projectID);
-        if(projectBeanDocks.get(0).getProcess() != "0" && projectBeanDocks.get(0).getIfWork() == 0){
+        List<ProjectBeanDock> projectBeanDocks = projectDockMapper.getProjectDockByProjectID(projectID);
+        if (projectBeanDocks.get(0).getProcess() != "0" && projectBeanDocks.get(0).getIfWork() == 0) {
             return RetResponse.makeErrRsp("最后一期还未完成，无法完成整个项目");
         }
         int res = projectMapper.updateProject2(projectState);
@@ -384,15 +385,15 @@ public class projectController {
         try {
             projectBeans = projectMapper.getProjectByAll(projectState);
             HashSet<String> hashSet = new HashSet<>();
-            for(ProjectBean each:projectBeans){
+            for (ProjectBean each : projectBeans) {
                 String projectID = each.getProjectID();
-                if(projectID != null)
+                if (projectID != null)
                     hashSet.add(projectID);
             }
             Map result = new HashMap();
-            result.put("ProjectID",hashSet);
+            result.put("ProjectID", hashSet);
             return RetResponse.makeOKRsp(result);
-        } catch (Exception e){
+        } catch (Exception e) {
             return RetResponse.makeErrRsp("错误");
         }
     }
@@ -400,15 +401,15 @@ public class projectController {
     // 业务申请接口
     @RequestMapping(value = "/apply", method = RequestMethod.POST)
     public RetResult<String> apply(@RequestParam("data") MultipartFile file,
-                                    ProjectManagement projectManagement) {
+                                   ProjectManagement projectManagement) {
 
-        String dataURL = upload(file,projectManagement.getCreatuser());
-        String uuid = UUID.randomUUID().toString().replace("-","");
+        String dataURL = upload(file, projectManagement.getCreatuser());
+        String uuid = UUID.randomUUID().toString().replace("-", "");
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//日期格式
         String creattime = dateFormat.format(now);
         List<User> lists = userMapper.getUserByUsername(projectManagement.getCreatuser());
-        if(lists.size()<1)
+        if (lists.size() < 1)
             return RetResponse.makeErrRsp("查询不到该creatuser");
         String company = lists.get(0).getCompany();
         projectManagement.setUuid(uuid);
@@ -417,11 +418,11 @@ public class projectController {
         projectManagement.setCompany(company);
         System.out.println(lists.get(0).getPercent());
         projectManagement.setPercent(lists.get(0).getPercent());
-        projectManagement.setMoney(projectManagement.getMount()*(1-projectManagement.getPercent()));
+        projectManagement.setMoney(projectManagement.getMount() * (1 - projectManagement.getPercent()));
         int flag = projectManagementMapper.insertProjectManagement(projectManagement);
-        if (flag==1){
+        if (flag == 1) {
             return RetResponse.makeOKRsp("ok");
-        }else {
+        } else {
             return RetResponse.makeErrRsp("业务申请失败");
         }
     }
@@ -434,6 +435,7 @@ public class projectController {
 
         return RetResponse.makeOKRsp(byTest);
     }
+
     @RequestMapping(value = "/verify", method = RequestMethod.POST)
     public RetResult<String> verify(@RequestBody Map json) {
         String uuid = json.get("uuid").toString();
@@ -443,9 +445,9 @@ public class projectController {
         projectManagement.setTest(Integer.parseInt(testResult));
         projectManagement.setUuid(uuid);
         int i = projectManagementMapper.updateTest(projectManagement);
-        if(i==1){
+        if (i == 1) {
             return RetResponse.makeOKRsp("ok");
-        }else {
+        } else {
             return RetResponse.makeErrRsp("更新失败");
         }
     }
@@ -461,22 +463,54 @@ public class projectController {
 
     @RequestMapping(value = "/verify1", method = RequestMethod.POST)
     public RetResult<String> verify1(@RequestBody Map json) {
-        String uuid = json.get("uuid").toString();
+        String number = json.get("number").toString();
         String testResult = json.get("testResult").toString();
-        ProjectManagement projectManagement = projectManagementMapper.getByUuid(uuid);
-        projectManagement.setIfWork(Integer.parseInt(testResult));
-        projectManagement.setUuid(uuid);
-        int i = projectManagementMapper.updateWork(projectManagement);
-        if(i==1){
-            if (testResult.equals("1")){
-                User user = userMapper.getUserByUsername(projectManagement.getCreatuser()).get(0);
-                user.setMoney(user.getMoney()+projectManagement.getMoney());
-                userMapper.updateUser(user);
-            }
-            return RetResponse.makeOKRsp("ok");
-        }else {
-            return RetResponse.makeErrRsp("更新失败");
+        Eachfunding eachfunding = new Eachfunding();
+        eachfunding.setNumber(number);
+        eachfunding.setTest(Integer.parseInt(testResult));
+        eachFundingMapper.updateEachFunding(eachfunding);//修改eachfunding的test
+
+        List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByNumber(number);
+        Eachfunding eachfundingByNumber = eachfundings.get(0);
+
+
+
+        //将钱给用户
+
+
+        //修改新表的ifwork
+
+
+
+        String uuid = eachfundingByNumber.getUuid();
+        Double applymount = eachfundingByNumber.getApplymount();
+
+        List<Eachfunding> eachfundingsList = eachFundingMapper.selectEachFundingByUUID(uuid);
+        Double allMount = 0.0;
+        for (Eachfunding each : eachfundingsList) {
+            allMount += each.getMount();
         }
+        if (applymount.equals(allMount)) {   //判断mount加起来是否等于applymount
+            ProjectManagement projectManagement = new ProjectManagement();
+            projectManagement.setUuid(uuid);
+            projectManagement.setIfWork(1); //修改旧表的ifwork为1
+            projectManagementMapper.updateWork(projectManagement);
+        }
+        return RetResponse.makeOKRsp("ok");
+//        ProjectManagement projectManagement = projectManagementMapper.getByUuid(uuid);
+//        projectManagement.setIfWork(Integer.parseInt(testResult));
+//        projectManagement.setUuid(uuid);
+//        int i = projectManagementMapper.updateWork(projectManagement);
+//        if(i==1){
+//            if (testResult.equals("1")){
+//                User user = userMapper.getUserByUsername(projectManagement.getCreatuser()).get(0);
+//                user.setMoney(user.getMoney()+projectManagement.getMoney());
+//                userMapper.updateUser(user);
+//            }
+//            return RetResponse.makeOKRsp("ok");
+//        }else {
+//            return RetResponse.makeErrRsp("更新失败");
+//        }
     }
 
 }
