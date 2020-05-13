@@ -16,12 +16,12 @@
         SELECT * FROM eachfunding WHERE uuid = #{uuid} ;
     </select>
 
-    <select id="selectEachFundingByWorkUser" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
-        SELECT * FROM eachfunding WHERE workuser = #{workuser} AND test != 2;
+    <select id="selectEachFundingByTest" resultType="cn.tju.doctor.daomain.Eachfunding">
+        SELECT * FROM eachfunding WHERE test != 2;
     </select>
 
     <select id="count" resultType="double">
-        SELECT SUM(mount) FROM eachfunding WHERE workuser = #{workuser} AND test = #{test};
+        SELECT SUM(mount) FROM eachfunding WHERE uuid = #{uuid} AND test = #{test};
     </select>
 
     <update id="updateEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">

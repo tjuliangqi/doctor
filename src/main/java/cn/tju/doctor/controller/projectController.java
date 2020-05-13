@@ -456,9 +456,9 @@ public class projectController {
 
     @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
     public RetResult<List<Map<String,String>>> searchUnverify1(@RequestBody Map<String,String> json) {
-        String workuser = json.get("workuser");
+//        String workuser = json.get("workuser");
 
-        List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByWorkUser(workuser);
+        List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByTest();
         if(eachfundings.size() == 0){
             return RetResponse.makeErrRsp("查询记录不存在");
         }
@@ -471,10 +471,10 @@ public class projectController {
         for(String each :set){
             Map<String,String> res = new HashMap<>();
             ProjectManagement projectManagement = projectManagementMapper.getByUuid(each);
-            List<Eachfunding> eachfundings1 = eachFundingMapper.selectEachFundingByWorkUser(workuser);
-            Eachfunding eachfunding = eachfundings1.get(0);
-            double verifyMount = eachFundingMapper.count(workuser,0);
-            double previous = eachFundingMapper.count(workuser,1);
+//            List<Eachfunding> eachfundings1 = eachFundingMapper.selectEachFundingByWorkUser(workuser);
+            Eachfunding eachfunding = eachFundingMapper.selectEachFundingByUUID(each).get(0);
+            double verifyMount = eachFundingMapper.count(each,0);
+            double previous = eachFundingMapper.count(each,1);
             res.put("createuser",projectManagement.getCreatuser());
             res.put("uuid",each);
             res.put("mount",String.valueOf(eachfunding.getMount()));

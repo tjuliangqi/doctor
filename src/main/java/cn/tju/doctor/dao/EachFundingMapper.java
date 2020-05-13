@@ -15,8 +15,8 @@ public interface EachFundingMapper {
 
     List<Eachfunding> selectEachFundingByNumber(@Param("number")String number);
     List<Eachfunding> selectEachFundingByUUID(@Param("uuid") String uuid);
-    List<Eachfunding> selectEachFundingByWorkUser(@Param("workuser") String workuser);
-    double count(@Param("workuser") String workuser,@Param("test") int test);
+    List<Eachfunding> selectEachFundingByTest();
+    double count(@Param("uuid") String uuid,@Param("test") int test);
     int updateEachFunding(Eachfunding eachfunding);
 
 }
