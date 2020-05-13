@@ -16,4 +16,7 @@ public interface ProjectManagementMapper {
     int updateWork(ProjectManagement projectManagement);
     int updateTest(ProjectManagement projectManagement);
     int insertProjectManagement(@Param("projectManagement") ProjectManagement projectManagement);
+
+    List<ProjectManagement> getByUserTest0(@Param("creatuser") String creatuser);
+    List<ProjectManagement> getByUserTest1(@Param("creatuser") String creatuser);
 }

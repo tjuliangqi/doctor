@@ -28,4 +28,12 @@
     </update>
 
 
+    <select id="getByUserTest0" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="String">
+        SELECT * FROM projectmanagement WHERE creatuser = #{creatuser} AND test = 0;
+    </select>
+
+    <select id="getByUserTest1" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="String">
+        SELECT * FROM projectmanagement WHERE creatuser = #{creatuser} AND test = 1;
+    </select>
+
 </mapper>

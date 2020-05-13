@@ -15,6 +15,25 @@ public class ProjectManagement {
     private String testtime;
     private String worktime;
 
+    public String getWorkuser() {
+        return workuser;
+    }
+
+    public void setWorkuser(String workuser) {
+        this.workuser = workuser;
+    }
+
+    public double getPrevious() {
+        return previous;
+    }
+
+    public void setPrevious(double previous) {
+        this.previous = previous;
+    }
+
+    private String workuser;
+    private double previous;
+
     public String getUuid() {
         return uuid;
     }

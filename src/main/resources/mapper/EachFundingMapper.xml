@@ -5,9 +5,13 @@
 
 
     <insert id="insertEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">
-        INSERT INTO article (uuid, title, source, writeTime, creatTime, sourceURL, fullContent, picURL, videoURL, label, part, ifVideo, likes, views, download, berecord)
-        VALUES  (#{uuid}, #{title}, #{source}, #{writeTime}, #{creatTime}, #{sourceURL}, #{fullContent}, #{picURL}, #{videoURL}, #{label}, #{part}, #{ifVideo}, #{likes}, #{views}, #{download}, #{berecord})
+        INSERT INTO eachfunding (number, creatuser, workuser, uuid, test, ifWork, mount, applymount, testtime, percent)
+        VALUES  (#{number}, #{creatuser}, #{workuser}, #{uuid}, #{test}, #{ifWork}, #{mount}, #{applymount}, #{testtime}, #{percent})
     </insert>
+
+    <select id="selectEachFundingByUUIDtest" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
+        SELECT * FROM eachfunding WHERE uuid = #{uuid} AND test != 2;
+    </select>
 
     <select id="selectEachFundingByNumber" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
         SELECT * FROM eachfunding WHERE number = #{number} ;

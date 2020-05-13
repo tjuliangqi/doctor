@@ -19,4 +19,7 @@ public interface EachFundingMapper {
     double count(@Param("uuid") String uuid,@Param("test") int test);
     int updateEachFunding(Eachfunding eachfunding);
 
+    List<Eachfunding> selectEachFundingByUUIDtest(@Param("uuid") String uuid);
+    int insertEachFunding(Eachfunding eachfunding);
+
 }

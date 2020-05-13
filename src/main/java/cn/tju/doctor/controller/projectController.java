@@ -429,6 +429,61 @@ public class projectController {
         }
     }
 
+    //用户查询已申请业务接口
+    @RequestMapping(value = "/searchHistoryApp", method = RequestMethod.POST)
+    public RetResult<List> searchHistoryApp(@RequestBody Map json) {
+        String createuser = json.get("createuser").toString();
+        String test = json.get("test").toString();
+        if(test.equals("0")){
+            List<ProjectManagement> list = projectManagementMapper.getByUserTest0(createuser);
+            if (list.size() < 1)
+                return RetResponse.makeErrRsp("查询不到该creatuser的未审核");
+            for(ProjectManagement each:list){
+                each.setPrevious(0.0);
+            }
+            return RetResponse.makeOKRsp(list);
+        }
+        else{
+            List<ProjectManagement> list = projectManagementMapper.getByUserTest1(createuser);
+            if (list.size() < 1)
+                return RetResponse.makeErrRsp("查询不到该creatuser的已审核");
+
+            for(ProjectManagement each:list){
+                String uuid = each.getUuid();
+                List<Eachfunding> list1 = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
+                double previous = 0.0;
+                for(Eachfunding eacheach: list1)
+                    previous = previous+eacheach.getApplymount();
+                each.setPrevious(previous);
+            }
+            return RetResponse.makeOKRsp(list);
+        }
+    }
+    //业务申请上款接口
+    @RequestMapping(value = "/addApply", method = RequestMethod.POST)
+    public RetResult<Eachfunding> addApply(@RequestBody Map json) {
+        String createuser = json.get("createuser").toString();
+        String uuid = json.get("uuid").toString();
+        double mount = (Double) json.get("mount");
+        ProjectManagement old = projectManagementMapper.getByUuid(uuid);
+        List<Eachfunding> newlist = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
+        double previous = 0.0;
+        for(Eachfunding eacheach: newlist)
+            previous = previous+eacheach.getApplymount();
+        if((previous+mount) > old.getMount())
+            return RetResponse.makeErrRsp("加上传来的mount大于老表mount");
+        else {
+            Eachfunding eachfunding = new Eachfunding();
+            eachfunding.setApplymount(mount);
+            eachfunding.setCreatuser(createuser);
+            eachfunding.setUuid(uuid);
+            int res = eachFundingMapper.insertEachFunding(eachfunding);
+            return RetResponse.makeOKRsp(eachfunding);
+        }
+
+    }
+
+
     @RequestMapping(value = "/searchUnverify", method = RequestMethod.POST)
     public RetResult<List> searchUnverify(@RequestBody Map json) {
         String testResult = json.get("testResult").toString();
