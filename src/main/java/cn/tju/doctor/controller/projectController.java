@@ -92,29 +92,6 @@ public class projectController {
         return RetResponse.makeOKRsp(projectBeans);
     }
 
-    @RequestMapping(value = "/add2", method = RequestMethod.POST)
-    public RetResult<String> add2(@RequestParam("file") MultipartFile file,
-                                  @RequestParam("name") String name,
-                                  @RequestParam("data") String data,
-                                  @RequestParam("dataURL") String dataURL,
-                                  @RequestParam("introduce") String introduce,
-                                  @RequestParam("createuser") String createuser,
-                                  @RequestParam("projectaccount") String projectaccount,
-                                  @RequestParam("projectmoney") String projectmoney,
-                                  @RequestParam("company") String company,
-                                  @RequestParam("actor") String actor,
-                                  @RequestParam("userType") String userType,
-                                  @RequestParam("mount") double mount,
-                                  @RequestParam("projectManager") String projectManager,
-                                  @RequestParam("companyAccount") String companyAccount,
-                                  @RequestParam("moneyManager") String moneyManager,
-                                  @RequestParam("accounting") String accounting,
-                                  @RequestParam("userdataURL") String userdataURL) {
-
-        dataURL = upload(file, createuser);
-
-        return RetResponse.makeOKRsp("ok");
-    }
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public RetResult<String> add(@RequestBody Map json) {
@@ -453,7 +430,7 @@ public class projectController {
                 List<Eachfunding> list1 = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
                 double previous = 0.0;
                 for(Eachfunding eacheach: list1)
-                    previous = previous+eacheach.getApplymount();
+                    previous = previous+eacheach.getMount();
                 each.setPrevious(previous);
             }
             return RetResponse.makeOKRsp(list);
@@ -469,7 +446,7 @@ public class projectController {
         List<Eachfunding> newlist = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
         double previous = 0.0;
         for(Eachfunding eacheach: newlist)
-            previous = previous+eacheach.getApplymount();
+            previous = previous+eacheach.getMount();
         if((previous+mount) > old.getMount())
             return RetResponse.makeErrRsp("加上传来的mount大于老表mount");
         else {
