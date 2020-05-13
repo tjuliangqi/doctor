@@ -27,6 +27,8 @@ public class projectController {
     ProjectManagementMapper projectManagementMapper;
     @Autowired
     EachFundingMapper eachFundingMapper;
+    @Autowired
+    UserfundingMapper userfundingMapper;
 
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List> search(@RequestBody Map map) {
@@ -453,12 +455,47 @@ public class projectController {
     }
 
     @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
-    public RetResult<List> searchUnverify1(@RequestBody Map json) {
-        String testResult = json.get("testResult").toString();
+    public RetResult<List<Map<String,String>>> searchUnverify1(@RequestBody Map<String,String> json) {
+        String workuser = json.get("workuser");
 
-        List<ProjectManagement> byTest = projectManagementMapper.getByWork(Integer.parseInt(testResult));
+        List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByWorkUser(workuser);
+        if(eachfundings.size() == 0){
+            return RetResponse.makeErrRsp("查询记录不存在");
+        }
+        Set<String> set = new HashSet<>();
 
-        return RetResponse.makeOKRsp(byTest);
+        for(Eachfunding eachfunding : eachfundings){
+            set.add(eachfunding.getUuid());
+        }
+        List<Map<String,String>> result = new ArrayList<>();
+        for(String each :set){
+            Map<String,String> res = new HashMap<>();
+            ProjectManagement projectManagement = projectManagementMapper.getByUuid(each);
+            List<Eachfunding> eachfundings1 = eachFundingMapper.selectEachFundingByWorkUser(workuser);
+            Eachfunding eachfunding = eachfundings1.get(0);
+            double verifyMount = eachFundingMapper.count(workuser,0);
+            double previous = eachFundingMapper.count(workuser,1);
+            res.put("createuser",projectManagement.getCreatuser());
+            res.put("uuid",each);
+            res.put("mount",String.valueOf(eachfunding.getMount()));
+            res.put("money",String.valueOf(projectManagement.getMoney()));
+            res.put("name",projectManagement.getName());
+            res.put("workuser",eachfunding.getWorkuser());
+            res.put("company",projectManagement.getCompany());
+            res.put("dataURL",projectManagement.getDataURL());
+            res.put("ifWork",String.valueOf(projectManagement.getIfWork()));
+            res.put("test",String.valueOf(eachfunding.getTest()));
+            res.put("createtime",projectManagement.getCreattime());
+            res.put("testtime",projectManagement.getTesttime());
+            res.put("worktime",projectManagement.getWorktime());
+            res.put("percent",String.valueOf(projectManagement.getPercent()));
+            res.put("previous",String.valueOf(previous));
+            res.put("verifyMount",String.valueOf(verifyMount));
+            result.add(res);
+
+
+        }
+        return RetResponse.makeOKRsp(result);
     }
 
     @RequestMapping(value = "/verify1", method = RequestMethod.POST)
