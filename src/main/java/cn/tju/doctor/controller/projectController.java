@@ -450,12 +450,21 @@ public class projectController {
         if((previous+mount) > old.getMount())
             return RetResponse.makeErrRsp("加上传来的mount大于老表mount");
         else {
+
             Eachfunding eachfunding = new Eachfunding();
             eachfunding.setApplymount(mount);
             eachfunding.setCreatuser(createuser);
             eachfunding.setUuid(uuid);
+            String number = UUID.randomUUID().toString().replace("-", "");
+            eachfunding.setNumber(number);
+            double percent = old.getPercent();
+            eachfunding.setPercent(percent);
             int res = eachFundingMapper.insertEachFunding(eachfunding);
-            return RetResponse.makeOKRsp(eachfunding);
+            if (res==1){
+                return RetResponse.makeOKRsp(eachfunding);
+            }else {
+                return RetResponse.makeErrRsp("插入失败");
+            }
         }
 
     }
