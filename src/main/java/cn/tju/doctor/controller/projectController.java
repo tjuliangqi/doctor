@@ -438,10 +438,10 @@ public class projectController {
     }
     //业务申请上款接口
     @RequestMapping(value = "/addApply", method = RequestMethod.POST)
-    public RetResult<Eachfunding> addApply(@RequestBody Map json) {
+    public RetResult<Eachfunding> addApply(@RequestBody Map<String,String> json) {
         String createuser = json.get("createuser").toString();
         String uuid = json.get("uuid").toString();
-        double mount = (Double) json.get("mount");
+        double mount = Double.valueOf(json.get("mount"));
         ProjectManagement old = projectManagementMapper.getByUuid(uuid);
         List<Eachfunding> newlist = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
         double previous = 0.0;
@@ -450,15 +450,16 @@ public class projectController {
         if((previous+mount) > old.getMount())
             return RetResponse.makeErrRsp("加上传来的mount大于老表mount");
         else {
-
             Eachfunding eachfunding = new Eachfunding();
-            eachfunding.setApplymount(mount);
+            eachfunding.setApplymount(old.getMount());
+            eachfunding.setMount(mount);
             eachfunding.setCreatuser(createuser);
             eachfunding.setUuid(uuid);
             String number = UUID.randomUUID().toString().replace("-", "");
             eachfunding.setNumber(number);
             double percent = old.getPercent();
             eachfunding.setPercent(percent);
+            eachfunding.setTest(0);
             int res = eachFundingMapper.insertEachFunding(eachfunding);
             if (res==1){
                 return RetResponse.makeOKRsp(eachfunding);
@@ -503,25 +504,32 @@ public class projectController {
         if(eachfundings.size() == 0){
             return RetResponse.makeErrRsp("查询记录不存在");
         }
-        Set<String> set = new HashSet<>();
+        Set<Eachfunding> set = new HashSet<>();
 
         for(Eachfunding eachfunding : eachfundings){
-            set.add(eachfunding.getUuid());
+            set.add(eachfunding);
         }
         List<Map<String,String>> result = new ArrayList<>();
-        for(String each :set){
+        for(Eachfunding each :set){
             Map<String,String> res = new HashMap<>();
-            ProjectManagement projectManagement = projectManagementMapper.getByUuid(each);
+            ProjectManagement projectManagement = projectManagementMapper.getByUuid(each.getUuid());
 //            List<Eachfunding> eachfundings1 = eachFundingMapper.selectEachFundingByWorkUser(workuser);
-            Eachfunding eachfunding = eachFundingMapper.selectEachFundingByUUID(each).get(0);
-            double verifyMount = eachFundingMapper.count(each,0);
-            double previous = eachFundingMapper.count(each,1);
+            Eachfunding eachfunding = eachFundingMapper.selectEachFundingByNumber(each.getNumber());
+            List<Eachfunding> verifys = eachFundingMapper.count(each.getUuid(),0);
+            double verifyMount = 0;
+            for (Eachfunding verify:verifys){
+                verifyMount = verifyMount+verify.getMount();
+            }
+            List<Eachfunding> previouslist = eachFundingMapper.count(each.getUuid(),1);
+            double previous = 0;
+            for (Eachfunding pre:previouslist){
+                previous = previous + pre.getMount();
+            }
             res.put("createuser",projectManagement.getCreatuser());
-            res.put("uuid",each);
+            res.put("uuid",each.getUuid());
             res.put("mount",String.valueOf(eachfunding.getMount()));
             res.put("money",String.valueOf(projectManagement.getMoney()));
             res.put("name",projectManagement.getName());
-            res.put("workuser",eachfunding.getWorkuser());
             res.put("company",projectManagement.getCompany());
             res.put("dataURL",projectManagement.getDataURL());
             res.put("ifWork",String.valueOf(projectManagement.getIfWork()));
@@ -532,6 +540,7 @@ public class projectController {
             res.put("percent",String.valueOf(projectManagement.getPercent()));
             res.put("previous",String.valueOf(previous));
             res.put("verifyMount",String.valueOf(verifyMount));
+            res.put("actureMount",String.valueOf(verifyMount*(1-projectManagement.getPercent())));
             result.add(res);
 
 
@@ -545,13 +554,30 @@ public class projectController {
     public RetResult<String> verify1(@RequestBody Map json) {
         String number = json.get("number").toString();
         String testResult = json.get("testResult").toString();
-        Eachfunding eachfunding = new Eachfunding();
-        eachfunding.setNumber(number);
-        eachfunding.setTest(Integer.parseInt(testResult));
-        eachFundingMapper.updateEachFunding(eachfunding);//修改eachfunding的test
 
-        List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByNumber(number);
-        Eachfunding eachfundingByNumber = eachfundings.get(0);
+        List<Eachfunding> eachfundings = eachFundingMapper.count(number,0);
+        for (Eachfunding eachfunding:eachfundings){
+            eachfunding.setTest(Integer.parseInt(testResult));
+            eachFundingMapper.updateEachFunding(eachfunding);//修改eachfunding的test
+            User user = userMapper.getUserByUsername(eachfunding.getCreatuser()).get(0);
+            user.setMoney(user.getMoney() + eachfunding.getMount()*(1-eachfunding.getPercent()));
+            userMapper.updateUser(user);
+            String uuid = eachfunding.getUuid();
+            Double applymount = eachfunding.getApplymount();
+
+            List<Eachfunding> eachfundingsList = eachFundingMapper.selectEachFundingByUUID(uuid);
+            Double allMount = 0.0;
+            for (Eachfunding each : eachfundingsList) {
+                allMount += each.getMount();
+            }
+            if (applymount.equals(allMount)) {   //判断mount加起来是否等于applymount
+                ProjectManagement projectManagement = new ProjectManagement();
+                projectManagement.setUuid(uuid);
+                projectManagement.setIfWork(1); //修改旧表的ifwork为1
+                projectManagementMapper.updateWork(projectManagement);
+            }
+        }
+
 
 
 
@@ -562,20 +588,7 @@ public class projectController {
 
 
 
-        String uuid = eachfundingByNumber.getUuid();
-        Double applymount = eachfundingByNumber.getApplymount();
 
-        List<Eachfunding> eachfundingsList = eachFundingMapper.selectEachFundingByUUID(uuid);
-        Double allMount = 0.0;
-        for (Eachfunding each : eachfundingsList) {
-            allMount += each.getMount();
-        }
-        if (applymount.equals(allMount)) {   //判断mount加起来是否等于applymount
-            ProjectManagement projectManagement = new ProjectManagement();
-            projectManagement.setUuid(uuid);
-            projectManagement.setIfWork(1); //修改旧表的ifwork为1
-            projectManagementMapper.updateWork(projectManagement);
-        }
         return RetResponse.makeOKRsp("ok");
 //        ProjectManagement projectManagement = projectManagementMapper.getByUuid(uuid);
 //        projectManagement.setIfWork(Integer.parseInt(testResult));
