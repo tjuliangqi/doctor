@@ -13,11 +13,11 @@ import java.util.List;
 @Mapper
 public interface EachFundingMapper {
 
-    List<Eachfunding> selectEachFundingByNumber(@Param("number")String number);
+    Eachfunding selectEachFundingByNumber(@Param("number")String number);
     List<Eachfunding> selectEachFundingByUUID(@Param("uuid") String uuid);
     List<Eachfunding> selectEachFundingByTest();
-    double count(@Param("uuid") String uuid,@Param("test") int test);
-    int updateEachFunding(Eachfunding eachfunding);
+    List<Eachfunding> count(@Param("uuid") String uuid,@Param("test") int test);
+    int updateEachFunding(@Param("eachfunding") Eachfunding eachfunding);
 
     List<Eachfunding> selectEachFundingByUUIDtest(@Param("uuid") String uuid);
     int insertEachFunding(Eachfunding eachfunding);

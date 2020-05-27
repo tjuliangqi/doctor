@@ -88,7 +88,7 @@ public class ProjectFeaServer {
                 throw new Exception("审核失败回滚");
             }
         }else if (userfunding.getTest() == 1){
-            to.setMoney(to.getMoney()+userfunding.getMount());
+//            to.setMoney(to.getMoney()+userfunding.getMount());
             Date date = new Date();
             SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String time = sf.format(date);

@@ -267,7 +267,11 @@ public class ProjectFeaController {
             userfunding.setType(1);
         }else {
             //公司给个人打钱
-            double money = userfundingMapper.getUserfundingByGoWithMonth(go);
+            List<Userfunding> moneylist = userfundingMapper.getUserfundingByGoWithMonth(go);
+            double money = 0;
+            for (Userfunding userfunding1:moneylist){
+                money = money + userfunding1.getMount();
+            }
             if(money + mount > LIMIT_MONEY){
                 return RetResponse.makeErrRsp("本月已经超出打款限额");
             }
@@ -384,6 +388,10 @@ public class ProjectFeaController {
         try {
             //转账
             projectFeaServer.money(from,to,userfunding);
+            if (to.getType().equals("7") && userfunding.getTest() == 1){
+                to.setMoney(to.getMoney()+userfunding.getMount());
+                userMapper.updateUser(to);
+            }
             if (to.getType().equals("0") && userfunding.getTest() == 1){
                 Double total = userfunding.getMount();
                 userfundingMapper.deleteUserfunding(userfunding);
@@ -401,6 +409,7 @@ public class ProjectFeaController {
                 projectFeaServer.money(from,to,userfunding);
                 Double moneys = total * 0.8;
                 userfunding.setType(3);
+                to.setMoney(to.getMoney()+total);
                 to.setArticleIncome(to.getArticleIncome()+moneys);
                 to.setHealthIncome(to.getHealthIncome()+total*0.2);
                 userMapper.updateUser(to);
@@ -479,6 +488,8 @@ public class ProjectFeaController {
                 SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 record2.setPublishTime(sdf2.format(date));
                 recordMapper.insertRecord2(record2);
+            }else {
+
             }
         }catch (Exception e){
             System.out.println(e);

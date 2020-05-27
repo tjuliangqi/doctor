@@ -5,8 +5,8 @@
 
 
     <insert id="insertEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">
-        INSERT INTO eachfunding (number, creatuser, workuser, uuid, test, ifWork, mount, applymount, testtime, percent)
-        VALUES  (#{number}, #{creatuser}, #{workuser}, #{uuid}, #{test}, #{ifWork}, #{mount}, #{applymount}, #{testtime}, #{percent})
+        INSERT INTO eachfunding (number, creatuser, uuid, test, ifWork, mount, applymount, testtime, percent)
+        VALUES  (#{number}, #{creatuser}, #{uuid}, #{test}, #{ifWork}, #{mount}, #{applymount}, #{testtime}, #{percent})
     </insert>
 
     <select id="selectEachFundingByUUIDtest" resultType="cn.tju.doctor.daomain.Eachfunding" parameterType="String">
@@ -21,15 +21,15 @@
     </select>
 
     <select id="selectEachFundingByTest" resultType="cn.tju.doctor.daomain.Eachfunding">
-        SELECT * FROM eachfunding WHERE test != 2;
+        SELECT * FROM eachfunding WHERE test = 0;
     </select>
 
-    <select id="count" resultType="double">
-        SELECT SUM(mount) FROM eachfunding WHERE uuid = #{uuid} AND test = #{test};
+    <select id="count" resultType="cn.tju.doctor.daomain.Eachfunding">
+        SELECT * FROM eachfunding WHERE uuid = #{uuid} AND test = #{test};
     </select>
 
     <update id="updateEachFunding" parameterType="cn.tju.doctor.daomain.Eachfunding">
-        UPDATE eachfunding SET test = #{test} WHERE number = #{number};
+        UPDATE eachfunding SET test = #{eachfunding.test} , ifWork = #{eachfunding.ifWork} WHERE number = #{eachfunding.number};
     </update>
 
 </mapper>

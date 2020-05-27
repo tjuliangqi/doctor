@@ -88,7 +88,11 @@ public class RecordController {
 //        to.setMoney(to.getMoney() + Double.valueOf(moneyS));
 //        to.setArticleIncome(to.getArticleIncome() + Double.valueOf(moneyS));
 
-        double money1 = userfundingMapper.getUserfundingByGoWithMonth(username);
+        List<Userfunding> moneylist = userfundingMapper.getUserfundingByGoWithMonth(username);
+        double money1 = 0;
+        for (Userfunding userfunding2:moneylist){
+            money1 = money1 + userfunding2.getMount();
+        }
         if(money1 + Double.valueOf(moneyS) > LIMIT_MONEY){
             return RetResponse.makeErrRsp("本月已经超出打款限额");
         }

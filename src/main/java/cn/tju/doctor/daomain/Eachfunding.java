@@ -3,7 +3,6 @@ package cn.tju.doctor.daomain;
 public class Eachfunding {
     private String number;
     private String creatuser;
-    private String workuser;
     private String uuid;
     private int test;
     private int ifWork;
@@ -26,14 +25,6 @@ public class Eachfunding {
 
     public void setCreatuser(String creatuser) {
         this.creatuser = creatuser;
-    }
-
-    public String getWorkuser() {
-        return workuser;
-    }
-
-    public void setWorkuser(String workuser) {
-        this.workuser = workuser;
     }
 
     public String getUuid() {
@@ -97,7 +88,6 @@ public class Eachfunding {
         return "Eachfunding{" +
                 "number='" + number + '\'' +
                 ", creatuser='" + creatuser + '\'' +
-                ", workuser='" + workuser + '\'' +
                 ", uuid='" + uuid + '\'' +
                 ", test=" + test +
                 ", ifWork=" + ifWork +
