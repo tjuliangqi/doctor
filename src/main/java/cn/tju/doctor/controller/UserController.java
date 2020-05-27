@@ -155,7 +155,7 @@ public class UserController {
     }
 
     @RequestMapping(value = "/getUser", method = RequestMethod.POST)
-    public RetResult<Map> getUser(@RequestBody Map<String,String> map){
+    public RetResult<User> getUser(@RequestBody Map<String,String> map){
         List<User> list = userMapper.getUserByUsername(map.get("username"));
         Map<String,Object> data = new HashMap<>();
         if (list.size()==0){
@@ -168,31 +168,32 @@ public class UserController {
                 e.printStackTrace();
                 return RetResponse.makeErrRsp("获取用户信息出错");
             }
-            data.put("username",user.getUsername());
-            data.put("modify",user.getModify());
-            data.put("email",user.getEmail());
-            data.put("ares",user.getArea());
-            data.put("region",user.getRegion());
-            data.put("unit",user.getUnit());
-            data.put("part",user.getPart());
-            data.put("like",user.getLike());
-            data.put("download",user.getDownload());
-            data.put("record",user.getRecord());
-            data.put("view",user.getView());
-            data.put("getMoney",user.getGetMoney());
-            data.put("getmoneyrecord",user.getGetmoneyrecord());
-            data.put("state",user.getState());
-            data.put("money",user.getMoney());
-            data.put("authorID",user.getAuthorID());
-            return RetResponse.makeOKRsp(data);
+//            data.put("username",user.getUsername());
+//            data.put("modify",user.getModify());
+//            data.put("email",user.getEmail());
+//            data.put("ares",user.getArea());
+//            data.put("region",user.getRegion());
+//            data.put("unit",user.getUnit());
+//            data.put("part",user.getPart());
+//            data.put("like",user.getLike());
+//            data.put("download",user.getDownload());
+//            data.put("record",user.getRecord());
+//            data.put("view",user.getView());
+//            data.put("getMoney",user.getGetMoney());
+//            data.put("getmoneyrecord",user.getGetmoneyrecord());
+//            data.put("state",user.getState());
+//            data.put("money",user.getMoney());
+//            data.put("authorID",user.getAuthorID());
+            return RetResponse.makeOKRsp(user);
         }
     }
 
     @RequestMapping(value = "/modify")
-    public RetResult<String> updateUser(@RequestBody User user){
-        List<User> list = userMapper.getUserByEmail(user.getEmail());
-        User newUser = list.get(0);
-        user.setAuthorID(newUser.getAuthorID());
+    public RetResult<User> updateUser(@RequestBody User user){
+        //List<User> list = userMapper.getUserByEmail(user.getEmail());
+        //User newUser = list.get(0);
+        //user.setAuthorID(newUser.getAuthorID());
+
         /*newUser.setPassword(user.getPassword());
         newUser.setEmail(user.getEmail());
         newUser.setArea(user.getArea());
@@ -208,9 +209,9 @@ public class UserController {
         newUser.setDocID(user.getDocID());
         newUser.setDocIDurl(user.getDocIDurl());
         newUser.setType(user.getType());*/
-        int flag = userMapper.updateUser(user);
+        int flag = userMapper.updateUserByUsername(user);
         if (flag == 1){
-            return RetResponse.makeOKRsp("ok");
+            return RetResponse.makeOKRsp(user);
         }else{
             return RetResponse.makeErrRsp("ERROR");
         }

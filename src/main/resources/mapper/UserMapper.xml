@@ -95,6 +95,36 @@
         WHERE authorID=#{user.authorID}
     </update>
 
+    <update id="updateUserByUsername" parameterType="cn.tju.doctor.daomain.User">
+        UPDATE users
+        <set>
+            <if test="user.password != null">password=#{user.password},</if>
+            <if test="user.email != null">email=#{user.email},</if>
+            <if test="user.token != null">token=#{user.token},</if>
+            <if test="user.area != null">area=#{user.area},</if>
+            <if test="user.region != null">region=#{user.region},</if>
+            <if test="user.unit != null">unit=#{user.unit},</if>
+            <if test="user.part != null">part=#{user.part},</if>
+            <if test="user.name != null">name=#{user.name},</if>
+            <if test="user.actureID != null">actureID=#{user.actureID},</if>
+            <if test="user.phone != null">phone=#{user.phone},</if>
+            <if test="user.address != null">address=#{user.address},</if>
+            <if test="user.bankID != null">bankID=#{user.bankID},</if>
+            <if test="user.ifDoc != null">ifDoc=#{user.ifDoc},</if>
+            <if test="user.docID != null">docID=#{user.docID},</if>
+            <if test="user.docIDurl != null">docIDurl=#{user.docIDurl},</if>
+            <if test="user.type != null">type=#{user.type},</if>
+            <if test="user.money != null">money=#{user.money},</if>
+            <if test="user.test != null">test=#{user.test},</if>
+            <if test="user.articleIncome != null">articleIncome=#{user.articleIncome},</if>
+            <if test="user.projectIncome != null">projectIncome=#{user.projectIncome},</if>
+            <if test="user.trainingIncome != null">trainingIncome=#{user.trainingIncome},</if>
+            <if test="user.healthIncome != null">healthIncome=#{user.healthIncome},</if>
+            <if test="user.percent != null">percent=#{user.percent}</if>
+        </set>
+        WHERE username=#{user.username}
+    </update>
+
     <update id="updateMoney" parameterType="String">
         UPDATE users SET money=#{money} WHERE username = #{username};
     </update>
