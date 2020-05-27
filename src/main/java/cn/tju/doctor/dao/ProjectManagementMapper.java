@@ -19,4 +19,6 @@ public interface ProjectManagementMapper {
 
     List<ProjectManagement> getByUserTest0(@Param("creatuser") String creatuser);
     List<ProjectManagement> getByUserTest1(@Param("creatuser") String creatuser);
+
+    int deleteByUUID(@Param("uuid") String uuid);
 }

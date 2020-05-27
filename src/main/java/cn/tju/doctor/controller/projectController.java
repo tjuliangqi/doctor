@@ -488,6 +488,12 @@ public class projectController {
 
         projectManagement.setTest(Integer.parseInt(testResult));
         projectManagement.setUuid(uuid);
+
+        if(projectManagement.getTest()==-1){
+            projectManagementMapper.deleteByUUID(uuid);
+            return RetResponse.makeOKRsp("delete ok");
+        }
+
         int i = projectManagementMapper.updateTest(projectManagement);
         if (i == 1) {
             return RetResponse.makeOKRsp("ok");
@@ -495,6 +501,7 @@ public class projectController {
             return RetResponse.makeErrRsp("更新失败");
         }
     }
+
 
     @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
     public RetResult<List<Map<String,String>>> searchUnverify1(@RequestBody Map<String,String> json) {

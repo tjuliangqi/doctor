@@ -27,6 +27,10 @@
         UPDATE projectmanagement SET test = #{test} WHERE uuid = #{uuid};
     </update>
 
+    <delete id="deleteByUUID" parameterType="String">
+        DELETE FROM projectmanagement WHERE uuid = #{uuid};
+    </delete>
+
 
     <select id="getByUserTest0" resultType="cn.tju.doctor.daomain.ProjectManagement" parameterType="String">
         SELECT * FROM projectmanagement WHERE creatuser = #{creatuser} AND test = 0;
