@@ -211,8 +211,15 @@ public class UserController {
         newUser.setType(user.getType());*/
         int flag = userMapper.updateUserByUsername(user);
         if (flag == 1){
-            return RetResponse.makeOKRsp(user);
-        }else{
+            List<User> list = userMapper.getUserByUsername(user.getUsername());
+            if (list.size()==0)
+                return RetResponse.makeErrRsp("用户不存在");
+            else {
+                User afteruser = list.get(0);
+                return RetResponse.makeOKRsp(afteruser);
+            }
+        }
+        else{
             return RetResponse.makeErrRsp("ERROR");
         }
     }
