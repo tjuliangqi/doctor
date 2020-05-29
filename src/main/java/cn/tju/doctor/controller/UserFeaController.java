@@ -290,6 +290,21 @@ public class UserFeaController {
         return RetResponse.makeOKRsp(result);
     }
 
+    @RequestMapping(value = "/searchVerify", method = RequestMethod.POST)
+    public RetResult<List<Userfunding>> searchVerify(@RequestBody Map<String, String> map) {
+        String testUser = map.get("testUser");
+//        int type = Integer.valueOf(map.get("type"));
+        List<Userfunding> result = new ArrayList<>();
+        try {
+            result = userfundingMapper.getUserfundingListByTest12(0, testUser);
+        } catch (Exception e) {
+            System.out.println(e);
+            return RetResponse.makeErrRsp("查询错误");
+        }
+
+        return RetResponse.makeOKRsp(result);
+    }
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> search(@RequestBody Map<String, String> map) {
         List<Userfunding> result = new ArrayList<>();
