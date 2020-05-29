@@ -32,6 +32,12 @@ public interface UserfundingMapper {
     List<Userfunding> getUserfundingListByTest(@Param("test") int test,@Param("testUser") String testUser);
     @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `test` != ${test}")
     List<Userfunding> getUserfundingListByTest12(@Param("test") int test,@Param("testUser") String testUser);
+
+    @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `moneyType` = ${moneyType} AND `test` = ${test}")
+    List<Userfunding> getUserfundingListByType(@Param("test") int test,@Param("testUser") String testUser,@Param("moneyType") int moneyType);
+    @Select("SELECT * FROM `userfunding` WHERE `testuser` = #{testUser} AND `moneyType` = ${moneyType} AND `test` != ${test}")
+    List<Userfunding> getUserfundingListBytype12(@Param("test") int test,@Param("testUser") String testUser,@Param("moneyType") int moneyType);
+
     @Select("SELECT * FROM `userfunding` WHERE `applyTime` >= #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
     List<Userfunding> getUserfundingListByApplytime(@Param("type") String type,@Param("value1") int value1,@Param("value2") int value2,@Param("value3") int value3);
     @Select("SELECT * FROM `userfunding` WHERE `authorID` = #{type} AND `ifWork` = ${value2} AND `in` = ${value3} AND `test` = ${value1}")
