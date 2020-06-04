@@ -105,6 +105,33 @@ public class UserFeaController {
         return RetResponse.makeOKRsp("ok");
     }
 
+    /**
+     * 新增查询用户的交易明细，包括转入转出
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/searchDetail", method = RequestMethod.POST)
+    public RetResult<List<Userfunding>> searchDetail(@RequestBody Map<String, String> map) {
+        List<Userfunding> result = new ArrayList<>();
+        if (map.keySet().size() == 0) {
+            return RetResponse.makeErrRsp("未传参数");
+        }
+        List<Userfunding> result1 = new ArrayList<>();
+        List<Userfunding> result2 = new ArrayList<>();
+        for (String key : map.keySet()) {
+            if (key.equals("source")) {
+                result1 = userfundingMapper.getUserfundingBySource(map.get("source"));
+
+            }
+            if (key.equals("go")) {
+                result2 = userfundingMapper.getUserfundingByAuthorID(map.get("authorID"));
+            }
+        }
+        result.addAll(result1);
+        result.addAll(result2);
+        return RetResponse.makeOKRsp(result);
+    }
+
 
     @RequestMapping(value = "/searchList", method = RequestMethod.POST)
     public RetResult<List<Userfunding>> searchList(@RequestBody Map<String, String> map) {
