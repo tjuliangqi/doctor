@@ -5,6 +5,15 @@ import cn.tju.doctor.daomain.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import yzhpay.sdk.constant.ConfigPath;
+import yzhpay.sdk.constant.XmlData;
+import yzhpay.sdk.dto.response.Response;
+import yzhpay.sdk.pay.order.BankCardOrder;
+import yzhpay.sdk.pay.verify.FourFactorVerify;
+import yzhpay.sdk.util.HttpUtil;
+import yzhpay.sdk.util.JsonUtil;
+import yzhpay.sdk.util.Property;
+import yzhpay.sdk.util.StringUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -611,6 +620,60 @@ public class projectController {
 //        }else {
 //            return RetResponse.makeErrRsp("更新失败");
 //        }
+    }
+
+
+    // 银行四要素验证，传入要验证的user
+    public RetResult<String> fourFactorVerifyConfirm(User user) throws Exception {
+        FourFactorVerify fourFactorVerify = new FourFactorVerify();
+        fourFactorVerify.setRealName(user.getName());
+        fourFactorVerify.setIdNumber(user.getActureID());
+        fourFactorVerify.setCardNumber(user.getBankID());
+        fourFactorVerify.setPhoneNumber(user.getPhone());
+        Map<String, Object> result = null;
+        try {
+            result = HttpUtil.post(fourFactorVerify.assembleRequest(), Property.getUrl(ConfigPath.YZH_FOUR_FACTOR_BANK_CARD_VERIFY));
+        } catch (Exception e) {
+            return RetResponse.makeErrRsp("验证失败");
+        }
+
+        String code = (String) result.get("code");
+        if (code != "0000") {
+            return RetResponse.makeErrRsp("目标账户不存在");
+        }
+
+        return RetResponse.makeOKRsp("ok");
+    }
+
+    //提现
+    public RetResult<String> bankOrder(User user, String payMoney) throws Exception {
+        BankCardOrder bankOrder = new BankCardOrder();
+        bankOrder.setRealName(user.getName());
+        bankOrder.setCardNumber(user.getBankID());
+        bankOrder.setPhoneNumber(user.getPhone());
+        bankOrder.setIdNumber(user.getActureID());
+        bankOrder.setPayMoney(payMoney);
+        bankOrder.setPayRemark("提现");
+        try {
+            Map<String, Object> payResult = HttpUtil.post(bankOrder.assembleRequest(), Property.getUrl(ConfigPath.YZH_BANK_CARD_REAL_TIME_ORDER));
+            Response response = null;
+            Map<String, Object> result = null;
+            try {
+                if ("200".equals(StringUtils.trim(result.get(XmlData.STATUSCODE)))) {
+                    response = JsonUtil.fromJson(StringUtils.trim(payResult.get(XmlData.DATA)), Response.class);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (response.getCode().equals("0000")) {
+                return RetResponse.makeOKRsp("ok");
+            } else {
+                return RetResponse.makeErrRsp("提现失败");
+            }
+        } catch (Exception e) {
+
+            return RetResponse.makeErrRsp("提现失败，网络错误");
+        }
     }
 
 }
