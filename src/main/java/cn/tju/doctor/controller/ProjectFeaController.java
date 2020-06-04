@@ -400,15 +400,16 @@ public class ProjectFeaController {
                 userfunding.setNumber(IdNumber1);
                 userfunding.setMoneyType(1);
                 userfunding.setMount(total*0.8);
+                userfunding.setType(3);
                 userfundingMapper.insertUserfunding(userfunding);
                 projectFeaServer.money(from,to,userfunding);
                 userfunding.setNumber(IdNumber2);
                 userfunding.setMoneyType(4);
                 userfunding.setMount(total*0.2);
+                userfunding.setType(3);
                 userfundingMapper.insertUserfunding(userfunding);
                 projectFeaServer.money(from,to,userfunding);
                 Double moneys = total * 0.8;
-                userfunding.setType(3);
                 to.setMoney(to.getMoney()+total);
                 to.setArticleIncome(to.getArticleIncome()+moneys);
                 to.setHealthIncome(to.getHealthIncome()+total*0.2);
