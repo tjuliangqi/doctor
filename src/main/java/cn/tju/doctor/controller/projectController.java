@@ -420,43 +420,43 @@ public class projectController {
     public RetResult<List> searchHistoryApp(@RequestBody Map json) {
         String createuser = json.get("createuser").toString();
         String test = json.get("test").toString();
-        if(test.equals("0")){
+        if (test.equals("0")) {
             List<ProjectManagement> list = projectManagementMapper.getByUserTest0(createuser);
             if (list.size() < 1)
                 return RetResponse.makeErrRsp("查询不到该creatuser的未审核");
-            for(ProjectManagement each:list){
+            for (ProjectManagement each : list) {
                 each.setPrevious(0.0);
             }
             return RetResponse.makeOKRsp(list);
-        }
-        else{
+        } else {
             List<ProjectManagement> list = projectManagementMapper.getByUserTest1(createuser);
             if (list.size() < 1)
                 return RetResponse.makeErrRsp("查询不到该creatuser的已审核");
 
-            for(ProjectManagement each:list){
+            for (ProjectManagement each : list) {
                 String uuid = each.getUuid();
                 List<Eachfunding> list1 = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
                 double previous = 0.0;
-                for(Eachfunding eacheach: list1)
-                    previous = previous+eacheach.getMount();
+                for (Eachfunding eacheach : list1)
+                    previous = previous + eacheach.getMount();
                 each.setPrevious(previous);
             }
             return RetResponse.makeOKRsp(list);
         }
     }
+
     //业务申请上款接口
     @RequestMapping(value = "/addApply", method = RequestMethod.POST)
-    public RetResult<Eachfunding> addApply(@RequestBody Map<String,String> json) {
+    public RetResult<Eachfunding> addApply(@RequestBody Map<String, String> json) {
         String createuser = json.get("createuser").toString();
         String uuid = json.get("uuid").toString();
         double mount = Double.valueOf(json.get("mount"));
         ProjectManagement old = projectManagementMapper.getByUuid(uuid);
         List<Eachfunding> newlist = eachFundingMapper.selectEachFundingByUUIDtest(uuid);
         double previous = 0.0;
-        for(Eachfunding eacheach: newlist)
-            previous = previous+eacheach.getMount();
-        if((previous+mount) > old.getMount())
+        for (Eachfunding eacheach : newlist)
+            previous = previous + eacheach.getMount();
+        if ((previous + mount) > old.getMount())
             return RetResponse.makeErrRsp("加上传来的mount大于老表mount");
         else {
             Eachfunding eachfunding = new Eachfunding();
@@ -470,9 +470,9 @@ public class projectController {
             eachfunding.setPercent(percent);
             eachfunding.setTest(0);
             int res = eachFundingMapper.insertEachFunding(eachfunding);
-            if (res==1){
+            if (res == 1) {
                 return RetResponse.makeOKRsp(eachfunding);
-            }else {
+            } else {
                 return RetResponse.makeErrRsp("插入失败");
             }
         }
@@ -498,7 +498,7 @@ public class projectController {
         projectManagement.setTest(Integer.parseInt(testResult));
         projectManagement.setUuid(uuid);
 
-        if(projectManagement.getTest()==-1){
+        if (projectManagement.getTest() == -1) {
             projectManagementMapper.deleteByUUID(uuid);
             return RetResponse.makeOKRsp("delete ok");
         }
@@ -513,50 +513,50 @@ public class projectController {
 
 
     @RequestMapping(value = "/searchUnverify1", method = RequestMethod.POST)
-    public RetResult<List<Map<String,String>>> searchUnverify1(@RequestBody Map<String,String> json) {
+    public RetResult<List<Map<String, String>>> searchUnverify1(@RequestBody Map<String, String> json) {
 //        String workuser = json.get("workuser");
 
         List<Eachfunding> eachfundings = eachFundingMapper.selectEachFundingByTest();
-        if(eachfundings.size() == 0){
+        if (eachfundings.size() == 0) {
             return RetResponse.makeErrRsp("查询记录不存在");
         }
         Set<Eachfunding> set = new HashSet<>();
 
-        for(Eachfunding eachfunding : eachfundings){
+        for (Eachfunding eachfunding : eachfundings) {
             set.add(eachfunding);
         }
-        List<Map<String,String>> result = new ArrayList<>();
-        for(Eachfunding each :set){
-            Map<String,String> res = new HashMap<>();
+        List<Map<String, String>> result = new ArrayList<>();
+        for (Eachfunding each : set) {
+            Map<String, String> res = new HashMap<>();
             ProjectManagement projectManagement = projectManagementMapper.getByUuid(each.getUuid());
 //            List<Eachfunding> eachfundings1 = eachFundingMapper.selectEachFundingByWorkUser(workuser);
             Eachfunding eachfunding = eachFundingMapper.selectEachFundingByNumber(each.getNumber());
-            List<Eachfunding> verifys = eachFundingMapper.count(each.getUuid(),0);
+            List<Eachfunding> verifys = eachFundingMapper.count(each.getUuid(), 0);
             double verifyMount = 0;
-            for (Eachfunding verify:verifys){
-                verifyMount = verifyMount+verify.getMount();
+            for (Eachfunding verify : verifys) {
+                verifyMount = verifyMount + verify.getMount();
             }
-            List<Eachfunding> previouslist = eachFundingMapper.count(each.getUuid(),1);
+            List<Eachfunding> previouslist = eachFundingMapper.count(each.getUuid(), 1);
             double previous = 0;
-            for (Eachfunding pre:previouslist){
+            for (Eachfunding pre : previouslist) {
                 previous = previous + pre.getMount();
             }
-            res.put("createuser",projectManagement.getCreatuser());
-            res.put("uuid",each.getUuid());
-            res.put("mount",String.valueOf(eachfunding.getMount()));
-            res.put("money",String.valueOf(projectManagement.getMoney()));
-            res.put("name",projectManagement.getName());
-            res.put("company",projectManagement.getCompany());
-            res.put("dataURL",projectManagement.getDataURL());
-            res.put("ifWork",String.valueOf(projectManagement.getIfWork()));
-            res.put("test",String.valueOf(eachfunding.getTest()));
-            res.put("createtime",projectManagement.getCreattime());
-            res.put("testtime",projectManagement.getTesttime());
-            res.put("worktime",projectManagement.getWorktime());
-            res.put("percent",String.valueOf(projectManagement.getPercent()));
-            res.put("previous",String.valueOf(previous));
-            res.put("verifyMount",String.valueOf(verifyMount));
-            res.put("actureMount",String.valueOf(verifyMount*(1-projectManagement.getPercent())));
+            res.put("createuser", projectManagement.getCreatuser());
+            res.put("uuid", each.getUuid());
+            res.put("mount", String.valueOf(eachfunding.getMount()));
+            res.put("money", String.valueOf(projectManagement.getMoney()));
+            res.put("name", projectManagement.getName());
+            res.put("company", projectManagement.getCompany());
+            res.put("dataURL", projectManagement.getDataURL());
+            res.put("ifWork", String.valueOf(projectManagement.getIfWork()));
+            res.put("test", String.valueOf(eachfunding.getTest()));
+            res.put("createtime", projectManagement.getCreattime());
+            res.put("testtime", projectManagement.getTesttime());
+            res.put("worktime", projectManagement.getWorktime());
+            res.put("percent", String.valueOf(projectManagement.getPercent()));
+            res.put("previous", String.valueOf(previous));
+            res.put("verifyMount", String.valueOf(verifyMount));
+            res.put("actureMount", String.valueOf(verifyMount * (1 - projectManagement.getPercent())));
             result.add(res);
 
 
@@ -565,18 +565,17 @@ public class projectController {
     }
 
 
-
     @RequestMapping(value = "/verify1", method = RequestMethod.POST)
     public RetResult<String> verify1(@RequestBody Map json) {
         String number = json.get("number").toString();
         String testResult = json.get("testResult").toString();
 
-        List<Eachfunding> eachfundings = eachFundingMapper.count(number,0);
-        for (Eachfunding eachfunding:eachfundings){
+        List<Eachfunding> eachfundings = eachFundingMapper.count(number, 0);
+        for (Eachfunding eachfunding : eachfundings) {
             eachfunding.setTest(Integer.parseInt(testResult));
             eachFundingMapper.updateEachFunding(eachfunding);//修改eachfunding的test
             User user = userMapper.getUserByUsername(eachfunding.getCreatuser()).get(0);
-            user.setMoney(user.getMoney() + eachfunding.getMount()*(1-eachfunding.getPercent()));
+            user.setMoney(user.getMoney() + eachfunding.getMount() * (1 - eachfunding.getPercent()));
             userMapper.updateUser(user);
             String uuid = eachfunding.getUuid();
             Double applymount = eachfunding.getApplymount();
@@ -595,14 +594,10 @@ public class projectController {
         }
 
 
-
-
         //将钱给用户
 
 
         //修改新表的ifwork
-
-
 
 
         return RetResponse.makeOKRsp("ok");
@@ -674,6 +669,24 @@ public class projectController {
 
             return RetResponse.makeErrRsp("提现失败，网络错误");
         }
+    }
+
+    // 每天个人转账记录
+    // 在userFunding表查applyTime=当天，type=2是团队到个人，type=3是公司到个人
+    @RequestMapping(value = "/todayRecord", method = RequestMethod.POST)
+    public RetResult<Map<String, List>> todayRecord() {
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//日期格式
+        String today = dateFormat.format(now);
+        System.out.println(today);
+        List<Userfunding> eachfunding2 = userfundingMapper.selectTodayFunding(today, 2);
+        List<Userfunding> eachfunding3 = userfundingMapper.selectTodayFunding(today, 3);
+        Map<String, List> map = new HashMap<>();
+        map.put("teamToPerson",eachfunding2);
+        map.put("companyToPerson",eachfunding3);
+        return RetResponse.makeOKRsp(map);
+
+
     }
 
 }

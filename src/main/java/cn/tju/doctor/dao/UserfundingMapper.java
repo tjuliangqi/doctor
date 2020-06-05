@@ -60,4 +60,7 @@ public interface UserfundingMapper {
     int updateUserfundingWork(@Param("userfunding") Userfunding userfunding);
     @Delete("DELETE FROM `userfunding` WHERE number = #{userfunding.number}")
     int deleteUserfunding(@Param("userfunding") Userfunding userfunding);
+
+    @Select("SELECT * FROM `userfunding` WHERE date(`applyTime`) = #{today} AND `type` = ${type}")
+    List<Userfunding> selectTodayFunding(@Param("today") String today, @Param("type") int type);
 }
