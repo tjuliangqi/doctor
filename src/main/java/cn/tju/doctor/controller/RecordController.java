@@ -35,6 +35,14 @@ public class RecordController {
     @Autowired
     UserfundingMapper userfundingMapper;
 
+    @Autowired
+    projectController projectController;
+
+    /**
+     * 团队给个人转账，并打钱（事务不起效）
+     * @param json
+     * @return
+     */
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     @Transactional(rollbackFor = Exception.class)
     public RetResult<String> add(@RequestBody Map json) {
@@ -59,6 +67,7 @@ public class RecordController {
         userfunding.setTest(1);
         userfunding.setIfWork(1);
         userfunding.setApplyTime(time);
+        //团队给个人转帐
         userfunding.setType(2);
         userfunding.setMoneyType(1);
 
@@ -98,11 +107,36 @@ public class RecordController {
         }
 
         try {
+
             userMapper.updateUser(from);
             userMapper.updateUser(to);
             userfundingMapper.insertUserfunding(userfunding);
             userfundingMapper.insertUserfunding(userfunding1);
+
+            //不安全的转账
+            if(projectController.fourFactorVerifyConfirm(to).getData().equals("ok")){
+                RetResult<String> retResult = projectController.bankOrder(to,moneyS);
+                if (!retResult.getData().equals("ok")){
+                    throw new Exception("转账错误");
+                }
+            }else {
+                throw new Exception("转账错误");
+            }
+
+
         }catch (Exception e){
+            //转账失败，钱款退回
+            from.setMoney(from.getMoney()+Double.valueOf(moneyS));
+            to.setMoney(to.getMoney()-Double.valueOf(moneyS));
+            to.setArticleIncome(to.getArticleIncome()-Double.valueOf(moneyS) * 0.8);
+            to.setHealthIncome(to.getHealthIncome() - Double.valueOf(moneyS) * 0.2);
+            userMapper.updateUser(from);
+            userMapper.updateUser(to);
+            //转账失败，标记funding
+            userfunding.setIfWork(2);
+            userfunding1.setIfWork(2);
+            userfundingMapper.updateUserfundingWork(userfunding);
+            userfundingMapper.updateUserfundingWork(userfunding1);
             return RetResponse.makeErrRsp("转账出错");
         }
 //        try {

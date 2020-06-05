@@ -29,6 +29,10 @@ public class ProjectFeaController {
     UserfundingMapper userfundingMapper;
     @Autowired
     RecordMapper recordMapper;
+
+    @Autowired
+    projectController projectController;
+
     @RequestMapping(value = "/search", method = RequestMethod.POST)
     public RetResult<List<Projectfunding>> search(@RequestBody Map<String,String> map)  {
         List<Projectfunding> result = new ArrayList<>();
@@ -372,6 +376,11 @@ public class ProjectFeaController {
         return RetResponse.makeOKRsp("ok");
     }
 
+    /**
+     * 公司给个人打钱的审核，审核完并转账
+     * @param map
+     * @return
+     */
     @RequestMapping(value = "/verifyUser", method = RequestMethod.POST)
     public RetResult<String> verifyUser(@RequestBody Map<String,String> map)  {
         String number = map.get("number");
@@ -401,19 +410,56 @@ public class ProjectFeaController {
                 userfunding.setMoneyType(1);
                 userfunding.setMount(total*0.8);
                 userfunding.setType(3);
+
                 userfundingMapper.insertUserfunding(userfunding);
-                projectFeaServer.money(from,to,userfunding);
-                userfunding.setNumber(IdNumber2);
-                userfunding.setMoneyType(4);
-                userfunding.setMount(total*0.2);
-                userfunding.setType(3);
-                userfundingMapper.insertUserfunding(userfunding);
-                projectFeaServer.money(from,to,userfunding);
+
+                //新增一个userfunding1
+                Userfunding userfunding1 = userfunding;
+                userfunding1.setNumber(IdNumber2);
+                userfunding1.setMoneyType(4);
+                userfunding1.setMount(total*0.2);
+                userfunding1.setType(3);
+                userfundingMapper.insertUserfunding(userfunding1);
+
                 Double moneys = total * 0.8;
                 to.setMoney(to.getMoney()+total);
                 to.setArticleIncome(to.getArticleIncome()+moneys);
                 to.setHealthIncome(to.getHealthIncome()+total*0.2);
-                userMapper.updateUser(to);
+                //这个可以去掉
+//                userMapper.updateUser(to);
+                //一起更新funding和to
+                projectFeaServer.money(from,to,userfunding);
+                projectFeaServer.money(from,to,userfunding1);
+                try {
+
+                    //不安全的转账
+                    if(projectController.fourFactorVerifyConfirm(to).getData().equals("ok")){
+                        RetResult<String> retResult = projectController.bankOrder(to,total.toString());
+                        if (!retResult.getData().equals("ok")){
+                            throw new Exception("转账错误");
+                        }
+                    }else {
+                        throw new Exception("四要素出错");
+                    }
+                }catch (Exception e){
+                    System.out.println(e);
+                    //撤回转入
+                    to.setMoney(to.getMoney()-total);
+                    to.setArticleIncome(to.getArticleIncome()-moneys);
+                    to.setHealthIncome(to.getHealthIncome()-total*0.2);
+                    userMapper.updateUser(to);
+
+                    //撤回转出
+                    from.setMoney(from.getMoney() + total);
+
+                    //标记fundingifwork=2
+                    userfunding.setIfWork(2);
+                    userfunding1.setIfWork(2);
+                    userfundingMapper.updateUserfundingWork(userfunding);
+                    userfundingMapper.updateUserfundingWork(userfunding1);
+                    return RetResponse.makeErrRsp(e.getMessage());
+                }
+
                 int money = moneys.intValue();
                 int l = 1;
                 while (money/l>0){

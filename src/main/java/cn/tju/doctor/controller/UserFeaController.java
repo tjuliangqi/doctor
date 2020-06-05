@@ -308,7 +308,7 @@ public class UserFeaController {
         int type = Integer.valueOf(map.get("type"));
         List<Userfunding> result = new ArrayList<>();
         try {
-            result = userfundingMapper.getUserfundingListByType(0, testUser,type);
+            result = userfundingMapper.getUserfundingListByType(0, testUser, type);
         } catch (Exception e) {
             System.out.println(e);
             return RetResponse.makeErrRsp("查询错误");
