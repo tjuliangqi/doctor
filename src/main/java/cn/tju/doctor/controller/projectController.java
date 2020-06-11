@@ -1,7 +1,9 @@
 package cn.tju.doctor.controller;
 
+import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.*;
 import cn.tju.doctor.daomain.*;
+import cn.tju.doctor.utils.CSVUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +17,7 @@ import yzhpay.sdk.util.JsonUtil;
 import yzhpay.sdk.util.Property;
 import yzhpay.sdk.util.StringUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -674,16 +677,57 @@ public class projectController {
     // 每天个人转账记录
     // 在userFunding表查applyTime=当天，type=2是团队到个人，type=3是公司到个人
     @RequestMapping(value = "/todayRecord", method = RequestMethod.POST)
-    public RetResult<Map<String, List>> todayRecord() {
+    public RetResult<Map<String, Object>> todayRecord() {
         Date now = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//日期格式
         String today = dateFormat.format(now);
         System.out.println(today);
         List<Userfunding> eachfunding2 = userfundingMapper.selectTodayFunding(today, 2);
         List<Userfunding> eachfunding3 = userfundingMapper.selectTodayFunding(today, 3);
-        Map<String, List> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         map.put("teamToPerson",eachfunding2);
         map.put("companyToPerson",eachfunding3);
+
+        String[] strings = {"number", "authorID", "mount", "rest", "in", "out", "test", "testtime",
+                "testuser", "ifWork", "workTime", "workUser", "record", "source", "sourceAccount",
+                "go", "goaccount", "applyID", "applyTime", "testRecord", "workRecord", "type",
+                "moneyType"};
+        List<String> fieldList= new ArrayList<>(Arrays.asList(strings));
+        CSVUtils csvUtils=new CSVUtils();
+        List<List<String>> listList=new ArrayList<>();
+        listList.add(fieldList);
+        List<String> list=null;
+        for(Userfunding userfunding:eachfunding3){
+            list=new ArrayList<>();//一个List为一行
+            list.add(userfunding.getNumber());
+            list.add(userfunding.getAuthorID());
+            list.add(String.valueOf(userfunding.getMount()));
+            list.add(String.valueOf(userfunding.getRest()));
+            list.add(String.valueOf(userfunding.getIn()));
+            list.add(String.valueOf(userfunding.getOut()));
+            list.add(String.valueOf(userfunding.getTest()));
+            list.add(userfunding.getTesttime());
+            list.add(userfunding.getTestuser());
+            list.add(String.valueOf(userfunding.getIfWork()));
+            list.add(userfunding.getWorkTime());
+            list.add(userfunding.getWorkUser());
+            list.add(userfunding.getRecord());
+            list.add(userfunding.getSource());
+            list.add(userfunding.getSourceAccount());
+            list.add(userfunding.getGo());
+            list.add(userfunding.getGoaccount());
+            list.add(userfunding.getApplyID());
+            list.add(userfunding.getApplyTime());
+            list.add(userfunding.getTestRecord());
+            list.add(userfunding.getWorkRecord());
+            list.add(String.valueOf(userfunding.getType()));
+            list.add(String.valueOf(userfunding.getMoneyType()));
+            listList.add(list);
+        }
+
+        File file = csvUtils.createCSVFile(listList,Config.UPLOAD_DIR + File.separator + File.separator ,"csv");
+        System.out.println(file.getPath());
+        map.put("companyToPersonCSV",file.getPath());
         return RetResponse.makeOKRsp(map);
 
 
