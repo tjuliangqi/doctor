@@ -1,7 +1,11 @@
 package cn.tju.doctor.utils;
 
+import cn.tju.doctor.Config;
+import cn.tju.doctor.daomain.Userfunding;
+
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CSVUtils {
@@ -10,7 +14,6 @@ public class CSVUtils {
      * 生成为CVS文件
      *
      * @param exportData 源数据List
-     *
      * @param outPutPath 文件路径
      * @param fileName   文件名称
      * @return
@@ -50,7 +53,6 @@ public class CSVUtils {
 
     /**
      * 写一行数据
-     *
      * @param row       数据列表
      * @param csvWriter
      * @throws IOException
@@ -70,8 +72,6 @@ public class CSVUtils {
 
     /**
      * 剔除特殊字符
-     *
-     * @param str       数据
      */
     public String DelQuota(String str) {
         String result = str;
@@ -82,14 +82,56 @@ public class CSVUtils {
         }
         return result;
     }
+    public static String writeCSV(List<Userfunding> userfundings){
+        String[] fieldsArr = {"number", "authorID", "mount", "rest", "in", "out", "test", "testtime",
+                "testuser", "ifWork", "workTime", "workUser", "record", "source", "sourceAccount",
+                "go", "goaccount", "applyID", "applyTime", "testRecord", "workRecord", "type",
+                "moneyType"};
+        List<String> fieldsList= new ArrayList<>(Arrays.asList(fieldsArr));
+        CSVUtils csvUtils=new CSVUtils();
+        List<List<String>> listList=new ArrayList<>();
+        listList.add(fieldsList);
+        List<String> list=null;
+        for(Userfunding userfunding:userfundings){
+            list=new ArrayList<>();
+            list.add(userfunding.getNumber());
+            list.add(userfunding.getAuthorID());
+            list.add(String.valueOf(userfunding.getMount()));
+            list.add(String.valueOf(userfunding.getRest()));
+            list.add(String.valueOf(userfunding.getIn()));
+            list.add(String.valueOf(userfunding.getOut()));
+            list.add(String.valueOf(userfunding.getTest()));
+            list.add(userfunding.getTesttime());
+            list.add(userfunding.getTestuser());
+            list.add(String.valueOf(userfunding.getIfWork()));
+            list.add(userfunding.getWorkTime());
+            list.add(userfunding.getWorkUser());
+            list.add(userfunding.getRecord());
+            list.add(userfunding.getSource());
+            list.add(userfunding.getSourceAccount());
+            list.add(userfunding.getGo());
+            list.add(userfunding.getGoaccount());
+            list.add(userfunding.getApplyID());
+            list.add(userfunding.getApplyTime());
+            list.add(userfunding.getTestRecord());
+            list.add(userfunding.getWorkRecord());
+            list.add(String.valueOf(userfunding.getType()));
+            list.add(String.valueOf(userfunding.getMoneyType()));
+            listList.add(list);
+        }
 
+
+        File file = csvUtils.createCSVFile(listList,Config.UPLOAD_DIR + File.separator +"CSVFiles"+ File.separator ,"csv");
+        System.out.println(file.getPath());
+        return "http://39.96.65.14/doctorfile/upload/CSVFiles/" + file.getName();
+    }
 
     /**
      *测试
      */
     public static void main(String[] args) {
         CSVUtils csvUtils=new CSVUtils();
-        List<List<String>> listList=new ArrayList<List<String>>();
+        List<List<String>> listList=new ArrayList<>();
         List<String> list=null;
         for (int i = 0; i <5 ; i++) {
             list=new ArrayList<String>();//一个List为一行

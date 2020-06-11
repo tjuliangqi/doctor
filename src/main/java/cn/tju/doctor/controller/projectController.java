@@ -1,9 +1,7 @@
 package cn.tju.doctor.controller;
 
-import cn.tju.doctor.Config;
 import cn.tju.doctor.dao.*;
 import cn.tju.doctor.daomain.*;
-import cn.tju.doctor.utils.CSVUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,11 +15,11 @@ import yzhpay.sdk.util.JsonUtil;
 import yzhpay.sdk.util.Property;
 import yzhpay.sdk.util.StringUtils;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static cn.tju.doctor.utils.CSVUtils.writeCSV;
 import static cn.tju.doctor.utils.ToBuildersUtils.intoState;
 import static cn.tju.doctor.utils.fileUtil.upload;
 
@@ -682,55 +680,18 @@ public class projectController {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");//日期格式
         String today = dateFormat.format(now);
         System.out.println(today);
-        List<Userfunding> eachfunding2 = userfundingMapper.selectTodayFunding(today, 2);
-        List<Userfunding> eachfunding3 = userfundingMapper.selectTodayFunding(today, 3);
+        List<Userfunding> userfundings2 = userfundingMapper.selectTodayFunding(today, 2);
+        List<Userfunding> userfundings3 = userfundingMapper.selectTodayFunding(today, 3);
         Map<String, Object> map = new HashMap<>();
-        map.put("teamToPerson",eachfunding2);
-        map.put("companyToPerson",eachfunding3);
+        map.put("teamToPerson",userfundings2);
+        map.put("companyToPerson",userfundings3);
+        String companyToPersonCSV = writeCSV(userfundings2);
+        String teamToPersonCSV = writeCSV(userfundings3);
 
-        String[] strings = {"number", "authorID", "mount", "rest", "in", "out", "test", "testtime",
-                "testuser", "ifWork", "workTime", "workUser", "record", "source", "sourceAccount",
-                "go", "goaccount", "applyID", "applyTime", "testRecord", "workRecord", "type",
-                "moneyType"};
-        List<String> fieldList= new ArrayList<>(Arrays.asList(strings));
-        CSVUtils csvUtils=new CSVUtils();
-        List<List<String>> listList=new ArrayList<>();
-        listList.add(fieldList);
-        List<String> list=null;
-        for(Userfunding userfunding:eachfunding3){
-            list=new ArrayList<>();//一个List为一行
-            list.add(userfunding.getNumber());
-            list.add(userfunding.getAuthorID());
-            list.add(String.valueOf(userfunding.getMount()));
-            list.add(String.valueOf(userfunding.getRest()));
-            list.add(String.valueOf(userfunding.getIn()));
-            list.add(String.valueOf(userfunding.getOut()));
-            list.add(String.valueOf(userfunding.getTest()));
-            list.add(userfunding.getTesttime());
-            list.add(userfunding.getTestuser());
-            list.add(String.valueOf(userfunding.getIfWork()));
-            list.add(userfunding.getWorkTime());
-            list.add(userfunding.getWorkUser());
-            list.add(userfunding.getRecord());
-            list.add(userfunding.getSource());
-            list.add(userfunding.getSourceAccount());
-            list.add(userfunding.getGo());
-            list.add(userfunding.getGoaccount());
-            list.add(userfunding.getApplyID());
-            list.add(userfunding.getApplyTime());
-            list.add(userfunding.getTestRecord());
-            list.add(userfunding.getWorkRecord());
-            list.add(String.valueOf(userfunding.getType()));
-            list.add(String.valueOf(userfunding.getMoneyType()));
-            listList.add(list);
-        }
+        map.put("teamToPersonCSV",teamToPersonCSV);
+        map.put("companyToPersonCSV",companyToPersonCSV);
 
-        File file = csvUtils.createCSVFile(listList,Config.UPLOAD_DIR + File.separator + File.separator ,"csv");
-        System.out.println(file.getPath());
-        map.put("companyToPersonCSV","http://39.96.65.14/doctorfile/upload/"  + file.getName());
         return RetResponse.makeOKRsp(map);
-
-
     }
 
 }
