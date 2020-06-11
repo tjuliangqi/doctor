@@ -727,7 +727,7 @@ public class projectController {
 
         File file = csvUtils.createCSVFile(listList,Config.UPLOAD_DIR + File.separator + File.separator ,"csv");
         System.out.println(file.getPath());
-        map.put("companyToPersonCSV",file.getPath());
+        map.put("companyToPersonCSV","http://39.96.65.14/doctorfile/upload/"  + file.getName());
         return RetResponse.makeOKRsp(map);
 
 
