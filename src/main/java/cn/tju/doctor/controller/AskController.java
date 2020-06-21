@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -276,6 +277,53 @@ public class AskController {
         list.add(data1);
         list.add(data2);
         return RetResponse.makeOKRsp(list);
+    }
+
+    @RequestMapping(value = "/setHomePageImage", method = RequestMethod.POST)
+    public RetResult<String> setHomePageImage(MultipartFile[] file) {
+
+        try {
+            for (MultipartFile eachFile:file){
+
+                String fileName = eachFile.getOriginalFilename();
+                String destFileName = "D:/doctorfile/homePageImage" + File.separator + fileName;
+
+                File destFile = new File(destFileName);
+                if (!destFile.getParentFile().exists()){
+                    destFile.getParentFile().mkdir();
+                }
+                if (destFile.getParentFile().exists()){
+                    File[] files = destFile.getParentFile().listFiles();
+                    for (File f:files) {
+                        f.delete();
+                    }
+                }
+                eachFile.transferTo(destFile);
+            }
+
+            return RetResponse.makeOKRsp("http://39.96.65.14/doctorfile/homePageImage/"+"路径下上传成功");
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("文件上传失败");
+        }
+    }
+
+    @RequestMapping(value = "/getHomePageImage", method = RequestMethod.POST)
+    public RetResult<List<String>> getHomePageImage() {
+
+        try {
+            String destFileName = "D:/doctorfile/homePageImage";
+            List<String> result = new ArrayList<>();
+            File destFile = new File(destFileName);
+            if (destFile.exists()) {
+                File[] files = destFile.getParentFile().listFiles();
+                for (File f : files) {
+                    result.add("http://39.96.65.14/doctorfile/homePageImage/"+f.getName());
+                }
+            }
+            return RetResponse.makeOKRsp(result);
+        } catch (Exception e){
+            return RetResponse.makeErrRsp("error");
+        }
     }
 
 }
